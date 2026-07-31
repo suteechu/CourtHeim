@@ -164,7 +164,7 @@ const Specifications = () => {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 </button>
               </li>
-              <li className="flex items-start justify-between border-b border-gray-100 pb-3">
+              <li className="flex items-start justify-between pb-3">
                 <div className="flex items-start">
                   <span className="text-heim-red mr-2 mt-1">■</span>
                   <div>
@@ -182,15 +182,6 @@ const Specifications = () => {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 </button>
               </li>
-              <li className="flex items-center justify-between pb-2">
-                <div>
-                  <span className="text-heim-red mr-2">■</span>
-                  <strong className="text-gray-900">Edge & Drainage:</strong> ขอบสนามมีคันคอนกรีตขอบดิน พร้อมรางระบายน้ำรอบสนาม
-                </div>
-                <button onClick={() => setModalContent({ src: './edge_drainage.jpg', caption: 'แบบขยาย Edge & Drainage (คันดินและรางระบายน้ำ)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                </button>
-              </li>
             </ul>
           </div>
 
@@ -201,13 +192,23 @@ const Specifications = () => {
               อุปกรณ์ที่ HEIM จัดหาและประกอบเอง
             </h3>
             <ul className="space-y-4 text-gray-600">
-              <li className="flex items-center border-b border-gray-100 pb-2">
-                <span className="text-heim-red mr-2">■</span>
-                <strong className="text-gray-900">1. เสาแป้นบาสเกตบอล</strong>
+              <li className="flex items-center justify-between border-b border-gray-100 pb-2">
+                <div>
+                  <span className="text-heim-red mr-2">■</span>
+                  <strong className="text-gray-900">1. เสาแป้นบาสเกตบอล</strong>
+                </div>
+                <button onClick={() => setModalContent({ src: './basketball_hoop_gen.jpg', caption: 'ภาพจำลองเสาแป้นบาสเกตบอล' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                </button>
               </li>
-              <li className="flex items-center pb-2">
-                <span className="text-heim-red mr-2">■</span>
-                <strong className="text-gray-900">2. เสาโกลหนู พร้อมตาข่าย</strong>
+              <li className="flex items-center justify-between pb-2">
+                <div>
+                  <span className="text-heim-red mr-2">■</span>
+                  <strong className="text-gray-900">2. เสาโกลหนู พร้อมตาข่าย</strong>
+                </div>
+                <button onClick={() => setModalContent({ src: './mini_goal_gen.jpg', caption: 'ภาพจำลองเสาโกลหนู' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                </button>
               </li>
             </ul>
           </div>
