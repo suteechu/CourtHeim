@@ -118,10 +118,10 @@ const BOQ = () => {
                         className="group flex items-start cursor-pointer"
                         onClick={() => setModalContent({ src: item.imageSrc, caption: item.item })}
                       >
-                        <p className="font-medium text-gray-800 group-hover:text-heim-blue transition-colors mr-2">{item.item}</p>
+                        <p className="font-medium text-gray-800 group-hover:text-heim-blue transition-colors mr-2">{item.category}</p>
                         <svg className="w-5 h-5 text-gray-300 group-hover:text-heim-blue opacity-50 group-hover:opacity-100 transition-all shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                       </div>
-                      <span className="text-xs text-gray-500">{item.category}</span>
+                      <span className="text-sm text-gray-500 block mt-1 leading-relaxed">{item.item}</span>
                     </td>
                     <td className="p-4 text-right text-gray-700">{item.qty}</td>
                     <td className="p-4 text-center text-gray-500">{item.unit}</td>
