@@ -63,6 +63,10 @@ const Features = () => {
                   src={imgSrc} 
                   alt={`Original Space ${index + 1}`} 
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                  onError={(e) => {
+                    if (e.target.src.includes('.jpg')) e.target.src = e.target.src.replace('.jpg', '.png');
+                    else if (e.target.src.includes('.png')) e.target.src = e.target.src.replace('.png', '.jpg');
+                  }}
                 />
               </div>
             ))}
@@ -79,6 +83,10 @@ const Features = () => {
                   src={imgSrc} 
                   alt={`3D Render ${index + 1}`} 
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                  onError={(e) => {
+                    if (e.target.src.includes('.jpg')) e.target.src = e.target.src.replace('.jpg', '.png');
+                    else if (e.target.src.includes('.png')) e.target.src = e.target.src.replace('.png', '.jpg');
+                  }}
                 />
               </div>
             ))}

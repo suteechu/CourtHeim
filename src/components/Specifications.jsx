@@ -36,7 +36,7 @@ const Specifications = () => {
                   <span className="text-heim-red mr-2">■</span>
                   <strong className="text-gray-900">Subbase (หินคลุก):</strong> Crushed Stone หนา 15 ซม. บดอัดแน่น
                 </div>
-                <button onClick={() => setModalContent({ src: './subbase_new.jpg', caption: 'แบบขยาย Subbase (หินคลุก)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+                <button onClick={() => setModalContent({ src: './Subbase.jpg', caption: 'แบบขยาย Subbase (หินคลุก)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 </button>
               </li>
@@ -223,7 +223,16 @@ const Specifications = () => {
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
             <div className="p-2">
-              <img src={modalContent.src} alt={modalContent.caption} className="w-full h-auto rounded-xl object-contain max-h-[80vh]" />
+              <img 
+                src={modalContent.src} 
+                alt={modalContent.caption} 
+                className="w-full h-auto rounded-xl object-contain max-h-[80vh]" 
+                onError={(e) => {
+                  if (e.target.src.includes('.jpg')) e.target.src = e.target.src.replace('.jpg', '.png');
+                  else if (e.target.src.includes('.png')) e.target.src = e.target.src.replace('.png', '.jpg');
+                  else e.target.src = 'https://via.placeholder.com/800x600?text=Image+Not+Available';
+                }}
+              />
             </div>
             <div className="p-4 bg-gray-50 border-t border-gray-100 text-center">
               <p className="text-sm text-gray-600 font-medium">{modalContent.caption}</p>

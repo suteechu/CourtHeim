@@ -169,7 +169,11 @@ const BOQ = () => {
                 src={modalContent.src} 
                 alt={modalContent.caption} 
                 className="w-full h-auto rounded-xl object-contain max-h-[80vh]" 
-                onError={(e) => { e.target.src = 'https://via.placeholder.com/800x600?text=Image+Not+Available' }}
+                onError={(e) => {
+                  if (e.target.src.includes('.jpg')) e.target.src = e.target.src.replace('.jpg', '.png');
+                  else if (e.target.src.includes('.png')) e.target.src = e.target.src.replace('.png', '.jpg');
+                  else e.target.src = 'https://via.placeholder.com/800x600?text=Image+Not+Available';
+                }}
               />
             </div>
             <div className="p-4 bg-gray-50 border-t border-gray-100 text-center">
