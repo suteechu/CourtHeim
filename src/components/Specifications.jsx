@@ -164,12 +164,21 @@ const Specifications = () => {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 </button>
               </li>
-              <li className="flex items-center justify-between border-b border-gray-100 pb-2">
-                <div>
-                  <span className="text-heim-red mr-2">■</span>
-                  <strong className="text-gray-900">Concrete Joints:</strong> ตัดรอยต่อคอนกรีตทุก 3–4 เมตร เพื่อป้องกันการแตกร้าว
+              <li className="flex items-start justify-between border-b border-gray-100 pb-3">
+                <div className="flex items-start">
+                  <span className="text-heim-red mr-2 mt-1">■</span>
+                  <div>
+                    <strong className="text-gray-900">Concrete Joints:</strong> ตัดรอยต่อคอนกรีตทุก 3–4 เมตร เพื่อป้องกันการแตกร้าว
+                    <div className="mt-3 p-3 bg-gray-50 rounded-lg text-sm border border-gray-100">
+                      <strong className="text-gray-800 block mb-1">คำแนะนำที่ดีที่สุดสำหรับพื้นที่ 10.70 x 15.00 m:</strong>
+                      <ul className="list-disc list-inside text-gray-600 space-y-1">
+                        <li>ด้านกว้าง (10.70 ม.): แบ่งออกเป็น 3 ช่วง = 3.56 เมตร / ช่วง</li>
+                        <li>ด้านยาว (15.00 ม.): แบ่งออกเป็น 4 ช่วง = 3.75 เมตร / ช่วง</li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
-                <button onClick={() => setModalContent({ src: './concrete_joints.jpg', caption: 'แบบขยาย Concrete Joints (ระยะ 3-4 เมตร)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+                <button onClick={() => setModalContent({ src: './concrete_joints.jpg', caption: 'แบบขยาย Concrete Joints (ระยะ 3-4 เมตร)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0 mt-1" title="ดูภาพจำลอง">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 </button>
               </li>
