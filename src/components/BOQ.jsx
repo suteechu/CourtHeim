@@ -46,11 +46,11 @@ const BOQ = () => {
     {
       id: 5,
       category: 'งานภูมิทัศน์ (Landscape & Fencing)',
-      item: 'งานตาข่ายกันลูกบอลหลังประตู',
+      item: 'งานตาข่ายกันลูกบอลหลังประตู (โครงสร้างเสาและตาข่าย 2 ด้าน)',
       qty: '1',
       unit: 'เหมา',
-      unitPrice: 50000,
-      total: 50000,
+      unitPrice: 15000,
+      total: 15000,
       imageSrc: './fencing_net.jpg',
     },
     {
