@@ -53,11 +53,27 @@ const Features = () => {
           ))}
         </div>
 
-        {/* 3D Perspective Gallery */}
+        {/* Original Space Gallery */}
         <div className="mt-20">
-          <h3 className="text-lg font-bold text-gray-800 mb-6 border-b pb-2">ภาพจำพื้นที่ เดิม (3D Reference)</h3>
+          <h3 className="text-lg font-bold text-gray-800 mb-6 border-b pb-2">ภาพพื้นที่เดิม (Original Space)</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {['./original-space-1.jpg', './original-space-2.jpg'].map((imgSrc, index) => (
+              <div key={index} className="h-64 bg-gray-200 rounded-lg overflow-hidden relative group">
+                <img 
+                  src={imgSrc} 
+                  alt={`Original Space ${index + 1}`} 
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 3D Perspective Gallery */}
+        <div className="mt-16">
+          <h3 className="text-lg font-bold text-gray-800 mb-6 border-b pb-2">ภาพจำลองการใช้พื้นที่ (3D Reference)</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {['./3d-1.jpg', './3d-2.jpg', './hero-bg.jpg'].map((imgSrc, index) => (
               <div key={index} className="h-48 bg-gray-200 rounded-lg overflow-hidden relative group">
                 <img 
                   src={imgSrc} 
