@@ -133,14 +133,14 @@ const Specifications = () => {
             <div className="mt-auto pt-6">
               <div className="p-4 bg-gray-50 rounded-lg text-sm text-gray-600 border border-gray-100">
                 <p className="font-bold text-gray-900 mb-2">รูปแบบสีของสนาม (Court Colors)</p>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 mb-3 space-y-2 sm:space-y-0">
+                <div className="flex flex-col mb-3 space-y-2">
                   <div className="flex items-center">
-                    <span className="w-4 h-4 rounded-full bg-[#B24C38] mr-2 shadow-sm border border-gray-200"></span>
-                    <span><strong className="text-gray-800">สีหลัก (Main):</strong> Terracotta (แดงอิฐ) - 105 ตร.ม.</span>
+                    <span className="w-4 h-4 rounded-full bg-[#B24C38] mr-3 shrink-0 shadow-sm border border-gray-200"></span>
+                    <span><strong className="text-gray-800">สีหลัก (Main):</strong> Terracotta (แดงอิฐ) - พื้นที่ 105 ตร.ม.</span>
                   </div>
                   <div className="flex items-center">
-                    <span className="w-4 h-4 rounded-full bg-[#378136] mr-2 shadow-sm border border-gray-200"></span>
-                    <span><strong className="text-gray-800">สีรอง (Secondary):</strong> Green (เขียว) - 70 ตร.ม.</span>
+                    <span className="w-4 h-4 rounded-full bg-[#378136] mr-3 shrink-0 shadow-sm border border-gray-200"></span>
+                    <span><strong className="text-gray-800">สีรอง (Secondary):</strong> Green (เขียว) - พื้นที่ 70 ตร.ม.</span>
                   </div>
                 </div>
                 <p>* ความหนารวมของระบบ Acrylic Coating อยู่ที่ประมาณ 2-3 mm</p>
