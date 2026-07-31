@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCG HEIM - Project Blueprint & Technical Specifications</title>
+    <style>
+        body {
+            font-family: 'Sarabun', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #f9fafb;
+        }
+        .document-container {
+            background-color: white;
+            padding: 50px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-top: 8px solid #005A9C; /* SCG Blue */
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #005A9C;
+            margin-bottom: 5px;
+            font-size: 28px;
+        }
+        .header p {
+            color: #6b7280;
+            font-size: 14px;
+            margin-top: 0;
+        }
+        .section-title {
+            color: #E31837; /* SCG Red */
+            border-left: 4px solid #E31837;
+            padding-left: 10px;
+            margin-top: 40px;
+            font-size: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f3f4f6;
+            font-weight: bold;
+            color: #111827;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 12px;
+            color: #9ca3af;
+            border-top: 1px solid #e5e7eb;
+            padding-top: 20px;
+        }
+        @media print {
+            body { background-color: white; padding: 0; }
+            .document-container { box-shadow: none; padding: 0; border: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="document-container">
+    <div class="header">
+        <h1>แบบแปลนและข้อกำหนดทางวิศวกรรม</h1>
+        <h2>(Project Blueprint & Technical Specifications)</h2>
+        <p>เอกสารควบคุมภายใน (Internal Control Document) - โครงการสนามกีฬาอเนกประสงค์ SCG HEIM</p>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; margin-bottom: 20px; background-color: #f3f4f6; padding: 15px; border-radius: 5px;">
+        <div><strong>รหัสโครงการ:</strong> HMC-2026-X</div>
+        <div><strong>ขนาดพื้นที่รวม:</strong> 10.70 x 15.00 เมตร (160.5 ตร.ม.)</div>
+        <div><strong>วันที่ออกเอกสาร:</strong> กรกฎาคม 2026</div>
+    </div>
+
+    <h3 class="section-title">1. งานโครงสร้างพื้นฐาน (Foundation & Structural Works)</h3>
+    <table>
+        <tr>
+            <th width="30%">รายการ (Item)</th>
+            <th>ข้อกำหนดทางวิศวกรรม (Specifications)</th>
+        </tr>
+        <tr>
+            <td>ชั้นดินเดิม (Subgrade)</td>
+            <td>ปรับระดับและบดอัดด้วยรถบดสั่นสะเทือน ทดสอบ Field Density Test ไม่น้อยกว่า 95% Modified Proctor (CBR > 8%)</td>
+        </tr>
+        <tr>
+            <td>ชั้นรองพื้นฐาน (Base Course)</td>
+            <td>ลงหินคลุก หนา 150 มม. บดอัดแน่น ค่า CBR > 10%</td>
+        </tr>
+        <tr>
+            <td>แผ่นพลาสติกปูรอง (Vapor Barrier)</td>
+            <td>ปูแผ่นพลาสติก PE หนา 0.15 มม. (Overlap อย่างน้อย 10 ซม.) ป้องกันความชื้นใต้ดิน</td>
+        </tr>
+        <tr>
+            <td>พื้นคอนกรีตเสริมเหล็ก (RC Slab)</td>
+            <td>ความหนา 120 มม. คอนกรีตกำลังอัด 280 ksc (Cylinder) เทรวดเดียวไม่มีรอยต่อ (Monolithic Pour)</td>
+        </tr>
+        <tr>
+            <td>เหล็กเสริม (Reinforcement)</td>
+            <td>เหล็กข้ออ้อย DB12 @ 0.20 ม. วาง 2 ชั้น (Top & Bottom) ระยะหุ้มคอนกรีต (Covering) 3-5 ซม.</td>
+        </tr>
+    </table>
+
+    <h3 class="section-title">2. ระบบระบายน้ำ (Drainage System)</h3>
+    <ul>
+        <li><strong>ระดับความลาดเอียง (Slope):</strong> ปรับระดับความลาดเอียงของพื้นคอนกรีตที่ 0.5% - 1% ชี้ไปทางรางระบายน้ำ</li>
+        <li><strong>รางระบายน้ำ (Trench):</strong> รางคอนกรีตเสริมเหล็กขนาดช่องเปิด 100 มม. รอบพื้นที่สนาม</li>
+        <li><strong>ท่อระบายน้ำหลัก (Main Pipe):</strong> ท่อ PVC-U ขนาด Ø 150 มม. (Class 8.5) หุ้มด้วยแผ่นใยสังเคราะห์ (Geotextile 200g/m²)</li>
+        <li><strong>ฝาตะแกรง (Grate):</strong> ฝาตะแกรงเหล็ก DB10 ชุบกัลวาไนซ์ (Hot-dip Galvanized) ระยะห่างซี่ 30 มม.</li>
+    </ul>
+
+    <h3 class="section-title">3. ระบบเคลือบผิวอะคริลิก (5-Layer A.S.A System)</h3>
+    <p>ดำเนินการเคลือบผิวหลังจากบ่มคอนกรีตครบ 28 วัน (หรือค่าความชื้นไม่เกิน 4%)</p>
+    <table>
+        <tr>
+            <th>ชั้นที่ (Layer)</th>
+            <th>ประเภทวัสดุ (Material)</th>
+            <th>ความหนา/รายละเอียด (Details)</th>
+        </tr>
+        <tr>
+            <td>1 - 2</td>
+            <td>Acrylic Base Coat</td>
+            <td>0.6 มม. (เพื่อสร้างแรงยึดเกาะกับผิวคอนกรีตและอุดรูพรุน)</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>Acrylic Cushion Coat</td>
+            <td>1.5 มม. (ผสมเม็ดรเบอร์เพื่อคุณสมบัติการซับแรงกระแทก - Shock Absorption)</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>Acrylic Wear Coat</td>
+            <td>180 ไมครอน (สร้างความฝืดและกันลื่น - Slip Resistance)</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>Acrylic Top Coat / Color</td>
+            <td>ทับหน้าสีเขียว (Green) และสีดินเผา (Terracotta) ทนรังสี UV</td>
+        </tr>
+    </table>
+
+    <h3 class="section-title">4. การตีเส้นสนามซ้อนทับ (Overlay Marking Layout)</h3>
+    <p>เนื่องจากพื้นที่จำกัด 10.70 x 15.00 ม. (160.5 ตร.ม.) จึงใช้เทคนิคตีเส้นซ้อนทับ (Overlay) เพื่อรองรับ 5 กีฬา โดยใช้สีอะคริลิก Traffic Paint:</p>
+    <ul>
+        <li><strong>สีขาว (White - หนา 50 มม.):</strong> ตะกร้อ (Sepak Takraw) และ พิคเคิลบอล (Pickleball) ขนาด 6.10 x 13.40 ม. (สามารถใช้เส้นร่วมกันได้)</li>
+        <li><strong>สีเหลือง (Yellow - หนา 50 มม.):</strong> บาสเกตบอลครึ่งสนาม (Half-Court Basketball) ขนาด 10.70 x 11.00 ม. (ปรับลดสเกลจาก 15x14 ม.)</li>
+        <li><strong>สีแดง (Red - หนา 50 มม.):</strong> ฟุตซอล (Futsal) ขนาด 10.70 x 15.00 ม. (ใช้พื้นที่เต็มกรอบสูงสุด)</li>
+        <li><strong>สีฟ้า (Blue - หนา 50 มม.):</strong> จุดมาร์กเกอร์สำหรับโซนออกกำลังกาย HYROX (Functional Zone Markers)</li>
+    </ul>
+
+    <div class="footer">
+        <p>เอกสารฉบับนี้สร้างขึ้นโดย AI สำหรับโครงการ SCG HEIM Sports Court (HMC-2026-X)<br>
+        ใช้เพื่อการอ้างอิงภายในเท่านั้น ห้ามเผยแพร่แก่บุคคลภายนอกโดยไม่ได้รับอนุญาต</p>
+        <button onclick="window.print()" style="margin-top: 15px; padding: 10px 20px; background-color: #005A9C; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            พิมพ์เอกสาร (Print / Save as PDF)
+        </button>
+    </div>
+</div>
+
+</body>
+</html>

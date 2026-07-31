@@ -1,0 +1,238 @@
+import React, { useState } from 'react';
+
+const Specifications = () => {
+  const [modalContent, setModalContent] = useState(null);
+
+  return (
+    <section id="specifications" className="py-24 bg-gray-50 relative">
+      <div className="container mx-auto px-6">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-5xl font-bold text-heim-blue mb-4">Technical <span className="text-heim-red">Specifications</span></h2>
+          <div className="h-1 w-24 bg-heim-red mx-auto rounded-full mb-6"></div>
+          <p className="text-gray-600 max-w-3xl mx-auto text-lg">
+            มาตรฐานวิศวกรรมขั้นสูง เพื่อบูรณาการพื้นที่ให้มีความปลอดภัยและคงทนต่อการใช้งานหนัก (Heavy-duty utilization)
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+          {/* Card 1: Engineering Standards */}
+          <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm h-full flex flex-col">
+            <h3 className="text-2xl font-bold mb-6 flex items-center text-gray-900">
+              <svg className="w-6 h-6 mr-3 text-heim-red" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+              มาตรฐานโครงสร้างพื้นฐาน
+            </h3>
+            <ul className="space-y-4 text-gray-600">
+              <li className="flex items-center justify-between border-b border-gray-100 pb-2">
+                <div>
+                  <span className="text-heim-red mr-2">■</span>
+                  <strong className="text-gray-900">Subgrade (ชั้นดินเดิม):</strong> Compacted Soil (บดอัดไม่น้อยกว่า 95% Modified Proctor)
+                </div>
+                <button onClick={() => setModalContent({ src: '/subgrade.jpg', caption: 'แบบขยาย Subgrade (ชั้นดินเดิม)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                </button>
+              </li>
+              <li className="flex items-center justify-between border-b border-gray-100 pb-2">
+                <div>
+                  <span className="text-heim-red mr-2">■</span>
+                  <strong className="text-gray-900">Subbase (หินคลุก):</strong> Crushed Stone หนา 15 ซม. บดอัดแน่น
+                </div>
+                <button onClick={() => setModalContent({ src: '/court_cross_section.jpg', caption: 'แบบขยาย Subbase (หินคลุก)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                </button>
+              </li>
+              <li className="flex items-center justify-between border-b border-gray-100 pb-2">
+                <div>
+                  <span className="text-heim-red mr-2">■</span>
+                  <strong className="text-gray-900">RC Slab (คอนกรีตเสริมเหล็ก):</strong> Concrete ความหนา 20 ซม.
+                </div>
+                <button onClick={() => setModalContent({ src: '/court_cross_section.jpg', caption: 'แบบขยาย RC Slab (คอนกรีตเสริมเหล็ก)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                </button>
+              </li>
+              <li className="flex items-center justify-between pb-2">
+                <div>
+                  <span className="text-heim-red mr-2">■</span>
+                  <strong className="text-gray-900">Reinforcement (เหล็กเสริม):</strong> Wiremesh #4mm.
+                </div>
+                <button onClick={() => setModalContent({ src: '/court_cross_section.jpg', caption: 'แบบขยาย Reinforcement (เหล็กเสริม)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          {/* Card 2: Multi-purpose */}
+          <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm h-full flex flex-col">
+            <h3 className="text-2xl font-bold mb-6 flex items-center text-gray-900">
+              <svg className="w-6 h-6 mr-3 text-heim-red" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+              การบูรณาการพื้นที่ (Multi-purpose)
+            </h3>
+            <p className="text-gray-600 leading-relaxed mb-4">
+              ออกแบบวางเส้นสนามแบบซ้อนทับ (Overlay Marking) รองรับ 5 กิจกรรมหลัก พร้อมจัดสรรพื้นที่ Buffer Zone &gt; 850 มม. ระหว่างเขตสนามกับผนังอาคาร
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <div className="flex items-center bg-gray-50 px-4 py-2 rounded-full border border-gray-200">
+                <span className="font-medium text-gray-700 mr-2">Futsal</span>
+                <button onClick={() => setModalContent({ src: '/futsal_court.jpg', caption: 'แบบขยายสนาม Futsal' })} className="text-gray-400 hover:text-heim-blue transition-colors" title="ดูภาพจำลอง">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                </button>
+              </div>
+              <div className="flex items-center bg-gray-50 px-4 py-2 rounded-full border border-gray-200">
+                <span className="font-medium text-gray-700 mr-2">Basketball (Half)</span>
+                <button onClick={() => setModalContent({ src: '/basketball_court.jpg', caption: 'แบบขยายสนาม Basketball (Half)' })} className="text-gray-400 hover:text-heim-blue transition-colors" title="ดูภาพจำลอง">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                </button>
+              </div>
+              <div className="flex items-center bg-gray-50 px-4 py-2 rounded-full border border-gray-200">
+                <span className="font-medium text-gray-700 mr-2">Pickleball / Sepak Takraw</span>
+                <button onClick={() => setModalContent({ src: '/pickleball_takraw_court.jpg', caption: 'แบบขยายสนาม Pickleball / Sepak Takraw' })} className="text-gray-400 hover:text-heim-blue transition-colors" title="ดูภาพจำลอง">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                </button>
+              </div>
+              <div className="flex items-center bg-gray-50 px-4 py-2 rounded-full border border-gray-200">
+                <span className="font-bold text-heim-blue mr-2">HYROX</span>
+                <button onClick={() => setModalContent({ src: '/hyrox_court.jpg', caption: 'แบบขยายพื้นที่ HYROX (Functional Fitness)' })} className="text-gray-400 hover:text-heim-blue transition-colors" title="ดูภาพจำลอง">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3: Coating System */}
+          <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm h-full flex flex-col">
+            <h3 className="text-2xl font-bold mb-6 flex items-center text-gray-900">
+              <svg className="w-6 h-6 mr-3 text-heim-red" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+              ระบบเคลือบผิว 5-Layer A.S.A.
+            </h3>
+            <ul className="space-y-4 text-gray-600">
+              <li className="flex justify-between items-center border-b border-gray-100 pb-2">
+                <span>Wear Coat (A) - กันลื่น</span>
+                <span className="text-gray-900 font-medium">180 micron</span>
+              </li>
+              <li className="flex justify-between items-center border-b border-gray-100 pb-2">
+                <span>Cushion Coat (B) - ซับแรงกระแทก</span>
+                <span className="text-gray-900 font-medium">1.5 มม.</span>
+              </li>
+              <li className="flex justify-between items-center pb-2">
+                <span>Base Coat (C) - สร้างแรงยึดเกาะ 2 ชั้น</span>
+                <span className="text-gray-900 font-medium">0.6 มม.</span>
+              </li>
+            </ul>
+            <div className="mt-auto pt-6">
+              <div className="p-4 bg-gray-50 rounded-lg text-sm text-gray-600 border border-gray-100">
+                <p className="font-bold text-gray-900 mb-2">รูปแบบสีของสนาม (Court Colors)</p>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 mb-3 space-y-2 sm:space-y-0">
+                  <div className="flex items-center">
+                    <span className="w-4 h-4 rounded-full bg-[#B24C38] mr-2 shadow-sm border border-gray-200"></span>
+                    <span><strong className="text-gray-800">สีหลัก (Main):</strong> Terracotta (แดงอิฐ)</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="w-4 h-4 rounded-full bg-[#378136] mr-2 shadow-sm border border-gray-200"></span>
+                    <span><strong className="text-gray-800">สีรอง (Secondary):</strong> Green (เขียว)</span>
+                  </div>
+                </div>
+                <p>* ความหนารวมของระบบ Acrylic Coating อยู่ที่ประมาณ 2-3 mm</p>
+              </div>
+            </div>
+          </div>
+          
+          {/* Card 4: Drainage */}
+          <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm h-full flex flex-col">
+            <h3 className="text-2xl font-bold mb-6 flex items-center text-gray-900">
+              <svg className="w-6 h-6 mr-3 text-heim-red" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+              ระบบระบายน้ำ (Drainage)
+            </h3>
+            <ul className="space-y-4 text-gray-600">
+              <li className="flex items-center justify-between border-b border-gray-100 pb-2">
+                <div>
+                  <span className="text-heim-red mr-2">■</span>
+                  <strong className="text-gray-900">Slope Design:</strong> ความลาดเอียง 0.5–0.8% เพื่อการระบายน้ำที่มีประสิทธิภาพ
+                </div>
+                <button onClick={() => setModalContent({ src: '/slope_design.jpg', caption: 'แบบขยาย Slope Design (0.5-0.8%)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                </button>
+              </li>
+              <li className="flex items-center justify-between border-b border-gray-100 pb-2">
+                <div>
+                  <span className="text-heim-red mr-2">■</span>
+                  <strong className="text-gray-900">Concrete Joints:</strong> ตัดรอยต่อคอนกรีตทุก 3–4 เมตร เพื่อป้องกันการแตกร้าว
+                </div>
+                <button onClick={() => setModalContent({ src: '/concrete_joints.jpg', caption: 'แบบขยาย Concrete Joints (ระยะ 3-4 เมตร)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                </button>
+              </li>
+              <li className="flex items-center justify-between pb-2">
+                <div>
+                  <span className="text-heim-red mr-2">■</span>
+                  <strong className="text-gray-900">Edge & Drainage:</strong> ขอบสนามมีคันคอนกรีตขอบดิน พร้อมรางระบายน้ำรอบสนาม
+                </div>
+                <button onClick={() => setModalContent({ src: '/edge_drainage.jpg', caption: 'แบบขยาย Edge & Drainage (คันดินและรางระบายน้ำ)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+
+        {/* Construction Method & Quality Control */}
+        <div className="mt-12 bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
+          <h3 className="text-2xl font-bold mb-6 flex items-center text-gray-900">
+            <svg className="w-6 h-6 mr-3 text-heim-red" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            ลำดับขั้นตอนการดำเนินงานก่อสร้าง (Method Statement) & ควบคุมคุณภาพ
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div>
+              <h4 className="text-lg font-bold text-heim-blue mb-4">ขั้นตอนการดำเนินงาน</h4>
+              <ol className="space-y-4 text-gray-600 list-decimal list-inside">
+                <li><strong className="text-gray-900">Substrate Preparation:</strong> รื้อถอนและบดอัดชั้นดิน (Subgrade) และ Base Course ด้วยรถบดสั่นสะเทือน</li>
+                <li><strong className="text-gray-900">Drainage Installation:</strong> ขุดร่องและติดตั้งระบบระบายน้ำ พร้อมหุ้ม Geotextile ก่อนงานพื้น</li>
+                <li><strong className="text-gray-900">RC Slab Construction:</strong> วางเหล็กเสริม Wiremesh # 4 มม. สองชั้นพร้อมลูกปูน เทคอนกรีตด้วยรถปั๊ม</li>
+                <li><strong className="text-gray-900">Acrylic System & Marking:</strong> ทำความสะอาดพื้นผิว และดำเนินการเคลือบระบบ A.S.A. 5 ชั้น</li>
+              </ol>
+            </div>
+            <div>
+              <h4 className="text-lg font-bold text-heim-red mb-4">มาตรการควบคุมคุณภาพ (Hold Points)</h4>
+              <ul className="space-y-4 text-gray-600">
+                <li className="flex items-start">
+                  <span className="text-green-500 font-bold mr-3 mt-1">✓</span>
+                  <span><strong className="text-gray-900">Hold Point 1:</strong> ผลการทดสอบการบดอัดดิน (CBR Test Report & Field Density 95%)</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 font-bold mr-3 mt-1">✓</span>
+                  <span><strong className="text-gray-900">Hold Point 2:</strong> ตรวจสอบความถูกต้องของเหล็กเสริม Wiremesh # 4 มม. และระยะ Chair Spacers ก่อนเทคอนกรีต</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 font-bold mr-3 mt-1">✓</span>
+                  <span><strong className="text-gray-900">Hold Point 3:</strong> ทดสอบขังน้ำ 24 ชั่วโมง (Flood Test) เพื่อตรวจระดับความลาดเอียงและจุดน้ำขัง ก่อนเคลือบผิว</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Image Modal */}
+      {modalContent && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm transition-opacity">
+          <div className="bg-white rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden relative animate-fade-in-up">
+            <button 
+              onClick={() => setModalContent(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-full p-2 transition-colors z-10"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div className="p-2">
+              <img src={modalContent.src} alt={modalContent.caption} className="w-full h-auto rounded-xl object-contain max-h-[80vh]" />
+            </div>
+            <div className="p-4 bg-gray-50 border-t border-gray-100 text-center">
+              <p className="text-sm text-gray-600 font-medium">{modalContent.caption}</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+};
+
+export default Specifications;
