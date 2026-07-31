@@ -195,7 +195,7 @@ const Specifications = () => {
               <li className="flex items-center justify-between border-b border-gray-100 pb-2">
                 <div>
                   <span className="text-heim-red mr-2">■</span>
-                  <strong className="text-gray-900">1. เสาแป้นบาสเกตบอล</strong>
+                  <strong className="text-gray-900">1. เสาแป้นบาสเกตบอล โครงสร้าง เหล็กกล่อง 100x100 t3.2 ตามแบบ</strong>
                 </div>
                 <button onClick={() => setModalContent({ src: './basketball_hoop_gen.jpg', caption: 'ภาพจำลองเสาแป้นบาสเกตบอล' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
