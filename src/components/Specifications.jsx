@@ -55,7 +55,7 @@ const Specifications = () => {
               <li className="flex items-center justify-between border-b border-gray-100 pb-2">
                 <div>
                   <span className="text-heim-red mr-2">■</span>
-                  <strong className="text-gray-900">พื้นคอนกรีตเสริมเหล็ก (RC Slab):</strong> ความหนา 120 มม. คอนกรีตกำลังอัด 280 ksc (Cylinder) เทรวดเดียวไม่มีรอยต่อ (Monolithic Pour)
+                  <strong className="text-gray-900">พื้นคอนกรีตเสริมเหล็ก (RC Slab):</strong> ความหนา 200 มม. คอนกรีตกำลังอัด 280 ksc (Cylinder) เทรวดเดียวไม่มีรอยต่อ (Monolithic Pour)
                 </div>
                 <button onClick={() => setModalContent({ src: './rc_slab.jpg', caption: 'แบบขยาย พื้นคอนกรีตเสริมเหล็ก (RC Slab)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
