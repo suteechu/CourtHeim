@@ -25,36 +25,42 @@ const Specifications = () => {
               <li className="flex items-center justify-between border-b border-gray-100 pb-2">
                 <div>
                   <span className="text-heim-red mr-2">■</span>
-                  <strong className="text-gray-900">Subgrade (ชั้นดินเดิม):</strong> Compacted Soil (บดอัดไม่น้อยกว่า 95% Modified Proctor)
+                  <strong className="text-gray-900">ชั้นดินเดิม (Subgrade):</strong> ปรับระดับและบดอัดด้วยรถบดสั่นสะเทือน ทดสอบ Field Density Test ไม่น้อยกว่า 95% Modified Proctor (CBR &gt; 8%)
                 </div>
-                <button onClick={() => setModalContent({ src: './subgrade.jpg', caption: 'แบบขยาย Subgrade (ชั้นดินเดิม)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+                <button onClick={() => setModalContent({ src: './subgrade.jpg', caption: 'แบบขยาย ชั้นดินเดิม (Subgrade)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 </button>
               </li>
               <li className="flex items-center justify-between border-b border-gray-100 pb-2">
                 <div>
                   <span className="text-heim-red mr-2">■</span>
-                  <strong className="text-gray-900">Subbase (หินคลุก):</strong> Crushed Stone หนา 15 ซม. บดอัดแน่น
+                  <strong className="text-gray-900">ชั้นรองพื้นฐาน (Base Course):</strong> ลงหินคลุก หนา 150 มม. บดอัดแน่น ค่า CBR &gt; 10%
                 </div>
-                <button onClick={() => setModalContent({ src: './Subbase.jpg', caption: 'แบบขยาย Subbase (หินคลุก)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+                <button onClick={() => setModalContent({ src: './Subbase.jpg', caption: 'แบบขยาย ชั้นรองพื้นฐาน (Base Course)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 </button>
               </li>
               <li className="flex items-center justify-between border-b border-gray-100 pb-2">
                 <div>
                   <span className="text-heim-red mr-2">■</span>
-                  <strong className="text-gray-900">RC Slab (คอนกรีตเสริมเหล็ก):</strong> Concrete ความหนา 20 ซม. พร้อมชั้นทราย (Sand Blinding)
+                  <strong className="text-gray-900">แผ่นพลาสติกปูรอง (Vapor Barrier):</strong> ปูแผ่นพลาสติก PE หนา 0.15 มม. (Overlap อย่างน้อย 10 ซม.) ป้องกันความชื้นใต้ดิน
                 </div>
-                <button onClick={() => setModalContent({ src: './rc_slab.jpg', caption: 'แบบขยาย RC Slab (คอนกรีตเสริมเหล็ก)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+              </li>
+              <li className="flex items-center justify-between border-b border-gray-100 pb-2">
+                <div>
+                  <span className="text-heim-red mr-2">■</span>
+                  <strong className="text-gray-900">พื้นคอนกรีตเสริมเหล็ก (RC Slab):</strong> ความหนา 120 มม. คอนกรีตกำลังอัด 280 ksc (Cylinder) เทรวดเดียวไม่มีรอยต่อ (Monolithic Pour)
+                </div>
+                <button onClick={() => setModalContent({ src: './rc_slab.jpg', caption: 'แบบขยาย พื้นคอนกรีตเสริมเหล็ก (RC Slab)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 </button>
               </li>
               <li className="flex items-center justify-between pb-2">
                 <div>
                   <span className="text-heim-red mr-2">■</span>
-                  <strong className="text-gray-900">Reinforcement (เหล็กเสริม):</strong> Wiremesh #4mm. (DB4/SR24) ระยะห่างศูนย์กลาง 200 มม.
+                  <strong className="text-gray-900">เหล็กเสริม (Reinforcement):</strong> เหล็กข้ออ้อย DB12 @ 0.20 ม. วาง 2 ชั้น (Top &amp; Bottom) ระยะหุ้มคอนกรีต (Covering) 3-5 ซม.
                 </div>
-                <button onClick={() => setModalContent({ src: './wiremesh.jpg', caption: 'แบบขยาย Reinforcement (เหล็กเสริม)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+                <button onClick={() => setModalContent({ src: './wiremesh.jpg', caption: 'แบบขยาย เหล็กเสริม (Reinforcement)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 </button>
               </li>
