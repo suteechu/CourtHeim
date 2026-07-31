@@ -21,7 +21,7 @@ function App() {
         <Specifications />
         <BOQ />
 
-        <Warranty />
+        {/* <Warranty /> */}
         {/* <FAQ /> */}
       </main>
       <Footer />
