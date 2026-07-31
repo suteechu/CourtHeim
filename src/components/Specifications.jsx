@@ -130,11 +130,11 @@ const Specifications = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 mb-3 space-y-2 sm:space-y-0">
                   <div className="flex items-center">
                     <span className="w-4 h-4 rounded-full bg-[#B24C38] mr-2 shadow-sm border border-gray-200"></span>
-                    <span><strong className="text-gray-800">สีหลัก (Main):</strong> Terracotta (แดงอิฐ)</span>
+                    <span><strong className="text-gray-800">สีหลัก (Main):</strong> Terracotta (แดงอิฐ) - 105 ตร.ม.</span>
                   </div>
                   <div className="flex items-center">
                     <span className="w-4 h-4 rounded-full bg-[#378136] mr-2 shadow-sm border border-gray-200"></span>
-                    <span><strong className="text-gray-800">สีรอง (Secondary):</strong> Green (เขียว)</span>
+                    <span><strong className="text-gray-800">สีรอง (Secondary):</strong> Green (เขียว) - 70 ตร.ม.</span>
                   </div>
                 </div>
                 <p>* ความหนารวมของระบบ Acrylic Coating อยู่ที่ประมาณ 2-3 mm</p>
