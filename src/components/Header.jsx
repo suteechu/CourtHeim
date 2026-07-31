@@ -15,7 +15,7 @@ const Header = () => {
     <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'glass py-3' : 'bg-transparent py-5'}`}>
       <div className="container mx-auto px-6 flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <img src="/logo.png" alt="SCG HEIM" className="h-10 object-contain bg-white rounded p-1" />
+          <img src="./logo.png" alt="SCG HEIM" className="h-10 object-contain bg-white rounded p-1" />
           <div className="text-xl font-bold text-heim-blue tracking-tighter hidden sm:block">
             <span className="font-light text-gray-600 ml-1">Sports</span>
           </div>

@@ -27,7 +27,7 @@ const Specifications = () => {
                   <span className="text-heim-red mr-2">■</span>
                   <strong className="text-gray-900">Subgrade (ชั้นดินเดิม):</strong> Compacted Soil (บดอัดไม่น้อยกว่า 95% Modified Proctor)
                 </div>
-                <button onClick={() => setModalContent({ src: '/subgrade.jpg', caption: 'แบบขยาย Subgrade (ชั้นดินเดิม)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+                <button onClick={() => setModalContent({ src: './subgrade.jpg', caption: 'แบบขยาย Subgrade (ชั้นดินเดิม)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 </button>
               </li>
@@ -36,7 +36,7 @@ const Specifications = () => {
                   <span className="text-heim-red mr-2">■</span>
                   <strong className="text-gray-900">Subbase (หินคลุก):</strong> Crushed Stone หนา 15 ซม. บดอัดแน่น
                 </div>
-                <button onClick={() => setModalContent({ src: '/court_cross_section.jpg', caption: 'แบบขยาย Subbase (หินคลุก)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+                <button onClick={() => setModalContent({ src: './court_cross_section.jpg', caption: 'แบบขยาย Subbase (หินคลุก)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 </button>
               </li>
@@ -45,7 +45,7 @@ const Specifications = () => {
                   <span className="text-heim-red mr-2">■</span>
                   <strong className="text-gray-900">RC Slab (คอนกรีตเสริมเหล็ก):</strong> Concrete ความหนา 20 ซม.
                 </div>
-                <button onClick={() => setModalContent({ src: '/court_cross_section.jpg', caption: 'แบบขยาย RC Slab (คอนกรีตเสริมเหล็ก)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+                <button onClick={() => setModalContent({ src: './court_cross_section.jpg', caption: 'แบบขยาย RC Slab (คอนกรีตเสริมเหล็ก)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 </button>
               </li>
@@ -54,7 +54,7 @@ const Specifications = () => {
                   <span className="text-heim-red mr-2">■</span>
                   <strong className="text-gray-900">Reinforcement (เหล็กเสริม):</strong> Wiremesh #4mm.
                 </div>
-                <button onClick={() => setModalContent({ src: '/court_cross_section.jpg', caption: 'แบบขยาย Reinforcement (เหล็กเสริม)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+                <button onClick={() => setModalContent({ src: './court_cross_section.jpg', caption: 'แบบขยาย Reinforcement (เหล็กเสริม)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 </button>
               </li>
@@ -73,25 +73,25 @@ const Specifications = () => {
             <div className="flex flex-wrap gap-3">
               <div className="flex items-center bg-gray-50 px-4 py-2 rounded-full border border-gray-200">
                 <span className="font-medium text-gray-700 mr-2">Futsal</span>
-                <button onClick={() => setModalContent({ src: '/futsal_court.jpg', caption: 'แบบขยายสนาม Futsal' })} className="text-gray-400 hover:text-heim-blue transition-colors" title="ดูภาพจำลอง">
+                <button onClick={() => setModalContent({ src: './futsal_court.jpg', caption: 'แบบขยายสนาม Futsal' })} className="text-gray-400 hover:text-heim-blue transition-colors" title="ดูภาพจำลอง">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 </button>
               </div>
               <div className="flex items-center bg-gray-50 px-4 py-2 rounded-full border border-gray-200">
                 <span className="font-medium text-gray-700 mr-2">Basketball (Half)</span>
-                <button onClick={() => setModalContent({ src: '/basketball_court.jpg', caption: 'แบบขยายสนาม Basketball (Half)' })} className="text-gray-400 hover:text-heim-blue transition-colors" title="ดูภาพจำลอง">
+                <button onClick={() => setModalContent({ src: './basketball_court.jpg', caption: 'แบบขยายสนาม Basketball (Half)' })} className="text-gray-400 hover:text-heim-blue transition-colors" title="ดูภาพจำลอง">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 </button>
               </div>
               <div className="flex items-center bg-gray-50 px-4 py-2 rounded-full border border-gray-200">
                 <span className="font-medium text-gray-700 mr-2">Pickleball / Sepak Takraw</span>
-                <button onClick={() => setModalContent({ src: '/pickleball_takraw_court.jpg', caption: 'แบบขยายสนาม Pickleball / Sepak Takraw' })} className="text-gray-400 hover:text-heim-blue transition-colors" title="ดูภาพจำลอง">
+                <button onClick={() => setModalContent({ src: './pickleball_takraw_court.jpg', caption: 'แบบขยายสนาม Pickleball / Sepak Takraw' })} className="text-gray-400 hover:text-heim-blue transition-colors" title="ดูภาพจำลอง">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 </button>
               </div>
               <div className="flex items-center bg-gray-50 px-4 py-2 rounded-full border border-gray-200">
                 <span className="font-bold text-heim-blue mr-2">HYROX</span>
-                <button onClick={() => setModalContent({ src: '/hyrox_court.jpg', caption: 'แบบขยายพื้นที่ HYROX (Functional Fitness)' })} className="text-gray-400 hover:text-heim-blue transition-colors" title="ดูภาพจำลอง">
+                <button onClick={() => setModalContent({ src: './hyrox_court.jpg', caption: 'แบบขยายพื้นที่ HYROX (Functional Fitness)' })} className="text-gray-400 hover:text-heim-blue transition-colors" title="ดูภาพจำลอง">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 </button>
               </div>
@@ -148,7 +148,7 @@ const Specifications = () => {
                   <span className="text-heim-red mr-2">■</span>
                   <strong className="text-gray-900">Slope Design:</strong> ความลาดเอียง 0.5–0.8% เพื่อการระบายน้ำที่มีประสิทธิภาพ
                 </div>
-                <button onClick={() => setModalContent({ src: '/slope_design.jpg', caption: 'แบบขยาย Slope Design (0.5-0.8%)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+                <button onClick={() => setModalContent({ src: './slope_design.jpg', caption: 'แบบขยาย Slope Design (0.5-0.8%)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 </button>
               </li>
@@ -157,7 +157,7 @@ const Specifications = () => {
                   <span className="text-heim-red mr-2">■</span>
                   <strong className="text-gray-900">Concrete Joints:</strong> ตัดรอยต่อคอนกรีตทุก 3–4 เมตร เพื่อป้องกันการแตกร้าว
                 </div>
-                <button onClick={() => setModalContent({ src: '/concrete_joints.jpg', caption: 'แบบขยาย Concrete Joints (ระยะ 3-4 เมตร)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+                <button onClick={() => setModalContent({ src: './concrete_joints.jpg', caption: 'แบบขยาย Concrete Joints (ระยะ 3-4 เมตร)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 </button>
               </li>
@@ -166,7 +166,7 @@ const Specifications = () => {
                   <span className="text-heim-red mr-2">■</span>
                   <strong className="text-gray-900">Edge & Drainage:</strong> ขอบสนามมีคันคอนกรีตขอบดิน พร้อมรางระบายน้ำรอบสนาม
                 </div>
-                <button onClick={() => setModalContent({ src: '/edge_drainage.jpg', caption: 'แบบขยาย Edge & Drainage (คันดินและรางระบายน้ำ)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
+                <button onClick={() => setModalContent({ src: './edge_drainage.jpg', caption: 'แบบขยาย Edge & Drainage (คันดินและรางระบายน้ำ)' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                 </button>
               </li>

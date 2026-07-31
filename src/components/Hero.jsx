@@ -7,7 +7,7 @@ const Hero = () => {
       <div className="absolute inset-0 opacity-40">
         <div className="absolute inset-0 bg-gradient-to-r from-heim-blue/80 to-transparent z-10" />
         <img 
-          src="/hero-bg.jpg" 
+          src="./hero-bg.jpg" 
           alt="Sports Field Background" 
           className="w-full h-full object-cover"
         />

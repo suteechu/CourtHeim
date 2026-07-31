@@ -11,7 +11,7 @@ const BOQ = () => {
       unit: 'ตร.ม.',
       unitPrice: 1100,
       total: 176550,
-      imageSrc: '/court_cross_section.jpg',
+      imageSrc: './court_cross_section.jpg',
     },
     {
       id: 2,
@@ -21,7 +21,7 @@ const BOQ = () => {
       unit: 'ตร.ม.',
       unitPrice: 650,
       total: 104325,
-      imageSrc: '/acrylic_surface.jpg',
+      imageSrc: './acrylic_surface.jpg',
     },
     {
       id: 3,
@@ -31,7 +31,7 @@ const BOQ = () => {
       unit: 'ตร.ม.',
       unitPrice: 2800,
       total: 449400,
-      imageSrc: '/tensile_roof.jpg',
+      imageSrc: './tensile_roof.jpg',
     },
     {
       id: 4,
@@ -41,7 +41,7 @@ const BOQ = () => {
       unit: 'เหมา',
       unitPrice: 25000,
       total: 25000,
-      imageSrc: '/court_markings.jpg',
+      imageSrc: './court_markings.jpg',
     },
     {
       id: 5,
@@ -51,7 +51,7 @@ const BOQ = () => {
       unit: 'เหมา',
       unitPrice: 50000,
       total: 50000,
-      imageSrc: '/fencing_net.jpg',
+      imageSrc: './fencing_net.jpg',
     },
     {
       id: 6,
@@ -61,7 +61,7 @@ const BOQ = () => {
       unit: 'ชุด',
       unitPrice: 120000,
       total: 120000,
-      imageSrc: '/led_lighting.jpg',
+      imageSrc: './led_lighting.jpg',
     },
     {
       id: 7,
@@ -71,7 +71,7 @@ const BOQ = () => {
       unit: 'ชุด',
       unitPrice: 85000,
       total: 85000,
-      imageSrc: '/sports_equipment.jpg',
+      imageSrc: './sports_equipment.jpg',
     }
   ];
 

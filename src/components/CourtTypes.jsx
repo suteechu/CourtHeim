@@ -66,7 +66,7 @@ const CourtTypes = () => {
           <div className="lg:col-span-7 relative group rounded-2xl overflow-hidden shadow-2xl">
             <div className="aspect-w-4 aspect-h-3 bg-gray-100 relative">
               <img 
-                src="/layout.jpg" 
+                src="./layout.jpg" 
                 alt="Court Layout" 
                 className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
               />
