@@ -5,7 +5,7 @@ import CourtTypes from './components/CourtTypes';
 import Features from './components/Features';
 import Specifications from './components/Specifications';
 import BOQ from './components/BOQ';
-import Booking from './components/Booking';
+
 import Warranty from './components/Warranty';
 import FAQ from './components/FAQ';
 import Footer from './components/Footer';
@@ -20,7 +20,7 @@ function App() {
         <CourtTypes />
         <Specifications />
         <BOQ />
-        <Booking />
+
         <Warranty />
         {/* <FAQ /> */}
       </main>

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import Booking from './Booking';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,10 +28,20 @@ const Header = () => {
           <a href="#specifications" className="text-gray-800 hover:text-heim-red font-medium transition-colors">สเปกวิศวกรรม</a>
           <a href="#contact" className="text-gray-800 hover:text-heim-red font-medium transition-colors">ติดต่อเรา</a>
         </nav>
-        <a href="#contact" className="bg-heim-blue text-white px-6 py-2 rounded-full font-medium hover:bg-blue-900 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-          แจ้งปัญหา (Ticket)
-        </a>
+        <div className="flex space-x-3 items-center">
+          <button 
+            onClick={() => setIsBookingOpen(true)}
+            className="bg-white text-heim-blue border-2 border-heim-blue px-4 py-1.5 rounded-full font-bold hover:bg-heim-blue hover:text-white transition-colors shadow-sm hidden sm:block whitespace-nowrap"
+          >
+            จองสนาม (Booking)
+          </button>
+          <a href="#contact" className="bg-heim-red text-white px-5 py-2 rounded-full font-medium hover:bg-red-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 whitespace-nowrap">
+            แจ้งปัญหา (Ticket)
+          </a>
+        </div>
       </div>
+      
+      {isBookingOpen && <Booking onClose={() => setIsBookingOpen(false)} />}
     </header>
   );
 };
