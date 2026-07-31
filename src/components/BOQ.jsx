@@ -26,11 +26,11 @@ const BOQ = () => {
     {
       id: 3,
       category: 'งานหลังคา (Roofing)',
-      item: 'โครงสร้างหลังคาผ้าใบดึงสลิง (Tensile Fabric Roof)',
+      item: 'การดึงสลิงติดผ้าใบกันแดด (Sunshade Sail with Cable Tension)',
       qty: '160.5',
       unit: 'ตร.ม.',
-      unitPrice: 2800,
-      total: 449400,
+      unitPrice: 1200,
+      total: 192600,
       imageSrc: './tensile_roof.jpg',
     },
     {
