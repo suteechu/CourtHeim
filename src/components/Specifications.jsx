@@ -168,7 +168,7 @@ const Specifications = () => {
                 <div className="flex items-start">
                   <span className="text-heim-red mr-2 mt-1">■</span>
                   <div>
-                    <strong className="text-gray-900">Concrete Joints:</strong> ตัดรอยต่อคอนกรีตทุก 3–4 เมตร เพื่อป้องกันการแตกร้าว
+                    <strong className="text-gray-900">Concrete Joints:</strong> ตัดรอยต่อคอนกรีตเพื่อป้องกันการแตกร้าว
                     <div className="mt-3 p-3 bg-gray-50 rounded-lg text-sm border border-gray-100">
                       <strong className="text-gray-800 block mb-1">คำแนะนำที่ดีที่สุดสำหรับพื้นที่ 10.70 x 15.00 m:</strong>
                       <ul className="list-disc list-inside text-gray-600 space-y-1">
