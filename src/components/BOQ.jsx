@@ -50,7 +50,7 @@ const BOQ = () => {
     // 3. งานหลังคาและอุปกรณ์ (Roofing & Equipment)
     { id: 13, category: 'งานหลังคา (Roofing)', item: 'งานผ้าใบกันแดด HDPE (4 แผ่น ขนาด 10.7x4.1 ม.)', qty: 175.5, unit: 'ตร.ม.', materialPrice: 600, laborPrice: 150, total: 131625 },
     { id: 14, category: 'งานหลังคา (Roofing)', item: 'ชุดสลิงสแตนเลส 8mm ดึงตึง (ยาวรวม 90 ม.) พร้อมอุปกรณ์ยึด', qty: 1, unit: 'ชุด', materialPrice: 25000, laborPrice: 15000, total: 40000 },
-    { id: 15, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'เสาแป้นบาสเกตบอล เหล็กกล่อง 100x100 t3.2 พร้อมแป้นกระจกอะคริลิกใส', qty: 1, unit: 'ชุด', materialPrice: 45000, laborPrice: 10000, total: 55000 },
+    { id: 15, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'แป้นบาสฝังพื้น 72 นิ้ว (HOOP IT รุ่น SPG-1209)', qty: 1, unit: 'ชุด', materialPrice: 40000, laborPrice: 10000, total: 50000 },
     { id: 16, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'ประตูโกลหนู 120x80x54 ซม. พร้อมตาข่าย', qty: 2, unit: 'ชุด', materialPrice: 7500, laborPrice: 1000, total: 17000 },
     { id: 17, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'บาร์โหนติดผนัง (YINGERJIAN)', qty: 4, unit: 'ชุด', materialPrice: 1500, laborPrice: 500, total: 8000 },
     { id: 18, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'ลูกบาสเกตบอล (Basketball)', qty: 2, unit: 'ลูก', materialPrice: 1200, laborPrice: 0, total: 2400 },
