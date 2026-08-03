@@ -5,29 +5,30 @@ const BOQ = () => {
   const [boqItems, setBoqItems] = useState([
     // 1. งานเตรียมพื้นที่และโครงสร้าง (Site Prep & Structural)
     { id: 1, category: 'งานโครงสร้าง (Structural)', item: 'งานเตรียมพื้นที่ ปรับระดับและบดอัดดินเดิม (Subgrade Compaction)', qty: 160.5, unit: 'ตร.ม.', materialPrice: 0, laborPrice: 50, total: 8025, imageSrc: './subgrade.jpg' },
-    { id: 2, category: 'งานโครงสร้าง (Structural)', item: 'งานทรายหยาบรองพื้น หนา 0.05 ม. (Sand Cushion)', qty: 8.03, unit: 'ลบ.ม.', materialPrice: 350, laborPrice: 100, total: 3613.5, imageSrc: './subgrade.jpg' },
-    { id: 3, category: 'งานโครงสร้าง (Structural)', item: 'แผ่นพลาสติกปูรองกันความชื้น (PE Sheet 0.15mm)', qty: 160.5, unit: 'ตร.ม.', materialPrice: 10, laborPrice: 5, total: 2407.5, imageSrc: './rc_slab.jpg' },
-    { id: 4, category: 'งานโครงสร้าง (Structural)', item: 'เหล็กตะแกรง Wiremesh #4mm @0.20m', qty: 160.5, unit: 'ตร.ม.', materialPrice: 35, laborPrice: 10, total: 7222.5, imageSrc: './wiremesh.jpg' },
-    { id: 5, category: 'งานโครงสร้าง (Structural)', item: 'คอนกรีตผสมเสร็จ 280 ksc (Cylinder) หนา 200 มม.', qty: 32.1, unit: 'ลบ.ม.', materialPrice: 1800, laborPrice: 400, total: 70620, imageSrc: './rc_slab.jpg' },
-    { id: 6, category: 'งานโครงสร้าง (Structural)', item: 'งานไม้แบบและตั้งแบบ (Formwork)', qty: 1, unit: 'เหมา', materialPrice: 3500, laborPrice: 5000, total: 8500, imageSrc: './rc_slab.jpg' },
-    { id: 7, category: 'งานโครงสร้าง (Structural)', item: 'งานตัด Joint และหยอดยางมะตอย (Concrete Joint)', qty: 65, unit: 'ม.', materialPrice: 40, laborPrice: 20, total: 3900, imageSrc: './concrete_joints.jpg' },
+    { id: 2, category: 'งานโครงสร้าง (Structural)', item: 'งานหินคลุกบดอัดแน่น หนา 0.10 ม. (Crushed Stone Subbase)', qty: 16.05, unit: 'ลบ.ม.', materialPrice: 550, laborPrice: 150, total: 11235, imageSrc: './subgrade.jpg' },
+    { id: 3, category: 'งานโครงสร้าง (Structural)', item: 'งานทรายหยาบรองพื้น หนา 0.05 ม. (Sand Cushion)', qty: 8.03, unit: 'ลบ.ม.', materialPrice: 350, laborPrice: 100, total: 3613.5, imageSrc: './subgrade.jpg' },
+    { id: 4, category: 'งานโครงสร้าง (Structural)', item: 'แผ่นพลาสติกปูรองกันความชื้น (PE Sheet 0.15mm)', qty: 160.5, unit: 'ตร.ม.', materialPrice: 10, laborPrice: 5, total: 2407.5, imageSrc: './rc_slab.jpg' },
+    { id: 5, category: 'งานโครงสร้าง (Structural)', item: 'เหล็กตะแกรง Wiremesh #4mm @0.20m', qty: 160.5, unit: 'ตร.ม.', materialPrice: 35, laborPrice: 10, total: 7222.5, imageSrc: './wiremesh.jpg' },
+    { id: 6, category: 'งานโครงสร้าง (Structural)', item: 'คอนกรีตผสมเสร็จ 280 ksc (Cylinder) หนา 200 มม.', qty: 32.1, unit: 'ลบ.ม.', materialPrice: 1800, laborPrice: 400, total: 70620, imageSrc: './rc_slab.jpg' },
+    { id: 7, category: 'งานโครงสร้าง (Structural)', item: 'งานไม้แบบและตั้งแบบ (Formwork)', qty: 1, unit: 'เหมา', materialPrice: 3500, laborPrice: 5000, total: 8500, imageSrc: './rc_slab.jpg' },
+    { id: 8, category: 'งานโครงสร้าง (Structural)', item: 'งานตัด Joint และหยอดยางมะตอย (Concrete Joint)', qty: 65, unit: 'ม.', materialPrice: 40, laborPrice: 20, total: 3900, imageSrc: './concrete_joints.jpg' },
     
     // 2. งานสถาปัตยกรรมพื้นผิว (Surface Coating)
-    { id: 8, category: 'งานสถาปัตยกรรม (Architectural)', item: 'น้ำยารองพื้น Primer อะคริลิก (Acrylic Primer)', qty: 160.5, unit: 'ตร.ม.', materialPrice: 60, laborPrice: 40, total: 16050, imageSrc: './acrylic_surface.jpg' },
-    { id: 9, category: 'งานสถาปัตยกรรม (Architectural)', item: 'ชั้นยางสังเคราะห์รองพื้น (Cushion Layer) 2 ชั้น', qty: 160.5, unit: 'ตร.ม.', materialPrice: 200, laborPrice: 150, total: 56175, imageSrc: './acrylic_surface.jpg' },
-    { id: 10, category: 'งานสถาปัตยกรรม (Architectural)', item: 'สีทับหน้าอะคริลิก 100% ทน UV (Acrylic Topcoat) 3 ชั้น', qty: 160.5, unit: 'ตร.ม.', materialPrice: 150, laborPrice: 100, total: 40125, imageSrc: './acrylic_surface.jpg' },
-    { id: 11, category: 'งานสถาปัตยกรรม (Architectural)', item: 'งานตีเส้นสนาม (Futsal, Basketball, Takraw)', qty: 1, unit: 'เหมา', materialPrice: 5000, laborPrice: 10000, total: 15000, imageSrc: './court_markings.jpg' },
+    { id: 9, category: 'งานสถาปัตยกรรม (Architectural)', item: 'น้ำยารองพื้น Primer อะคริลิก (Acrylic Primer)', qty: 160.5, unit: 'ตร.ม.', materialPrice: 60, laborPrice: 40, total: 16050, imageSrc: './acrylic_surface.jpg' },
+    { id: 10, category: 'งานสถาปัตยกรรม (Architectural)', item: 'ชั้นยางสังเคราะห์รองพื้น (Cushion Layer) 2 ชั้น', qty: 160.5, unit: 'ตร.ม.', materialPrice: 200, laborPrice: 150, total: 56175, imageSrc: './acrylic_surface.jpg' },
+    { id: 11, category: 'งานสถาปัตยกรรม (Architectural)', item: 'สีทับหน้าอะคริลิก 100% ทน UV (Acrylic Topcoat) 3 ชั้น', qty: 160.5, unit: 'ตร.ม.', materialPrice: 150, laborPrice: 100, total: 40125, imageSrc: './acrylic_surface.jpg' },
+    { id: 12, category: 'งานสถาปัตยกรรม (Architectural)', item: 'งานตีเส้นสนาม (Futsal, Basketball, Takraw)', qty: 1, unit: 'เหมา', materialPrice: 5000, laborPrice: 10000, total: 15000, imageSrc: './court_markings.jpg' },
 
     // 3. งานหลังคาและอุปกรณ์ (Roofing & Equipment)
-    { id: 12, category: 'งานหลังคา (Roofing)', item: 'งานดึงสลิงติดผ้าใบกันแดด (Sunshade Sail with Cable Tension)', qty: 160.5, unit: 'ตร.ม.', materialPrice: 900, laborPrice: 300, total: 192600, imageSrc: './tensile_roof.jpg' },
-    { id: 13, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'เสาแป้นบาสเกตบอล เหล็กกล่อง 100x100 t3.2 พร้อมแป้นกระจกอะคริลิกใส', qty: 1, unit: 'ชุด', materialPrice: 45000, laborPrice: 10000, total: 55000, imageSrc: './sports_equipment.jpg' },
-    { id: 14, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'ประตูโกลหนู 120x80x54 ซม. พร้อมตาข่าย', qty: 2, unit: 'ชุด', materialPrice: 7500, laborPrice: 1000, total: 17000, imageSrc: './sports_equipment.jpg' },
-    { id: 15, category: 'งานภูมิทัศน์ (Landscape & Fencing)', item: 'งานตาข่ายกันลูกบอลหลังประตู (โครงสร้างเสาและตาข่าย 2 ด้าน)', qty: 1, unit: 'เหมา', materialPrice: 10000, laborPrice: 5000, total: 15000, imageSrc: './fencing_net.jpg' },
+    { id: 13, category: 'งานหลังคา (Roofing)', item: 'งานดึงสลิงติดผ้าใบกันแดด (Sunshade Sail with Cable Tension)', qty: 160.5, unit: 'ตร.ม.', materialPrice: 900, laborPrice: 300, total: 192600, imageSrc: './tensile_roof.jpg' },
+    { id: 14, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'เสาแป้นบาสเกตบอล เหล็กกล่อง 100x100 t3.2 พร้อมแป้นกระจกอะคริลิกใส', qty: 1, unit: 'ชุด', materialPrice: 45000, laborPrice: 10000, total: 55000, imageSrc: './sports_equipment.jpg' },
+    { id: 15, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'ประตูโกลหนู 120x80x54 ซม. พร้อมตาข่าย', qty: 2, unit: 'ชุด', materialPrice: 7500, laborPrice: 1000, total: 17000, imageSrc: './sports_equipment.jpg' },
+    { id: 16, category: 'งานภูมิทัศน์ (Landscape & Fencing)', item: 'งานตาข่ายกันลูกบอลหลังประตู (โครงสร้างเสาและตาข่าย 2 ด้าน)', qty: 1, unit: 'เหมา', materialPrice: 10000, laborPrice: 5000, total: 15000, imageSrc: './fencing_net.jpg' },
 
     // 4. งานระบบไฟฟ้า (Electrical)
-    { id: 16, category: 'งานระบบไฟฟ้า (Electrical)', item: 'เสาไฟเหล็กกัลวาไนซ์ สูง 6 ม.', qty: 4, unit: 'ต้น', materialPrice: 6500, laborPrice: 2000, total: 34000, imageSrc: './led_lighting.jpg' },
-    { id: 17, category: 'งานระบบไฟฟ้า (Electrical)', item: 'โคมไฟ LED Floodlight 400W พร้อมติดตั้ง', qty: 8, unit: 'โคม', materialPrice: 7500, laborPrice: 1000, total: 68000, imageSrc: './led_lighting.jpg' },
-    { id: 18, category: 'งานระบบไฟฟ้า (Electrical)', item: 'ตู้คอนโทรล สายไฟ NYY และท่อร้อยสาย', qty: 1, unit: 'เหมา', materialPrice: 14000, laborPrice: 4000, total: 18000, imageSrc: './led_lighting.jpg' }
+    { id: 17, category: 'งานระบบไฟฟ้า (Electrical)', item: 'เสาไฟเหล็กกัลวาไนซ์ สูง 6 ม.', qty: 4, unit: 'ต้น', materialPrice: 6500, laborPrice: 2000, total: 34000, imageSrc: './led_lighting.jpg' },
+    { id: 18, category: 'งานระบบไฟฟ้า (Electrical)', item: 'โคมไฟ LED Floodlight 400W พร้อมติดตั้ง', qty: 8, unit: 'โคม', materialPrice: 7500, laborPrice: 1000, total: 68000, imageSrc: './led_lighting.jpg' },
+    { id: 19, category: 'งานระบบไฟฟ้า (Electrical)', item: 'ตู้คอนโทรล สายไฟ NYY และท่อร้อยสาย', qty: 1, unit: 'เหมา', materialPrice: 14000, laborPrice: 4000, total: 18000, imageSrc: './led_lighting.jpg' }
   ]);
 
   const totalAmount = boqItems.reduce((sum, item) => sum + item.total, 0);
