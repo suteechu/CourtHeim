@@ -54,7 +54,7 @@ const BOQ = () => {
     { id: 3, category: 'งานโครงสร้าง (Structural)', item: 'งานทรายหยาบรองพื้น หนา 0.05 ม. (Sand Cushion)', qty: 8.77, unit: 'คิว', materialPrice: 350, laborPrice: 100, total: 3946.5 },
     { id: 4, category: 'งานโครงสร้าง (Structural)', item: 'แผ่นพลาสติกปูรองกันความชื้น (PE Sheet 0.15mm)', qty: 175.5, unit: 'ตร.ม.', materialPrice: 10, laborPrice: 5, total: 2632.5 },
     { id: 5, category: 'งานโครงสร้าง (Structural)', item: 'เหล็กตะแกรง Wiremesh #4mm @0.20m', qty: 175.5, unit: 'ตร.ม.', materialPrice: 35, laborPrice: 10, total: 7897.5 },
-    { id: 6, category: 'งานโครงสร้าง (Structural)', item: 'คอนกรีตผสมเสร็จ 280 ksc หนา 200 มม. พร้อมขัดหยาบปรับ Slope 1:200', qty: 35.1, unit: 'คิว', materialPrice: 1800, laborPrice: 400, total: 77220 },
+    { id: 6, category: 'งานโครงสร้าง (Structural)', item: 'คอนกรีตผสมเสร็จ 280 ksc หนา 200 มม. พร้อมขัดหยาบปรับ Slope 1:200', qty: 35.1, unit: 'คิว', materialPrice: 1800, laborPrice: 520, total: 81432 },
     { id: 7, category: 'งานโครงสร้าง (Structural)', item: 'งานไม้แบบและตั้งแบบ (Formwork)', qty: 1, unit: 'เหมา', materialPrice: 3500, laborPrice: 5000, total: 8500 },
     { id: 8, category: 'งานโครงสร้าง (Structural)', item: 'งานตัด Joint และหยอดยางมะตอย (Concrete Joint)', qty: 71, unit: 'ม.', materialPrice: 40, laborPrice: 20, total: 4260 },
     { id: 23, category: 'งานโครงสร้าง (Structural)', item: 'เหล็ก Dowel Bar 16มม. @0.30ม. (เหล็กเดือยตรงรอยต่อ)', qty: 71, unit: 'ม.', materialPrice: 60, laborPrice: 20, total: 5680 },
