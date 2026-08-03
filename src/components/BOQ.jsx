@@ -1,6 +1,22 @@
 import React, { useState } from 'react';
 
 const BOQ = () => {
+  const [expandedCategories, setExpandedCategories] = useState({
+    'งานโครงสร้าง (Structural)': true,
+    'งานสถาปัตยกรรม (Architectural)': true,
+    'งานหลังคา (Roofing)': true,
+    'อุปกรณ์กีฬา (Sports Equipment)': true,
+    'งานภูมิทัศน์ (Landscape & Fencing)': true,
+    'งานระบบไฟฟ้า (Electrical)': true,
+  });
+
+  const toggleCategory = (category) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [category]: !prev[category]
+    }));
+  };
+
   const [boqItems, setBoqItems] = useState([
     // 1. งานเตรียมพื้นที่และโครงสร้าง (Site Prep & Structural)
     { id: 1, category: 'งานโครงสร้าง (Structural)', item: 'งานเตรียมพื้นที่ ปรับระดับบดอัดดินเดิม และทำ Slope 1:200 (Subgrade & Slope 1:200)', qty: 175.48, unit: 'ตร.ม.', materialPrice: 0, laborPrice: 50, total: 8774 },
@@ -19,17 +35,18 @@ const BOQ = () => {
     { id: 12, category: 'งานสถาปัตยกรรม (Architectural)', item: 'งานตีเส้นสนาม (Futsal, Basketball, Takraw)', qty: 1, unit: 'เหมา', materialPrice: 5000, laborPrice: 10000, total: 15000 },
 
     // 3. งานหลังคาและอุปกรณ์ (Roofing & Equipment)
-    { id: 13, category: 'งานหลังคา (Roofing)', item: 'งานดึงสลิงติดผ้าใบกันแดด (Sunshade Sail with Cable Tension)', qty: 175.48, unit: 'ตร.ม.', materialPrice: 900, laborPrice: 300, total: 210576 },
-    { id: 14, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'เสาแป้นบาสเกตบอล เหล็กกล่อง 100x100 t3.2 พร้อมแป้นกระจกอะคริลิกใส', qty: 1, unit: 'ชุด', materialPrice: 45000, laborPrice: 10000, total: 55000 },
-    { id: 15, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'ประตูโกลหนู 120x80x54 ซม. พร้อมตาข่าย', qty: 2, unit: 'ชุด', materialPrice: 7500, laborPrice: 1000, total: 17000 },
-    { id: 16, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'บาร์โหนติดผนัง (YINGERJIAN)', qty: 4, unit: 'ชุด', materialPrice: 1500, laborPrice: 500, total: 8000 },
-    { id: 17, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'ลูกบาสเกตบอล (Basketball)', qty: 2, unit: 'ลูก', materialPrice: 1200, laborPrice: 0, total: 2400 },
-    { id: 18, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'ลูกฟุตซอล (Futsal)', qty: 2, unit: 'ลูก', materialPrice: 900, laborPrice: 0, total: 1800 },
-    { id: 19, category: 'งานภูมิทัศน์ (Landscape & Fencing)', item: 'งานตาข่ายกันลูกบอลหลังประตู (โครงสร้างเสาและตาข่าย 2 ด้าน)', qty: 1, unit: 'เหมา', materialPrice: 10000, laborPrice: 5000, total: 15000 },
+    { id: 13, category: 'งานหลังคา (Roofing)', item: 'งานผ้าใบกันแดด HDPE (4 แผ่น ขนาด 10.7x4.1 ม.)', qty: 175.48, unit: 'ตร.ม.', materialPrice: 600, laborPrice: 150, total: 131610 },
+    { id: 14, category: 'งานหลังคา (Roofing)', item: 'ชุดสลิงสแตนเลส 8mm ดึงตึง (ยาวรวม 90 ม.) พร้อมอุปกรณ์ยึด', qty: 1, unit: 'ชุด', materialPrice: 25000, laborPrice: 15000, total: 40000 },
+    { id: 15, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'เสาแป้นบาสเกตบอล เหล็กกล่อง 100x100 t3.2 พร้อมแป้นกระจกอะคริลิกใส', qty: 1, unit: 'ชุด', materialPrice: 45000, laborPrice: 10000, total: 55000 },
+    { id: 16, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'ประตูโกลหนู 120x80x54 ซม. พร้อมตาข่าย', qty: 2, unit: 'ชุด', materialPrice: 7500, laborPrice: 1000, total: 17000 },
+    { id: 17, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'บาร์โหนติดผนัง (YINGERJIAN)', qty: 4, unit: 'ชุด', materialPrice: 1500, laborPrice: 500, total: 8000 },
+    { id: 18, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'ลูกบาสเกตบอล (Basketball)', qty: 2, unit: 'ลูก', materialPrice: 1200, laborPrice: 0, total: 2400 },
+    { id: 19, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'ลูกฟุตซอล (Futsal)', qty: 2, unit: 'ลูก', materialPrice: 900, laborPrice: 0, total: 1800 },
+    { id: 20, category: 'งานภูมิทัศน์ (Landscape & Fencing)', item: 'งานตาข่ายกันลูกบอลหลังประตู (โครงสร้างเสาและตาข่าย 2 ด้าน)', qty: 1, unit: 'เหมา', materialPrice: 10000, laborPrice: 5000, total: 15000 },
 
     // 4. งานระบบไฟฟ้า (Electrical)
-    { id: 20, category: 'งานระบบไฟฟ้า (Electrical)', item: 'โคมไฟ LED Floodlight 400W พร้อมขายึดติดผนัง (Wall-mounted)', qty: 8, unit: 'โคม', materialPrice: 7500, laborPrice: 1000, total: 68000 },
-    { id: 21, category: 'งานระบบไฟฟ้า (Electrical)', item: 'ตู้คอนโทรล สายไฟ NYY และท่อร้อยสาย', qty: 1, unit: 'เหมา', materialPrice: 14000, laborPrice: 4000, total: 18000 }
+    { id: 21, category: 'งานระบบไฟฟ้า (Electrical)', item: 'โคมไฟ LED Floodlight 400W พร้อมขายึดติดผนัง (Wall-mounted)', qty: 8, unit: 'โคม', materialPrice: 7500, laborPrice: 1000, total: 68000 },
+    { id: 22, category: 'งานระบบไฟฟ้า (Electrical)', item: 'ตู้คอนโทรล สายไฟ NYY และท่อร้อยสาย', qty: 1, unit: 'เหมา', materialPrice: 14000, laborPrice: 4000, total: 18000 }
   ]);
 
   const totalAmount = boqItems.reduce((sum, item) => sum + item.total, 0);
@@ -196,15 +213,25 @@ const BOQ = () => {
                 </tr>
               </thead>
               <tbody className="text-sm divide-y divide-gray-200">
-                {Object.entries(groupedBoq).map(([category, items], catIndex) => (
+                {Object.entries(groupedBoq).map(([category, items], catIndex) => {
+                  const categoryTotal = items.reduce((sum, i) => sum + i.total, 0);
+                  const isExpanded = expandedCategories[category] !== false;
+
+                  return (
                   <React.Fragment key={category}>
-                    <tr className="bg-blue-50/50 font-semibold text-heim-blue">
-                      <td className="px-3 py-2 text-center">{catIndex + 1}</td>
-                      <td className="px-3 py-2" colSpan={6}>{category}</td>
+                    <tr 
+                      className="bg-blue-50/50 font-semibold text-heim-blue cursor-pointer hover:bg-blue-100 transition-colors"
+                      onClick={() => toggleCategory(category)}
+                    >
+                      <td className="px-3 py-2 text-center text-gray-500">
+                        <svg className={`w-4 h-4 mx-auto transition-transform ${isExpanded ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
+                      </td>
+                      <td className="px-3 py-2" colSpan={5}>{catIndex + 1}. {category}</td>
+                      <td className="px-3 py-2 text-right text-heim-blue">{categoryTotal.toLocaleString('th-TH')}</td>
                     </tr>
-                    {items.map((item, itemIndex) => (
+                    {isExpanded && items.map((item, itemIndex) => (
                       <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-3 py-2 text-center text-gray-500 whitespace-nowrap">{`${catIndex + 1}.${itemIndex + 1}`}</td>
+                        <td className="px-3 py-2 text-center text-gray-400 whitespace-nowrap">{`${catIndex + 1}.${itemIndex + 1}`}</td>
                         <td className="px-3 py-2 pl-8 whitespace-nowrap">
                           <span className="text-gray-800 leading-relaxed block">{item.item}</span>
                         </td>
@@ -216,7 +243,7 @@ const BOQ = () => {
                       </tr>
                     ))}
                   </React.Fragment>
-                ))}
+                )})}
               </tbody>
             </table>
           </div>
