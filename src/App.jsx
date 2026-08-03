@@ -6,8 +6,6 @@ import Features from './components/Features';
 import Blueprints from './components/Blueprints';
 import Specifications from './components/Specifications';
 import BOQ from './components/BOQ';
-import Warranty from './components/Warranty';
-import FAQ from './components/FAQ';
 import Footer from './components/Footer';
 import AOS from 'aos';
 import 'aos/dist/aos.css';

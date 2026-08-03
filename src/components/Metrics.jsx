@@ -21,13 +21,14 @@ const Metrics = () => {
       { threshold: 0.5 }
     );
     
-    if (metricsRef.current) {
-      observer.observe(metricsRef.current);
+    const currentRef = metricsRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
     }
     
     return () => {
-      if (metricsRef.current) {
-        observer.unobserve(metricsRef.current);
+      if (currentRef) {
+        observer.unobserve(currentRef);
       }
     };
   }, []);
