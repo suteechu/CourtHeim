@@ -185,34 +185,6 @@ const Specifications = () => {
             </ul>
           </div>
 
-          {/* Card 5: Equipment */}
-          <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm h-full flex flex-col md:col-span-2">
-            <h3 className="text-2xl font-bold mb-6 flex items-center text-gray-900">
-              <svg className="w-6 h-6 mr-3 text-heim-red" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-              อุปกรณ์กีฬาสำเร็จรูป (Prefabricated Sports Equipment)
-            </h3>
-            <ul className="space-y-4 text-gray-600">
-              <li className="flex items-center justify-between border-b border-gray-100 pb-2">
-                <div>
-                  <span className="text-heim-red mr-2">■</span>
-                  <strong className="text-gray-900">1. เสาแป้นบาสเกตบอล โครงสร้าง เหล็กกล่อง 100x100 t3.2 ตามแบบ</strong>
-                </div>
-                <button onClick={() => setModalContent({ src: './basketball_hoop_gen.png', caption: 'ภาพจำลองเสาแป้นบาสเกตบอล' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                </button>
-              </li>
-              <li className="flex items-center justify-between pb-2">
-                <div>
-                  <span className="text-heim-red mr-2">■</span>
-                  <strong className="text-gray-900">2. เสาประตูโกลหนู ขนาด 120 x 80 x 54 cm. พร้อมตาข่าย</strong>
-                </div>
-                <button onClick={() => setModalContent({ src: './mini_goal_gen.jpg', caption: 'ภาพจำลองเสาโกลหนู' })} className="text-gray-400 hover:text-heim-blue transition-colors ml-4 shrink-0" title="ดูภาพจำลอง">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                </button>
-              </li>
-            </ul>
-          </div>
-        </div>
 
 
         {/* Construction Method & Quality Control */}
