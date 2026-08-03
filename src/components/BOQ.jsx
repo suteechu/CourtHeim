@@ -107,7 +107,7 @@ const BOQ = () => {
           <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4">Estimated <span className="text-heim-red">BOQ & Pricing</span></h2>
           <div className="h-1 w-24 bg-heim-red mx-auto rounded-full mb-6 print:hidden"></div>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed print:hidden">
-            รายการประเมินราคาอ้างอิงเบื้องต้นสำหรับโครงการ (อัปเดตข้อมูลแบบ Real-time จากส่วนกลาง)
+            รายการประเมินราคาอ้างอิงเบื้องต้นสำหรับโครงการสนามกีฬาอเนกประสงค์
           </p>
         </div>
 
