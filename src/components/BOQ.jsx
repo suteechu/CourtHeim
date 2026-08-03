@@ -83,6 +83,38 @@ const BOQ = () => {
     return new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB' }).format(amount);
   };
 
+  const exportToCSV = () => {
+    // UTF-8 BOM for Excel
+    const BOM = '\uFEFF';
+    const headers = ['ลำดับ', 'หมวดหมู่ (Category)', 'รายการ (Description)', 'จำนวน (Qty)', 'หน่วย (Unit)', 'ราคา/หน่วย (Unit Price)', 'จำนวนเงิน (Total)'];
+    
+    let csvContent = BOM + headers.join(',') + '\n';
+    
+    boqItems.forEach((item, index) => {
+      const category = `"${item.category.replace(/"/g, '""')}"`;
+      const description = `"${item.item.replace(/"/g, '""')}"`;
+      const qty = item.qty;
+      const unit = `"${item.unit.replace(/"/g, '""')}"`;
+      const unitPrice = item.unitPrice;
+      const total = item.total;
+      
+      csvContent += `${index + 1},${category},${description},${qty},${unit},${unitPrice},${total}\n`;
+    });
+
+    csvContent += `\n,,,,,รวมเป็นเงิน (Sub Total),${totalAmount}\n`;
+    csvContent += `,,,,,ภาษีมูลค่าเพิ่ม (VAT 7%),${vat}\n`;
+    csvContent += `,,,,,รวมยอดเงินสุทธิ (Grand Total),${grandTotal}\n`;
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'CourtHeim_BOQ.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <section id="boq" className="py-24 bg-gray-50 relative">
       <div className="container mx-auto px-6">
@@ -94,6 +126,16 @@ const BOQ = () => {
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
             ตัวอย่างการประเมินราคาวัสดุและค่าแรง (Bill of Quantities) สำหรับการก่อสร้างสนามกีฬามัลติฟังก์ชัน ขนาด 10.70 x 15.00 เมตร (160.5 ตร.ม.) วิเคราะห์โดย AI (ราคาโดยประมาณการ)
           </p>
+        </div>
+
+        <div className="max-w-5xl mx-auto mb-4 flex justify-end">
+          <button 
+            onClick={exportToCSV}
+            className="flex items-center gap-2 bg-heim-blue text-white px-5 py-2.5 rounded-lg hover:bg-blue-800 transition-colors shadow-sm font-medium text-sm"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+            Export to CSV
+          </button>
         </div>
 
         <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
