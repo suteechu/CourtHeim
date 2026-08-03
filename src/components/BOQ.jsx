@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 
 const BOQ = () => {
   const [expandedCategories, setExpandedCategories] = useState({
-    'งานโครงสร้าง (Structural)': false,
-    'งานสถาปัตยกรรม (Architectural)': false,
-    'งานหลังคา (Roofing)': false,
-    'อุปกรณ์กีฬา (Sports Equipment)': false,
-    'งานภูมิทัศน์ (Landscape & Fencing)': false,
-    'งานระบบไฟฟ้า (Electrical)': false,
+    'งานโครงสร้าง (Structural)': true,
+    'งานสถาปัตยกรรม (Architectural)': true,
+    'งานหลังคา (Roofing)': true,
+    'อุปกรณ์กีฬา (Sports Equipment)': true,
+    'งานภูมิทัศน์ (Landscape & Fencing)': true,
+    'งานระบบไฟฟ้า (Electrical)': true,
   });
 
   const [selectedCategories, setSelectedCategories] = useState({
