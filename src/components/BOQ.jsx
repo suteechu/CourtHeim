@@ -3,12 +3,12 @@ import React, { useState } from 'react';
 const BOQ = () => {
   const [boqItems, setBoqItems] = useState([
     // 1. งานเตรียมพื้นที่และโครงสร้าง (Site Prep & Structural)
-    { id: 1, category: 'งานโครงสร้าง (Structural)', item: 'งานเตรียมพื้นที่ ปรับระดับและบดอัดดินเดิม (Subgrade Compaction)', qty: 175.48, unit: 'ตร.ม.', materialPrice: 0, laborPrice: 50, total: 8774 },
+    { id: 1, category: 'งานโครงสร้าง (Structural)', item: 'งานเตรียมพื้นที่ ปรับระดับบดอัดดินเดิม และทำ Slope 1:200 (Subgrade & Slope 1:200)', qty: 175.48, unit: 'ตร.ม.', materialPrice: 0, laborPrice: 50, total: 8774 },
     { id: 2, category: 'งานโครงสร้าง (Structural)', item: 'งานหินคลุกบดอัดแน่น หนา 0.10 ม. (Crushed Stone Subbase)', qty: 17.55, unit: 'ลบ.ม.', materialPrice: 550, laborPrice: 150, total: 12285 },
     { id: 3, category: 'งานโครงสร้าง (Structural)', item: 'งานทรายหยาบรองพื้น หนา 0.05 ม. (Sand Cushion)', qty: 8.77, unit: 'ลบ.ม.', materialPrice: 350, laborPrice: 100, total: 3946.5 },
     { id: 4, category: 'งานโครงสร้าง (Structural)', item: 'แผ่นพลาสติกปูรองกันความชื้น (PE Sheet 0.15mm)', qty: 175.48, unit: 'ตร.ม.', materialPrice: 10, laborPrice: 5, total: 2632.2 },
     { id: 5, category: 'งานโครงสร้าง (Structural)', item: 'เหล็กตะแกรง Wiremesh #4mm @0.20m', qty: 175.48, unit: 'ตร.ม.', materialPrice: 35, laborPrice: 10, total: 7896.6 },
-    { id: 6, category: 'งานโครงสร้าง (Structural)', item: 'คอนกรีตผสมเสร็จ 280 ksc (Cylinder) หนา 200 มม.', qty: 35.1, unit: 'ลบ.ม.', materialPrice: 1800, laborPrice: 400, total: 77220 },
+    { id: 6, category: 'งานโครงสร้าง (Structural)', item: 'คอนกรีตผสมเสร็จ 280 ksc หนา 200 มม. พร้อมขัดหยาบปรับ Slope 1:200', qty: 35.1, unit: 'ลบ.ม.', materialPrice: 1800, laborPrice: 400, total: 77220 },
     { id: 7, category: 'งานโครงสร้าง (Structural)', item: 'งานไม้แบบและตั้งแบบ (Formwork)', qty: 1, unit: 'เหมา', materialPrice: 3500, laborPrice: 5000, total: 8500 },
     { id: 8, category: 'งานโครงสร้าง (Structural)', item: 'งานตัด Joint และหยอดยางมะตอย (Concrete Joint)', qty: 71, unit: 'ม.', materialPrice: 40, laborPrice: 20, total: 4260 },
     
@@ -28,9 +28,8 @@ const BOQ = () => {
     { id: 19, category: 'งานภูมิทัศน์ (Landscape & Fencing)', item: 'งานตาข่ายกันลูกบอลหลังประตู (โครงสร้างเสาและตาข่าย 2 ด้าน)', qty: 1, unit: 'เหมา', materialPrice: 10000, laborPrice: 5000, total: 15000 },
 
     // 4. งานระบบไฟฟ้า (Electrical)
-    { id: 20, category: 'งานระบบไฟฟ้า (Electrical)', item: 'เสาไฟเหล็กกัลวาไนซ์ สูง 6 ม.', qty: 4, unit: 'ต้น', materialPrice: 6500, laborPrice: 2000, total: 34000 },
-    { id: 21, category: 'งานระบบไฟฟ้า (Electrical)', item: 'โคมไฟ LED Floodlight 400W พร้อมติดตั้ง', qty: 8, unit: 'โคม', materialPrice: 7500, laborPrice: 1000, total: 68000 },
-    { id: 22, category: 'งานระบบไฟฟ้า (Electrical)', item: 'ตู้คอนโทรล สายไฟ NYY และท่อร้อยสาย', qty: 1, unit: 'เหมา', materialPrice: 14000, laborPrice: 4000, total: 18000 }
+    { id: 20, category: 'งานระบบไฟฟ้า (Electrical)', item: 'โคมไฟ LED Floodlight 400W พร้อมขายึดติดผนัง (Wall-mounted)', qty: 8, unit: 'โคม', materialPrice: 7500, laborPrice: 1000, total: 68000 },
+    { id: 21, category: 'งานระบบไฟฟ้า (Electrical)', item: 'ตู้คอนโทรล สายไฟ NYY และท่อร้อยสาย', qty: 1, unit: 'เหมา', materialPrice: 14000, laborPrice: 4000, total: 18000 }
   ]);
 
   const totalAmount = boqItems.reduce((sum, item) => sum + item.total, 0);
