@@ -34,7 +34,7 @@ const Features = () => {
           </h2>
           <div className="h-1 w-24 bg-heim-red mx-auto rounded-full mb-6"></div>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg leading-relaxed">
-            การประเมินความคุ้มค่าของการเปลี่ยนพื้นที่ว่างระหว่างอาคาร Office และ Food Factory ให้กลายเป็นลานกิจกรรมอเนกประสงค์แบบบูรณาการ
+            การประเมินความคุ้มค่าของการเปลี่ยนพื้นที่ว่างระหว่างอาคาร Office และ Canteen ให้กลายเป็นลานกิจกรรมอเนกประสงค์แบบบูรณาการ
           </p>
         </div>
 
