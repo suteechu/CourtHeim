@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const BOQ = () => {
   const [modalContent, setModalContent] = useState(null);
-  const boqItems = [
+  const [boqItems, setBoqItems] = useState([
     // 1. งานเตรียมพื้นที่และโครงสร้าง (Site Prep & Structural)
     { id: 1, category: 'งานโครงสร้าง (Structural)', item: 'งานเตรียมพื้นที่ ปรับระดับและบดอัดดินเดิม (Subgrade Compaction)', qty: 160.5, unit: 'ตร.ม.', unitPrice: 50, total: 8025, imageSrc: './subgrade.jpg' },
     { id: 2, category: 'งานโครงสร้าง (Structural)', item: 'งานทรายหยาบรองพื้น หนา 0.05 ม. (Sand Cushion)', qty: 8.03, unit: 'ลบ.ม.', unitPrice: 450, total: 3613.5, imageSrc: './subgrade.jpg' },
@@ -28,7 +28,7 @@ const BOQ = () => {
     { id: 16, category: 'งานระบบไฟฟ้า (Electrical)', item: 'เสาไฟเหล็กกัลวาไนซ์ สูง 6 ม.', qty: 4, unit: 'ต้น', unitPrice: 8500, total: 34000, imageSrc: './led_lighting.jpg' },
     { id: 17, category: 'งานระบบไฟฟ้า (Electrical)', item: 'โคมไฟ LED Floodlight 400W พร้อมติดตั้ง', qty: 8, unit: 'โคม', unitPrice: 8500, total: 68000, imageSrc: './led_lighting.jpg' },
     { id: 18, category: 'งานระบบไฟฟ้า (Electrical)', item: 'ตู้คอนโทรล สายไฟ NYY และท่อร้อยสาย', qty: 1, unit: 'เหมา', unitPrice: 18000, total: 18000, imageSrc: './led_lighting.jpg' }
-  ];
+  ]);
 
   const totalAmount = boqItems.reduce((sum, item) => sum + item.total, 0);
   const vat = totalAmount * 0.07;
@@ -70,6 +70,70 @@ const BOQ = () => {
     document.body.removeChild(link);
   };
 
+  const parseCSVRow = (text) => {
+    let result = [];
+    let cur = '';
+    let inQuote = false;
+    for (let i = 0; i < text.length; i++) {
+      if (text[i] === '"') {
+        if (inQuote && text[i + 1] === '"') {
+          cur += '"';
+          i++;
+        } else {
+          inQuote = !inQuote;
+        }
+      } else if (text[i] === ',' && !inQuote) {
+        result.push(cur);
+        cur = '';
+      } else {
+        cur += text[i];
+      }
+    }
+    result.push(cur);
+    return result;
+  };
+
+  const handleImportCSV = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const text = event.target.result;
+      const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
+      
+      const newItems = [];
+      let startIdx = 1; // skip header
+      
+      for (let i = startIdx; i < lines.length; i++) {
+        const row = parseCSVRow(lines[i]);
+        if (row.length >= 7) {
+          if (!row[0] || row[0].trim() === '') break;
+          
+          const id = parseInt(row[0].trim(), 10);
+          if (isNaN(id)) continue;
+
+          newItems.push({
+            id: id,
+            category: row[1].trim(),
+            item: row[2].trim(),
+            qty: parseFloat(row[3].trim().replace(/,/g, '')) || 0,
+            unit: row[4].trim(),
+            unitPrice: parseFloat(row[5].trim().replace(/,/g, '')) || 0,
+            total: parseFloat(row[6].trim().replace(/,/g, '')) || 0,
+            imageSrc: './logo.png' 
+          });
+        }
+      }
+      
+      if (newItems.length > 0) {
+        setBoqItems(newItems);
+      }
+      e.target.value = '';
+    };
+    reader.readAsText(file, 'utf-8');
+  };
+
   return (
     <section id="boq" className="py-24 bg-gray-50 relative">
       <div className="container mx-auto px-6">
@@ -83,7 +147,12 @@ const BOQ = () => {
           </p>
         </div>
 
-        <div className="max-w-5xl mx-auto mb-4 flex justify-end">
+        <div className="max-w-5xl mx-auto mb-4 flex justify-end gap-3">
+          <label className="flex items-center gap-2 bg-white border border-heim-blue text-heim-blue px-5 py-2.5 rounded-lg hover:bg-blue-50 transition-colors shadow-sm font-medium text-sm cursor-pointer">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+            Import CSV
+            <input type="file" accept=".csv" className="hidden" onChange={handleImportCSV} />
+          </label>
           <button 
             onClick={exportToCSV}
             className="flex items-center gap-2 bg-heim-blue text-white px-5 py-2.5 rounded-lg hover:bg-blue-800 transition-colors shadow-sm font-medium text-sm"
