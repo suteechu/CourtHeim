@@ -164,7 +164,7 @@ const BOQ = () => {
           </p>
         </div>
 
-        <div className="max-w-5xl mx-auto mb-4 flex justify-end gap-3">
+        <div className="max-w-6xl mx-auto mb-4 flex justify-end gap-3">
           <label className="flex items-center gap-2 bg-white border border-heim-blue text-heim-blue px-5 py-2.5 rounded-lg hover:bg-blue-50 transition-colors shadow-sm font-medium text-sm cursor-pointer">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
             Import CSV
@@ -179,14 +179,14 @@ const BOQ = () => {
           </button>
         </div>
 
-        <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden" data-aos="fade-up" data-aos-delay="200">
+        <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden" data-aos="fade-up" data-aos-delay="200">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-heim-blue text-white text-sm">
-                  <th className="px-3 py-2 font-semibold w-12 text-center">ลำดับ</th>
-                  <th className="px-3 py-2 font-semibold">รายการ (Description)</th>
-                  <th className="px-3 py-2 font-semibold text-right w-24">จำนวน</th>
+                  <th className="px-3 py-2 font-semibold w-12 text-center whitespace-nowrap">ลำดับ</th>
+                  <th className="px-3 py-2 font-semibold whitespace-nowrap">รายการ (Description)</th>
+                  <th className="px-3 py-2 font-semibold text-right w-24 whitespace-nowrap">จำนวน</th>
                   <th className="px-3 py-2 font-semibold text-center w-24">หน่วย</th>
                   <th className="px-3 py-2 font-semibold text-right w-32">ค่าวัสดุ/หน่วย</th>
                   <th className="px-3 py-2 font-semibold text-right w-32">ค่าแรง/หน่วย</th>
@@ -202,8 +202,8 @@ const BOQ = () => {
                     </tr>
                     {items.map((item, itemIndex) => (
                       <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-3 py-2 text-center text-gray-500">{`${catIndex + 1}.${itemIndex + 1}`}</td>
-                        <td className="px-3 py-2 pl-8">
+                        <td className="px-3 py-2 text-center text-gray-500 whitespace-nowrap">{`${catIndex + 1}.${itemIndex + 1}`}</td>
+                        <td className="px-3 py-2 pl-8 whitespace-nowrap">
                           <span className="text-gray-800 leading-relaxed block">{item.item}</span>
                         </td>
                         <td className="px-3 py-2 text-right text-gray-700">{item.qty}</td>
