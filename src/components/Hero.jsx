@@ -71,7 +71,7 @@ const Hero = () => {
             </div>
             <div>
               <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">พื้นที่สนามมาตรฐาน</p>
-              <p className="text-2xl font-black text-gray-900 tracking-tighter">177.085 <span className="text-sm font-medium text-gray-500 tracking-normal">sq.m</span></p>
+              <p className="text-2xl font-black text-gray-900 tracking-tighter">175.5 <span className="text-sm font-medium text-gray-500 tracking-normal">sq.m</span></p>
             </div>
           </div>
         </div>

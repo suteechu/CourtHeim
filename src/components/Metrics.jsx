@@ -5,7 +5,7 @@ const Metrics = () => {
   const metricsRef = useRef(null);
 
   const metrics = [
-    { id: 1, value: 177.085, suffix: ' ตร.ม.', label: 'พื้นที่โครงการรวม (Total Area)' },
+    { id: 1, value: 175.5, suffix: ' ตร.ม.', label: 'พื้นที่โครงการรวม (Total Area)' },
     { id: 2, value: 45, suffix: ' วัน', label: 'ระยะเวลาดำเนินงาน (Timeline)' },
     { id: 3, value: 3, suffix: ' เฟส', label: 'ช่วงการส่งมอบ (Phases)' },
     { id: 4, value: 100, suffix: '%', label: 'สถานะ: เตรียมการ (Preparation)' }
