@@ -14,7 +14,7 @@ const Header = () => {
   }, []);
 
   return (
-    <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'glass py-3' : 'bg-transparent py-5'}`}>
+    <header className={`fixed w-full z-50 transition-all duration-300 print:hidden ${isScrolled ? 'glass py-3' : 'bg-transparent py-5'}`}>
       <div className="container mx-auto px-6 flex justify-between items-center">
         <div className="flex items-center space-x-2">
           <img src="./logo.png" alt="SCG HEIM" className="h-10 object-contain bg-white rounded p-1" />
@@ -22,11 +22,13 @@ const Header = () => {
             <span className="font-light text-gray-600 ml-1">Sports</span>
           </div>
         </div>
-        <nav className="hidden md:flex space-x-8">
+        <nav className="hidden md:flex space-x-6 lg:space-x-8">
           <a href="#home" className="text-gray-800 hover:text-heim-red font-medium transition-colors">หน้าแรก</a>
           <a href="#courts" className="text-gray-800 hover:text-heim-red font-medium transition-colors">มิติสนาม</a>
+          <a href="#blueprints" className="text-gray-800 hover:text-heim-red font-medium transition-colors">ดูแบบ</a>
+          <a href="#timeline" className="text-gray-800 hover:text-heim-red font-medium transition-colors">แผนงาน (Milestone)</a>
           <a href="#specifications" className="text-gray-800 hover:text-heim-red font-medium transition-colors">สเปกวิศวกรรม</a>
-          <a href="#contact" className="text-gray-800 hover:text-heim-red font-medium transition-colors">ติดต่อเรา</a>
+          <a href="#boq" className="text-gray-800 hover:text-heim-red font-medium transition-colors">BOQ (ราคา)</a>
         </nav>
         <div className="flex space-x-3 items-center">
           <button 
@@ -35,9 +37,6 @@ const Header = () => {
           >
             จองสนาม (Booking)
           </button>
-          <a href="#contact" className="bg-heim-red text-white px-5 py-2 rounded-full font-medium hover:bg-red-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 whitespace-nowrap">
-            แจ้งปัญหา (Ticket)
-          </a>
         </div>
       </div>
       

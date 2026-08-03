@@ -2,7 +2,7 @@ import React from 'react';
 
 const Footer = () => {
   return (
-    <footer className="bg-heim-blue text-white py-12">
+    <footer className="bg-heim-blue text-white py-12 print:hidden">
       <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div>
           <div className="text-2xl font-bold tracking-tighter mb-4">
@@ -18,6 +18,7 @@ const Footer = () => {
             <li><a href="#home" className="text-gray-400 hover:text-white transition-colors">หน้าแรก (Home)</a></li>
             <li><a href="#features" className="text-gray-400 hover:text-white transition-colors">วัตถุประสงค์ (Objectives)</a></li>
             <li><a href="#specifications" className="text-gray-400 hover:text-white transition-colors">สเปกวิศวกรรม (Specs)</a></li>
+            <li><a href="#boq" className="text-gray-400 hover:text-white transition-colors">BOQ & Pricing (ราคา)</a></li>
           </ul>
         </div>
         <div>

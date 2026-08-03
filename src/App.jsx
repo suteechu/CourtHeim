@@ -4,6 +4,7 @@ import Hero from './components/Hero';
 import CourtTypes from './components/CourtTypes';
 import Features from './components/Features';
 import Blueprints from './components/Blueprints';
+import Timeline from './components/Timeline';
 import Specifications from './components/Specifications';
 import BOQ from './components/BOQ';
 import Footer from './components/Footer';
@@ -26,11 +27,9 @@ function App() {
         <Features />
         <CourtTypes />
         <Blueprints />
+        <Timeline />
         <Specifications />
         <BOQ />
-
-        {/* <Warranty /> */}
-        {/* <FAQ /> */}
       </main>
       <Footer />
     </div>
