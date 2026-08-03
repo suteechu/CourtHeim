@@ -17,25 +17,38 @@ const BOQ = () => {
     }));
   };
 
+  const isSummaryView = Object.values(expandedCategories).every(v => v === false);
+  
+  const handleToggleSummaryView = (e) => {
+    const isSummary = e.target.checked;
+    setExpandedCategories(prev => {
+      const newState = { ...prev };
+      Object.keys(newState).forEach(key => {
+        newState[key] = !isSummary;
+      });
+      return newState;
+    });
+  };
+
   const [boqItems, setBoqItems] = useState([
     // 1. งานเตรียมพื้นที่และโครงสร้าง (Site Prep & Structural)
-    { id: 1, category: 'งานโครงสร้าง (Structural)', item: 'งานเตรียมพื้นที่ ปรับระดับบดอัดดินเดิม และทำ Slope 1:200 (Subgrade & Slope 1:200)', qty: 175.48, unit: 'ตร.ม.', materialPrice: 0, laborPrice: 50, total: 8774 },
+    { id: 1, category: 'งานโครงสร้าง (Structural)', item: 'งานเตรียมพื้นที่ ปรับระดับบดอัดดินเดิม และทำ Slope 1:200 (Subgrade & Slope 1:200)', qty: 175.5, unit: 'ตร.ม.', materialPrice: 0, laborPrice: 50, total: 8775 },
     { id: 2, category: 'งานโครงสร้าง (Structural)', item: 'งานหินคลุกบดอัดแน่น หนา 0.10 ม. (Crushed Stone Subbase)', qty: 17.55, unit: 'ลบ.ม.', materialPrice: 550, laborPrice: 150, total: 12285 },
     { id: 3, category: 'งานโครงสร้าง (Structural)', item: 'งานทรายหยาบรองพื้น หนา 0.05 ม. (Sand Cushion)', qty: 8.77, unit: 'ลบ.ม.', materialPrice: 350, laborPrice: 100, total: 3946.5 },
-    { id: 4, category: 'งานโครงสร้าง (Structural)', item: 'แผ่นพลาสติกปูรองกันความชื้น (PE Sheet 0.15mm)', qty: 175.48, unit: 'ตร.ม.', materialPrice: 10, laborPrice: 5, total: 2632.2 },
-    { id: 5, category: 'งานโครงสร้าง (Structural)', item: 'เหล็กตะแกรง Wiremesh #4mm @0.20m', qty: 175.48, unit: 'ตร.ม.', materialPrice: 35, laborPrice: 10, total: 7896.6 },
+    { id: 4, category: 'งานโครงสร้าง (Structural)', item: 'แผ่นพลาสติกปูรองกันความชื้น (PE Sheet 0.15mm)', qty: 175.5, unit: 'ตร.ม.', materialPrice: 10, laborPrice: 5, total: 2632.5 },
+    { id: 5, category: 'งานโครงสร้าง (Structural)', item: 'เหล็กตะแกรง Wiremesh #4mm @0.20m', qty: 175.5, unit: 'ตร.ม.', materialPrice: 35, laborPrice: 10, total: 7897.5 },
     { id: 6, category: 'งานโครงสร้าง (Structural)', item: 'คอนกรีตผสมเสร็จ 280 ksc หนา 200 มม. พร้อมขัดหยาบปรับ Slope 1:200', qty: 35.1, unit: 'ลบ.ม.', materialPrice: 1800, laborPrice: 400, total: 77220 },
     { id: 7, category: 'งานโครงสร้าง (Structural)', item: 'งานไม้แบบและตั้งแบบ (Formwork)', qty: 1, unit: 'เหมา', materialPrice: 3500, laborPrice: 5000, total: 8500 },
     { id: 8, category: 'งานโครงสร้าง (Structural)', item: 'งานตัด Joint และหยอดยางมะตอย (Concrete Joint)', qty: 71, unit: 'ม.', materialPrice: 40, laborPrice: 20, total: 4260 },
     
     // 2. งานสถาปัตยกรรมพื้นผิว (Surface Coating)
-    { id: 9, category: 'งานสถาปัตยกรรม (Architectural)', item: 'น้ำยารองพื้น Primer อะคริลิก (Acrylic Primer)', qty: 175.48, unit: 'ตร.ม.', materialPrice: 60, laborPrice: 40, total: 17548 },
-    { id: 10, category: 'งานสถาปัตยกรรม (Architectural)', item: 'ชั้นยางสังเคราะห์รองพื้น (Cushion Layer) 2 ชั้น', qty: 175.48, unit: 'ตร.ม.', materialPrice: 200, laborPrice: 150, total: 61418 },
-    { id: 11, category: 'งานสถาปัตยกรรม (Architectural)', item: 'สีทับหน้าอะคริลิก 100% ทน UV (Acrylic Topcoat) 3 ชั้น', qty: 175.48, unit: 'ตร.ม.', materialPrice: 150, laborPrice: 100, total: 43870 },
+    { id: 9, category: 'งานสถาปัตยกรรม (Architectural)', item: 'น้ำยารองพื้น Primer อะคริลิก (Acrylic Primer)', qty: 175.5, unit: 'ตร.ม.', materialPrice: 60, laborPrice: 40, total: 17550 },
+    { id: 10, category: 'งานสถาปัตยกรรม (Architectural)', item: 'ชั้นยางสังเคราะห์รองพื้น (Cushion Layer) 2 ชั้น', qty: 175.5, unit: 'ตร.ม.', materialPrice: 200, laborPrice: 150, total: 61425 },
+    { id: 11, category: 'งานสถาปัตยกรรม (Architectural)', item: 'สีทับหน้าอะคริลิก 100% ทน UV (Acrylic Topcoat) 3 ชั้น', qty: 175.5, unit: 'ตร.ม.', materialPrice: 150, laborPrice: 100, total: 43875 },
     { id: 12, category: 'งานสถาปัตยกรรม (Architectural)', item: 'งานตีเส้นสนาม (Futsal, Basketball, Takraw)', qty: 1, unit: 'เหมา', materialPrice: 5000, laborPrice: 10000, total: 15000 },
 
     // 3. งานหลังคาและอุปกรณ์ (Roofing & Equipment)
-    { id: 13, category: 'งานหลังคา (Roofing)', item: 'งานผ้าใบกันแดด HDPE (4 แผ่น ขนาด 10.7x4.1 ม.)', qty: 175.48, unit: 'ตร.ม.', materialPrice: 600, laborPrice: 150, total: 131610 },
+    { id: 13, category: 'งานหลังคา (Roofing)', item: 'งานผ้าใบกันแดด HDPE (4 แผ่น ขนาด 10.7x4.1 ม.)', qty: 175.5, unit: 'ตร.ม.', materialPrice: 600, laborPrice: 150, total: 131625 },
     { id: 14, category: 'งานหลังคา (Roofing)', item: 'ชุดสลิงสแตนเลส 8mm ดึงตึง (ยาวรวม 90 ม.) พร้อมอุปกรณ์ยึด', qty: 1, unit: 'ชุด', materialPrice: 25000, laborPrice: 15000, total: 40000 },
     { id: 15, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'เสาแป้นบาสเกตบอล เหล็กกล่อง 100x100 t3.2 พร้อมแป้นกระจกอะคริลิกใส', qty: 1, unit: 'ชุด', materialPrice: 45000, laborPrice: 10000, total: 55000 },
     { id: 16, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'ประตูโกลหนู 120x80x54 ซม. พร้อมตาข่าย', qty: 2, unit: 'ชุด', materialPrice: 7500, laborPrice: 1000, total: 17000 },
@@ -179,23 +192,34 @@ const BOQ = () => {
           </h2>
           <div className="h-1 w-24 bg-heim-red mx-auto rounded-full mb-6"></div>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-            สำหรับการก่อสร้างสนามกีฬามัลติฟังก์ชัน ขนาด 10.70 x 16.40 เมตร (175.48 ตร.ม.)
+            สำหรับการก่อสร้างสนามกีฬามัลติฟังก์ชัน ขนาด 10.70 x 16.40 เมตร (175.5 ตร.ม.)
           </p>
         </div>
 
-        <div className="max-w-6xl mx-auto mb-4 flex justify-end gap-3">
-          <label className="flex items-center gap-2 bg-white border border-heim-blue text-heim-blue px-5 py-2.5 rounded-lg hover:bg-blue-50 transition-colors shadow-sm font-medium text-sm cursor-pointer">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-            Import CSV
-            <input type="file" accept=".csv" className="hidden" onChange={handleImportCSV} />
+        <div className="max-w-6xl mx-auto mb-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+          <label className="flex items-center gap-2 cursor-pointer text-gray-700 font-medium text-sm mr-auto sm:mr-0 select-none">
+            <input 
+              type="checkbox" 
+              className="w-5 h-5 text-heim-blue rounded focus:ring-heim-blue cursor-pointer border-gray-300"
+              checked={isSummaryView}
+              onChange={handleToggleSummaryView}
+            />
+            แสดงเฉพาะหมวด (Summary View)
           </label>
-          <button 
-            onClick={exportToCSV}
-            className="flex items-center gap-2 bg-heim-blue text-white px-5 py-2.5 rounded-lg hover:bg-blue-800 transition-colors shadow-sm font-medium text-sm"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-            Export to CSV
-          </button>
+          <div className="flex gap-3 w-full sm:w-auto justify-end">
+            <label className="flex items-center gap-2 bg-white border border-heim-blue text-heim-blue px-5 py-2.5 rounded-lg hover:bg-blue-50 transition-colors shadow-sm font-medium text-sm cursor-pointer">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+              Import CSV
+              <input type="file" accept=".csv" className="hidden" onChange={handleImportCSV} />
+            </label>
+            <button 
+              onClick={exportToCSV}
+              className="flex items-center gap-2 bg-heim-blue text-white px-5 py-2.5 rounded-lg hover:bg-blue-800 transition-colors shadow-sm font-medium text-sm"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              Export to CSV
+            </button>
+          </div>
         </div>
 
         <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden" data-aos="fade-up" data-aos-delay="200">
