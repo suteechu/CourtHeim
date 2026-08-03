@@ -58,8 +58,8 @@ const BOQ = () => {
     { id: 20, category: 'งานภูมิทัศน์ (Landscape & Fencing)', item: 'งานตาข่ายกันลูกบอลหลังประตู (โครงสร้างเสาและตาข่าย 2 ด้าน)', qty: 1, unit: 'เหมา', materialPrice: 10000, laborPrice: 5000, total: 15000 },
 
     // 4. งานระบบไฟฟ้า (Electrical)
-    { id: 21, category: 'งานระบบไฟฟ้า (Electrical)', item: 'โคมไฟ LED Floodlight 400W พร้อมขายึดติดผนัง (Wall-mounted)', qty: 8, unit: 'โคม', materialPrice: 7500, laborPrice: 1000, total: 68000 },
-    { id: 22, category: 'งานระบบไฟฟ้า (Electrical)', item: 'ตู้คอนโทรล สายไฟ NYY และท่อร้อยสาย', qty: 1, unit: 'เหมา', materialPrice: 14000, laborPrice: 4000, total: 18000 }
+    { id: 21, category: 'งานระบบไฟฟ้า (Electrical)', item: 'โคมไฟ LED Floodlight 400W พร้อมขายึดติดผนัง (Wall-mounted)', qty: 8, unit: 'โคม', materialPrice: 0, laborPrice: 0, total: 0 },
+    { id: 22, category: 'งานระบบไฟฟ้า (Electrical)', item: 'ตู้คอนโทรล สายไฟ NYY และท่อร้อยสาย', qty: 1, unit: 'เหมา', materialPrice: 0, laborPrice: 0, total: 0 }
   ]);
 
   const totalAmount = boqItems.reduce((sum, item) => sum + item.total, 0);
