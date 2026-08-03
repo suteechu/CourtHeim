@@ -54,7 +54,7 @@ const Hero = () => {
               </span>
             </a>
 
-            <a href="./blueprint.html" target="_blank" className="group relative px-8 py-4 bg-heim-red text-white font-bold text-lg uppercase tracking-wider transform -skew-x-12 transition-all hover:bg-red-700 shadow-[6px_6px_0_0_rgba(255,255,255,0.2)] hover:shadow-[2px_2px_0_0_rgba(255,255,255,0.2)] hover:translate-x-1 hover:translate-y-1 flex items-center justify-center">
+            <a href="#blueprints" className="group relative px-8 py-4 bg-heim-red text-white font-bold text-lg uppercase tracking-wider transform -skew-x-12 transition-all hover:bg-red-700 shadow-[6px_6px_0_0_rgba(255,255,255,0.2)] hover:shadow-[2px_2px_0_0_rgba(255,255,255,0.2)] hover:translate-x-1 hover:translate-y-1 flex items-center justify-center">
               <span className="block transform skew-x-12 flex items-center justify-center">
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                 แบบแปลน (Blueprints)
