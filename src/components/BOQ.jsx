@@ -4,30 +4,30 @@ const BOQ = () => {
   const [modalContent, setModalContent] = useState(null);
   const [boqItems, setBoqItems] = useState([
     // 1. งานเตรียมพื้นที่และโครงสร้าง (Site Prep & Structural)
-    { id: 1, category: 'งานโครงสร้าง (Structural)', item: 'งานเตรียมพื้นที่ ปรับระดับและบดอัดดินเดิม (Subgrade Compaction)', qty: 160.5, unit: 'ตร.ม.', unitPrice: 50, total: 8025, imageSrc: './subgrade.jpg' },
-    { id: 2, category: 'งานโครงสร้าง (Structural)', item: 'งานทรายหยาบรองพื้น หนา 0.05 ม. (Sand Cushion)', qty: 8.03, unit: 'ลบ.ม.', unitPrice: 450, total: 3613.5, imageSrc: './subgrade.jpg' },
-    { id: 3, category: 'งานโครงสร้าง (Structural)', item: 'แผ่นพลาสติกปูรองกันความชื้น (PE Sheet 0.15mm)', qty: 160.5, unit: 'ตร.ม.', unitPrice: 15, total: 2407.5, imageSrc: './rc_slab.jpg' },
-    { id: 4, category: 'งานโครงสร้าง (Structural)', item: 'เหล็กตะแกรง Wiremesh #4mm @0.20m', qty: 160.5, unit: 'ตร.ม.', unitPrice: 45, total: 7222.5, imageSrc: './wiremesh.jpg' },
-    { id: 5, category: 'งานโครงสร้าง (Structural)', item: 'คอนกรีตผสมเสร็จ 280 ksc (Cylinder) หนา 200 มม.', qty: 32.1, unit: 'ลบ.ม.', unitPrice: 2200, total: 70620, imageSrc: './rc_slab.jpg' },
-    { id: 6, category: 'งานโครงสร้าง (Structural)', item: 'งานไม้แบบและตั้งแบบ (Formwork)', qty: 1, unit: 'เหมา', unitPrice: 8500, total: 8500, imageSrc: './rc_slab.jpg' },
-    { id: 7, category: 'งานโครงสร้าง (Structural)', item: 'งานตัด Joint และหยอดยางมะตอย (Concrete Joint)', qty: 65, unit: 'ม.', unitPrice: 60, total: 3900, imageSrc: './concrete_joints.jpg' },
+    { id: 1, category: 'งานโครงสร้าง (Structural)', item: 'งานเตรียมพื้นที่ ปรับระดับและบดอัดดินเดิม (Subgrade Compaction)', qty: 160.5, unit: 'ตร.ม.', materialPrice: 0, laborPrice: 50, total: 8025, imageSrc: './subgrade.jpg' },
+    { id: 2, category: 'งานโครงสร้าง (Structural)', item: 'งานทรายหยาบรองพื้น หนา 0.05 ม. (Sand Cushion)', qty: 8.03, unit: 'ลบ.ม.', materialPrice: 350, laborPrice: 100, total: 3613.5, imageSrc: './subgrade.jpg' },
+    { id: 3, category: 'งานโครงสร้าง (Structural)', item: 'แผ่นพลาสติกปูรองกันความชื้น (PE Sheet 0.15mm)', qty: 160.5, unit: 'ตร.ม.', materialPrice: 10, laborPrice: 5, total: 2407.5, imageSrc: './rc_slab.jpg' },
+    { id: 4, category: 'งานโครงสร้าง (Structural)', item: 'เหล็กตะแกรง Wiremesh #4mm @0.20m', qty: 160.5, unit: 'ตร.ม.', materialPrice: 35, laborPrice: 10, total: 7222.5, imageSrc: './wiremesh.jpg' },
+    { id: 5, category: 'งานโครงสร้าง (Structural)', item: 'คอนกรีตผสมเสร็จ 280 ksc (Cylinder) หนา 200 มม.', qty: 32.1, unit: 'ลบ.ม.', materialPrice: 1800, laborPrice: 400, total: 70620, imageSrc: './rc_slab.jpg' },
+    { id: 6, category: 'งานโครงสร้าง (Structural)', item: 'งานไม้แบบและตั้งแบบ (Formwork)', qty: 1, unit: 'เหมา', materialPrice: 3500, laborPrice: 5000, total: 8500, imageSrc: './rc_slab.jpg' },
+    { id: 7, category: 'งานโครงสร้าง (Structural)', item: 'งานตัด Joint และหยอดยางมะตอย (Concrete Joint)', qty: 65, unit: 'ม.', materialPrice: 40, laborPrice: 20, total: 3900, imageSrc: './concrete_joints.jpg' },
     
     // 2. งานสถาปัตยกรรมพื้นผิว (Surface Coating)
-    { id: 8, category: 'งานสถาปัตยกรรม (Architectural)', item: 'น้ำยารองพื้น Primer อะคริลิก (Acrylic Primer)', qty: 160.5, unit: 'ตร.ม.', unitPrice: 100, total: 16050, imageSrc: './acrylic_surface.jpg' },
-    { id: 9, category: 'งานสถาปัตยกรรม (Architectural)', item: 'ชั้นยางสังเคราะห์รองพื้น (Cushion Layer) 2 ชั้น', qty: 160.5, unit: 'ตร.ม.', unitPrice: 350, total: 56175, imageSrc: './acrylic_surface.jpg' },
-    { id: 10, category: 'งานสถาปัตยกรรม (Architectural)', item: 'สีทับหน้าอะคริลิก 100% ทน UV (Acrylic Topcoat) 3 ชั้น', qty: 160.5, unit: 'ตร.ม.', unitPrice: 250, total: 40125, imageSrc: './acrylic_surface.jpg' },
-    { id: 11, category: 'งานสถาปัตยกรรม (Architectural)', item: 'งานตีเส้นสนาม (Futsal, Basketball, Takraw)', qty: 1, unit: 'เหมา', unitPrice: 15000, total: 15000, imageSrc: './court_markings.jpg' },
+    { id: 8, category: 'งานสถาปัตยกรรม (Architectural)', item: 'น้ำยารองพื้น Primer อะคริลิก (Acrylic Primer)', qty: 160.5, unit: 'ตร.ม.', materialPrice: 60, laborPrice: 40, total: 16050, imageSrc: './acrylic_surface.jpg' },
+    { id: 9, category: 'งานสถาปัตยกรรม (Architectural)', item: 'ชั้นยางสังเคราะห์รองพื้น (Cushion Layer) 2 ชั้น', qty: 160.5, unit: 'ตร.ม.', materialPrice: 200, laborPrice: 150, total: 56175, imageSrc: './acrylic_surface.jpg' },
+    { id: 10, category: 'งานสถาปัตยกรรม (Architectural)', item: 'สีทับหน้าอะคริลิก 100% ทน UV (Acrylic Topcoat) 3 ชั้น', qty: 160.5, unit: 'ตร.ม.', materialPrice: 150, laborPrice: 100, total: 40125, imageSrc: './acrylic_surface.jpg' },
+    { id: 11, category: 'งานสถาปัตยกรรม (Architectural)', item: 'งานตีเส้นสนาม (Futsal, Basketball, Takraw)', qty: 1, unit: 'เหมา', materialPrice: 5000, laborPrice: 10000, total: 15000, imageSrc: './court_markings.jpg' },
 
     // 3. งานหลังคาและอุปกรณ์ (Roofing & Equipment)
-    { id: 12, category: 'งานหลังคา (Roofing)', item: 'งานดึงสลิงติดผ้าใบกันแดด (Sunshade Sail with Cable Tension)', qty: 160.5, unit: 'ตร.ม.', unitPrice: 1200, total: 192600, imageSrc: './tensile_roof.jpg' },
-    { id: 13, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'เสาแป้นบาสเกตบอล เหล็กกล่อง 100x100 t3.2 พร้อมแป้นกระจกอะคริลิกใส', qty: 1, unit: 'ชุด', unitPrice: 55000, total: 55000, imageSrc: './sports_equipment.jpg' },
-    { id: 14, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'ประตูโกลหนู 120x80x54 ซม. พร้อมตาข่าย', qty: 2, unit: 'ชุด', unitPrice: 8500, total: 17000, imageSrc: './sports_equipment.jpg' },
-    { id: 15, category: 'งานภูมิทัศน์ (Landscape & Fencing)', item: 'งานตาข่ายกันลูกบอลหลังประตู (โครงสร้างเสาและตาข่าย 2 ด้าน)', qty: 1, unit: 'เหมา', unitPrice: 15000, total: 15000, imageSrc: './fencing_net.jpg' },
+    { id: 12, category: 'งานหลังคา (Roofing)', item: 'งานดึงสลิงติดผ้าใบกันแดด (Sunshade Sail with Cable Tension)', qty: 160.5, unit: 'ตร.ม.', materialPrice: 900, laborPrice: 300, total: 192600, imageSrc: './tensile_roof.jpg' },
+    { id: 13, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'เสาแป้นบาสเกตบอล เหล็กกล่อง 100x100 t3.2 พร้อมแป้นกระจกอะคริลิกใส', qty: 1, unit: 'ชุด', materialPrice: 45000, laborPrice: 10000, total: 55000, imageSrc: './sports_equipment.jpg' },
+    { id: 14, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'ประตูโกลหนู 120x80x54 ซม. พร้อมตาข่าย', qty: 2, unit: 'ชุด', materialPrice: 7500, laborPrice: 1000, total: 17000, imageSrc: './sports_equipment.jpg' },
+    { id: 15, category: 'งานภูมิทัศน์ (Landscape & Fencing)', item: 'งานตาข่ายกันลูกบอลหลังประตู (โครงสร้างเสาและตาข่าย 2 ด้าน)', qty: 1, unit: 'เหมา', materialPrice: 10000, laborPrice: 5000, total: 15000, imageSrc: './fencing_net.jpg' },
 
     // 4. งานระบบไฟฟ้า (Electrical)
-    { id: 16, category: 'งานระบบไฟฟ้า (Electrical)', item: 'เสาไฟเหล็กกัลวาไนซ์ สูง 6 ม.', qty: 4, unit: 'ต้น', unitPrice: 8500, total: 34000, imageSrc: './led_lighting.jpg' },
-    { id: 17, category: 'งานระบบไฟฟ้า (Electrical)', item: 'โคมไฟ LED Floodlight 400W พร้อมติดตั้ง', qty: 8, unit: 'โคม', unitPrice: 8500, total: 68000, imageSrc: './led_lighting.jpg' },
-    { id: 18, category: 'งานระบบไฟฟ้า (Electrical)', item: 'ตู้คอนโทรล สายไฟ NYY และท่อร้อยสาย', qty: 1, unit: 'เหมา', unitPrice: 18000, total: 18000, imageSrc: './led_lighting.jpg' }
+    { id: 16, category: 'งานระบบไฟฟ้า (Electrical)', item: 'เสาไฟเหล็กกัลวาไนซ์ สูง 6 ม.', qty: 4, unit: 'ต้น', materialPrice: 6500, laborPrice: 2000, total: 34000, imageSrc: './led_lighting.jpg' },
+    { id: 17, category: 'งานระบบไฟฟ้า (Electrical)', item: 'โคมไฟ LED Floodlight 400W พร้อมติดตั้ง', qty: 8, unit: 'โคม', materialPrice: 7500, laborPrice: 1000, total: 68000, imageSrc: './led_lighting.jpg' },
+    { id: 18, category: 'งานระบบไฟฟ้า (Electrical)', item: 'ตู้คอนโทรล สายไฟ NYY และท่อร้อยสาย', qty: 1, unit: 'เหมา', materialPrice: 14000, laborPrice: 4000, total: 18000, imageSrc: './led_lighting.jpg' }
   ]);
 
   const totalAmount = boqItems.reduce((sum, item) => sum + item.total, 0);
@@ -41,7 +41,7 @@ const BOQ = () => {
   const exportToCSV = () => {
     // UTF-8 BOM for Excel
     const BOM = '\uFEFF';
-    const headers = ['ลำดับ', 'หมวดหมู่ (Category)', 'รายการ (Description)', 'จำนวน (Qty)', 'หน่วย (Unit)', 'ราคา/หน่วย (Unit Price)', 'จำนวนเงิน (Total)'];
+    const headers = ['ลำดับ', 'หมวดหมู่ (Category)', 'รายการ (Description)', 'จำนวน (Qty)', 'หน่วย (Unit)', 'ค่าวัสดุ/หน่วย (Material Price)', 'ค่าแรง/หน่วย (Labor Price)', 'จำนวนเงิน (Total)'];
     
     let csvContent = BOM + headers.join(',') + '\n';
     
@@ -50,15 +50,16 @@ const BOQ = () => {
       const description = `"${item.item.replace(/"/g, '""')}"`;
       const qty = item.qty;
       const unit = `"${item.unit.replace(/"/g, '""')}"`;
-      const unitPrice = item.unitPrice;
+      const materialPrice = item.materialPrice;
+      const laborPrice = item.laborPrice;
       const total = item.total;
       
-      csvContent += `${index + 1},${category},${description},${qty},${unit},${unitPrice},${total}\n`;
+      csvContent += `${index + 1},${category},${description},${qty},${unit},${materialPrice},${laborPrice},${total}\n`;
     });
 
-    csvContent += `\n,,,,,รวมเป็นเงิน (Sub Total),${totalAmount}\n`;
-    csvContent += `,,,,,ภาษีมูลค่าเพิ่ม (VAT 7%),${vat}\n`;
-    csvContent += `,,,,,รวมยอดเงินสุทธิ (Grand Total),${grandTotal}\n`;
+    csvContent += `\n,,,,,,รวมเป็นเงิน (Sub Total),${totalAmount}\n`;
+    csvContent += `,,,,,,ภาษีมูลค่าเพิ่ม (VAT 7%),${vat}\n`;
+    csvContent += `,,,,,,รวมยอดเงินสุทธิ (Grand Total),${grandTotal}\n`;
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -107,20 +108,28 @@ const BOQ = () => {
       
       for (let i = startIdx; i < lines.length; i++) {
         const row = parseCSVRow(lines[i]);
-        if (row.length >= 7) {
+        if (row.length >= 8) {
           if (!row[0] || row[0].trim() === '') break;
           
           const id = parseInt(row[0].trim(), 10);
           if (isNaN(id)) continue;
 
+          const qty = parseFloat(row[3].trim().replace(/,/g, '')) || 0;
+          const materialPrice = parseFloat(row[5].trim().replace(/,/g, '')) || 0;
+          const laborPrice = parseFloat(row[6].trim().replace(/,/g, '')) || 0;
+          
+          // Recalculate total just to be safe, or use the imported total
+          const total = parseFloat(row[7].trim().replace(/,/g, '')) || (qty * (materialPrice + laborPrice));
+
           newItems.push({
             id: id,
             category: row[1].trim(),
             item: row[2].trim(),
-            qty: parseFloat(row[3].trim().replace(/,/g, '')) || 0,
+            qty: qty,
             unit: row[4].trim(),
-            unitPrice: parseFloat(row[5].trim().replace(/,/g, '')) || 0,
-            total: parseFloat(row[6].trim().replace(/,/g, '')) || 0,
+            materialPrice: materialPrice,
+            laborPrice: laborPrice,
+            total: total,
             imageSrc: './logo.png' 
           });
         }
@@ -171,7 +180,8 @@ const BOQ = () => {
                   <th className="p-4 font-semibold">รายการ (Description)</th>
                   <th className="p-4 font-semibold text-right w-24">จำนวน</th>
                   <th className="p-4 font-semibold text-center w-24">หน่วย</th>
-                  <th className="p-4 font-semibold text-right w-32">ราคา/หน่วย</th>
+                  <th className="p-4 font-semibold text-right w-32">ค่าวัสดุ/หน่วย</th>
+                  <th className="p-4 font-semibold text-right w-32">ค่าแรง/หน่วย</th>
                   <th className="p-4 font-semibold text-right w-40">จำนวนเงิน (บาท)</th>
                 </tr>
               </thead>
@@ -191,7 +201,8 @@ const BOQ = () => {
                     </td>
                     <td className="p-4 text-right text-gray-700">{item.qty}</td>
                     <td className="p-4 text-center text-gray-500">{item.unit}</td>
-                    <td className="p-4 text-right text-gray-700">{item.unitPrice.toLocaleString('th-TH')}</td>
+                    <td className="p-4 text-right text-gray-700">{item.materialPrice.toLocaleString('th-TH')}</td>
+                    <td className="p-4 text-right text-gray-700">{item.laborPrice.toLocaleString('th-TH')}</td>
                     <td className="p-4 text-right font-medium text-gray-800">{item.total.toLocaleString('th-TH')}</td>
                   </tr>
                 ))}
