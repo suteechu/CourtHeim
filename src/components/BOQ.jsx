@@ -70,7 +70,7 @@ const BOQ = () => {
     { id: 13, category: 'งานหลังคา (Roofing)', item: 'งานผ้าใบกันแดด HDPE (4 แผ่น ขนาด 10.7x4.1 ม.)', qty: 177.50, unit: 'ตร.ม.', materialPrice: 600, laborPrice: 150, total: 133125 },
     { id: 14, category: 'งานหลังคา (Roofing)', item: 'ชุดสลิงสแตนเลส 8mm ดึงตึง (ยาวรวม 90 ม.) พร้อมอุปกรณ์ยึด', qty: 1, unit: 'ชุด', materialPrice: 25000, laborPrice: 15000, total: 40000 },
     { id: 15, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'แป้นบาสฝังพื้น 72 นิ้ว (HOOP IT รุ่น SPG-1209)', qty: 1, unit: 'ชุด', materialPrice: 40000, laborPrice: 0, total: 40000 },
-    { id: 16, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'โกลหนู (WINNER) เหล็กกลม 2 นิ้ว ขนาด 200x100 ซม. พร้อมตาข่าย', qty: 1, unit: 'คู่', materialPrice: 15000, laborPrice: 0, total: 15000 },
+    { id: 16, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'โกลหนู (WINNER) เหล็กกลม 2 นิ้ว ขนาด 200x100 ซม. พร้อมตาข่าย', link: 'https://www.winnersports2504.com/product/54/%E0%B9%82%E0%B8%81%E0%B8%A5%E0%B8%AB%E0%B8%99%E0%B8%B9-%E0%B8%9E%E0%B8%A3%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B8%95%E0%B8%B2%E0%B8%82%E0%B9%88%E0%B8%B2%E0%B8%A2-winner?srsltid=AfmBOorCf4V9sdJztSgDRhgif1jlxOBgLPRB9o21VRN6--1V0C15uAZc', qty: 1, unit: 'คู่', materialPrice: 15000, laborPrice: 0, total: 15000 },
     { id: 17, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'บาร์โหนติดผนัง (YINGERJIAN)', qty: 4, unit: 'ชุด', materialPrice: 1500, laborPrice: 0, total: 6000 },
     { id: 18, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'ลูกบาสเกตบอล (Basketball)', qty: 2, unit: 'ลูก', materialPrice: 1200, laborPrice: 0, total: 2400 },
     { id: 19, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'ลูกฟุตซอล (Futsal)', qty: 2, unit: 'ลูก', materialPrice: 900, laborPrice: 0, total: 1800 },
@@ -292,7 +292,14 @@ const BOQ = () => {
                       <tr key={item.id} className="hover:bg-gray-50 transition-colors">
                         <td className="px-3 py-2 text-center text-gray-400 whitespace-nowrap">{`${catIndex + 1}.${itemIndex + 1}`}</td>
                         <td className="px-3 py-2 pl-8 whitespace-nowrap">
-                          <span className="text-gray-800 leading-relaxed block">{item.item}</span>
+                          {item.link ? (
+                            <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-heim-blue hover:text-blue-700 hover:underline leading-relaxed block cursor-pointer">
+                              {item.item}
+                              <svg className="w-3 h-3 inline-block ml-1 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            </a>
+                          ) : (
+                            <span className="text-gray-800 leading-relaxed block">{item.item}</span>
+                          )}
                         </td>
                         <td className="px-3 py-2 text-right text-gray-700">{item.qty}</td>
                         <td className="px-3 py-2 text-center text-gray-500">{item.unit}</td>
