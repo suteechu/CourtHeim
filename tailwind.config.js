@@ -12,7 +12,7 @@ export default {
         'heim-gray': '#F3F4F6',
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['Prompt', 'sans-serif'],
       }
     },
   },

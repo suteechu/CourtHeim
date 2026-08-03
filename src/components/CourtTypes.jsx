@@ -52,7 +52,7 @@ const CourtTypes = () => {
 
   return (
     <section id="courts" className="py-24 bg-white relative">
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-6" data-aos="fade-up">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold text-heim-blue mb-4">Multi-Purpose <span className="text-heim-red">Courts</span></h2>
           <div className="h-1 w-24 bg-heim-red mx-auto rounded-full mb-6"></div>
@@ -76,11 +76,13 @@ const CourtTypes = () => {
 
           {/* Details side */}
           <div className="lg:col-span-5 space-y-4">
-            {courts.map((court) => (
+            {courts.map((court, index) => (
               <div 
                 key={court.id}
                 onClick={() => setSelectedCourt(court)}
                 className="cursor-pointer p-5 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 group"
+                data-aos="fade-up"
+                data-aos-delay={index * 100}
               >
                 <div className="flex items-start">
                   <div className={`w-10 h-10 md:w-12 md:h-12 rounded-lg ${court.color} text-white flex items-center justify-center shrink-0 shadow-md group-hover:scale-110 transition-transform`}>

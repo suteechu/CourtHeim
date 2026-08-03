@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 const BOQ = () => {
-  const [modalContent, setModalContent] = useState(null);
   const [boqItems, setBoqItems] = useState([
     // 1. งานเตรียมพื้นที่และโครงสร้าง (Site Prep & Structural)
     { id: 1, category: 'งานโครงสร้าง (Structural)', item: 'งานเตรียมพื้นที่ ปรับระดับและบดอัดดินเดิม (Subgrade Compaction)', qty: 160.5, unit: 'ตร.ม.', materialPrice: 0, laborPrice: 50, total: 8025, imageSrc: './subgrade.jpg' },
@@ -154,7 +153,7 @@ const BOQ = () => {
 
   return (
     <section id="boq" className="py-24 bg-gray-50 relative">
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-6" data-aos="fade-up">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl font-bold text-heim-blue mb-4">
             Estimated <span className="text-heim-red">BOQ</span> & Pricing
@@ -180,44 +179,38 @@ const BOQ = () => {
           </button>
         </div>
 
-        <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden" data-aos="fade-up" data-aos-delay="200">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-heim-blue text-white text-sm">
-                  <th className="p-4 font-semibold w-12 text-center">ลำดับ</th>
-                  <th className="p-4 font-semibold">รายการ (Description)</th>
-                  <th className="p-4 font-semibold text-right w-24">จำนวน</th>
-                  <th className="p-4 font-semibold text-center w-24">หน่วย</th>
-                  <th className="p-4 font-semibold text-right w-32">ค่าวัสดุ/หน่วย</th>
-                  <th className="p-4 font-semibold text-right w-32">ค่าแรง/หน่วย</th>
-                  <th className="p-4 font-semibold text-right w-40">จำนวนเงิน (บาท)</th>
+                  <th className="px-3 py-2 font-semibold w-12 text-center">ลำดับ</th>
+                  <th className="px-3 py-2 font-semibold">รายการ (Description)</th>
+                  <th className="px-3 py-2 font-semibold text-right w-24">จำนวน</th>
+                  <th className="px-3 py-2 font-semibold text-center w-24">หน่วย</th>
+                  <th className="px-3 py-2 font-semibold text-right w-32">ค่าวัสดุ/หน่วย</th>
+                  <th className="px-3 py-2 font-semibold text-right w-32">ค่าแรง/หน่วย</th>
+                  <th className="px-3 py-2 font-semibold text-right w-40">จำนวนเงิน (บาท)</th>
                 </tr>
               </thead>
               <tbody className="text-sm divide-y divide-gray-200">
                 {Object.entries(groupedBoq).map(([category, items], catIndex) => (
                   <React.Fragment key={category}>
                     <tr className="bg-blue-50/50 font-semibold text-heim-blue">
-                      <td className="p-4 text-center">{catIndex + 1}</td>
-                      <td className="p-4" colSpan={6}>{category}</td>
+                      <td className="px-3 py-2 text-center">{catIndex + 1}</td>
+                      <td className="px-3 py-2" colSpan={6}>{category}</td>
                     </tr>
                     {items.map((item, itemIndex) => (
                       <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="p-4 text-center text-gray-500">{`${catIndex + 1}.${itemIndex + 1}`}</td>
-                        <td className="p-4 pl-8">
-                          <div 
-                            className="group flex items-start cursor-pointer"
-                            onClick={() => setModalContent({ src: item.imageSrc, caption: item.item })}
-                          >
-                            <span className="text-gray-800 group-hover:text-heim-blue transition-colors leading-relaxed block">{item.item}</span>
-                            <svg className="w-4 h-4 text-gray-300 group-hover:text-heim-blue opacity-50 group-hover:opacity-100 transition-all shrink-0 ml-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                          </div>
+                        <td className="px-3 py-2 text-center text-gray-500">{`${catIndex + 1}.${itemIndex + 1}`}</td>
+                        <td className="px-3 py-2 pl-8">
+                          <span className="text-gray-800 leading-relaxed block">{item.item}</span>
                         </td>
-                        <td className="p-4 text-right text-gray-700">{item.qty}</td>
-                        <td className="p-4 text-center text-gray-500">{item.unit}</td>
-                        <td className="p-4 text-right text-gray-700">{item.materialPrice.toLocaleString('th-TH')}</td>
-                        <td className="p-4 text-right text-gray-700">{item.laborPrice.toLocaleString('th-TH')}</td>
-                        <td className="p-4 text-right font-medium text-gray-800">{item.total.toLocaleString('th-TH')}</td>
+                        <td className="px-3 py-2 text-right text-gray-700">{item.qty}</td>
+                        <td className="px-3 py-2 text-center text-gray-500">{item.unit}</td>
+                        <td className="px-3 py-2 text-right text-gray-700">{item.materialPrice.toLocaleString('th-TH')}</td>
+                        <td className="px-3 py-2 text-right text-gray-700">{item.laborPrice.toLocaleString('th-TH')}</td>
+                        <td className="px-3 py-2 text-right font-medium text-gray-800">{item.total.toLocaleString('th-TH')}</td>
                       </tr>
                     ))}
                   </React.Fragment>
@@ -246,35 +239,6 @@ const BOQ = () => {
           </div>
         </div>
       </div>
-
-      {/* Image Modal */}
-      {modalContent && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm transition-opacity">
-          <div className="bg-white rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden relative animate-fade-in-up">
-            <button 
-              onClick={() => setModalContent(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-800 bg-gray-100 hover:bg-gray-200 rounded-full p-2 transition-colors z-10"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <div className="p-2 min-h-[300px] flex items-center justify-center bg-gray-50">
-              <img 
-                src={modalContent.src} 
-                alt={modalContent.caption} 
-                className="w-full h-auto rounded-xl object-contain max-h-[80vh]" 
-                onError={(e) => {
-                  if (e.target.src.includes('.jpg')) e.target.src = e.target.src.replace('.jpg', '.png');
-                  else if (e.target.src.includes('.png')) e.target.src = e.target.src.replace('.png', '.jpg');
-                  else e.target.src = 'https://via.placeholder.com/800x600?text=Image+Not+Available';
-                }}
-              />
-            </div>
-            <div className="p-4 bg-gray-50 border-t border-gray-100 text-center">
-              <p className="text-sm text-gray-600 font-medium">{modalContent.caption}</p>
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   );
 };
