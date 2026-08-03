@@ -3,76 +3,31 @@ import React, { useState } from 'react';
 const BOQ = () => {
   const [modalContent, setModalContent] = useState(null);
   const boqItems = [
-    {
-      id: 1,
-      category: 'งานโครงสร้าง (Structural)',
-      item: 'พื้นความหนา 200 มม. เสริมเหล็ก Wiremesh #4mm. พร้อมแผ่นพลาสติกปูรองและปรับสโลปลาดเอียง (ไม่วางระบบท่อระบายน้ำ)',
-      qty: '160.5',
-      unit: 'ตร.ม.',
-      unitPrice: 1100,
-      total: 176550,
-      imageSrc: './court_cross_section.jpg',
-    },
-    {
-      id: 2,
-      category: 'งานสถาปัตยกรรม (Architectural)',
-      item: 'ระบบพื้นผิวอะคริลิก 5 ชั้น (Acrylic Coating 2-3 mm)',
-      qty: '160.5',
-      unit: 'ตร.ม.',
-      unitPrice: 650,
-      total: 104325,
-      imageSrc: './acrylic_surface.jpg',
-    },
-    {
-      id: 3,
-      category: 'งานหลังคา (Roofing)',
-      item: 'การดึงสลิงติดผ้าใบกันแดด (Sunshade Sail with Cable Tension)',
-      qty: '160.5',
-      unit: 'ตร.ม.',
-      unitPrice: 1200,
-      total: 192600,
-      imageSrc: './tensile_roof.jpg',
-    },
-    {
-      id: 4,
-      category: 'งานสถาปัตยกรรม (Architectural)',
-      item: 'งานตีเส้นสนาม (Court Markings: Futsal, Basketball, Takraw)',
-      qty: '1',
-      unit: 'เหมา',
-      unitPrice: 25000,
-      total: 25000,
-      imageSrc: './court_markings.jpg',
-    },
-    {
-      id: 5,
-      category: 'งานภูมิทัศน์ (Landscape & Fencing)',
-      item: 'งานตาข่ายกันลูกบอลหลังประตู (โครงสร้างเสาและตาข่าย 2 ด้าน)',
-      qty: '1',
-      unit: 'เหมา',
-      unitPrice: 15000,
-      total: 15000,
-      imageSrc: './fencing_net.jpg',
-    },
-    {
-      id: 6,
-      category: 'งานระบบไฟฟ้า (Electrical)',
-      item: 'ระบบไฟส่องสว่าง LED 400W จำนวน 8 โคม พร้อมเสาและตู้คอนโทรล',
-      qty: '1',
-      unit: 'ชุด',
-      unitPrice: 120000,
-      total: 120000,
-      imageSrc: './led_lighting.jpg',
-    },
-    {
-      id: 7,
-      category: 'อุปกรณ์กีฬา (Sports Equipment)',
-      item: 'เสาแป้นบาสเกตบอลแบบยึดพื้น Fix, ประตูโกลหนู ขนาด 120 x 80 x 54 cm. พร้อมตาข่าย',
-      qty: '1',
-      unit: 'ชุด',
-      unitPrice: 85000,
-      total: 85000,
-      imageSrc: './sports_equipment.jpg',
-    }
+    // 1. งานเตรียมพื้นที่และโครงสร้าง (Site Prep & Structural)
+    { id: 1, category: 'งานโครงสร้าง (Structural)', item: 'งานเตรียมพื้นที่ ปรับระดับและบดอัดดินเดิม (Subgrade Compaction)', qty: 160.5, unit: 'ตร.ม.', unitPrice: 50, total: 8025, imageSrc: './subgrade.jpg' },
+    { id: 2, category: 'งานโครงสร้าง (Structural)', item: 'งานทรายหยาบรองพื้น หนา 0.05 ม. (Sand Cushion)', qty: 8.03, unit: 'ลบ.ม.', unitPrice: 450, total: 3613.5, imageSrc: './subgrade.jpg' },
+    { id: 3, category: 'งานโครงสร้าง (Structural)', item: 'แผ่นพลาสติกปูรองกันความชื้น (PE Sheet 0.15mm)', qty: 160.5, unit: 'ตร.ม.', unitPrice: 15, total: 2407.5, imageSrc: './rc_slab.jpg' },
+    { id: 4, category: 'งานโครงสร้าง (Structural)', item: 'เหล็กตะแกรง Wiremesh #4mm @0.20m', qty: 160.5, unit: 'ตร.ม.', unitPrice: 45, total: 7222.5, imageSrc: './wiremesh.jpg' },
+    { id: 5, category: 'งานโครงสร้าง (Structural)', item: 'คอนกรีตผสมเสร็จ 280 ksc (Cylinder) หนา 200 มม.', qty: 32.1, unit: 'ลบ.ม.', unitPrice: 2200, total: 70620, imageSrc: './rc_slab.jpg' },
+    { id: 6, category: 'งานโครงสร้าง (Structural)', item: 'งานไม้แบบและตั้งแบบ (Formwork)', qty: 1, unit: 'เหมา', unitPrice: 8500, total: 8500, imageSrc: './rc_slab.jpg' },
+    { id: 7, category: 'งานโครงสร้าง (Structural)', item: 'งานตัด Joint และหยอดยางมะตอย (Concrete Joint)', qty: 65, unit: 'ม.', unitPrice: 60, total: 3900, imageSrc: './concrete_joints.jpg' },
+    
+    // 2. งานสถาปัตยกรรมพื้นผิว (Surface Coating)
+    { id: 8, category: 'งานสถาปัตยกรรม (Architectural)', item: 'น้ำยารองพื้น Primer อะคริลิก (Acrylic Primer)', qty: 160.5, unit: 'ตร.ม.', unitPrice: 100, total: 16050, imageSrc: './acrylic_surface.jpg' },
+    { id: 9, category: 'งานสถาปัตยกรรม (Architectural)', item: 'ชั้นยางสังเคราะห์รองพื้น (Cushion Layer) 2 ชั้น', qty: 160.5, unit: 'ตร.ม.', unitPrice: 350, total: 56175, imageSrc: './acrylic_surface.jpg' },
+    { id: 10, category: 'งานสถาปัตยกรรม (Architectural)', item: 'สีทับหน้าอะคริลิก 100% ทน UV (Acrylic Topcoat) 3 ชั้น', qty: 160.5, unit: 'ตร.ม.', unitPrice: 250, total: 40125, imageSrc: './acrylic_surface.jpg' },
+    { id: 11, category: 'งานสถาปัตยกรรม (Architectural)', item: 'งานตีเส้นสนาม (Futsal, Basketball, Takraw)', qty: 1, unit: 'เหมา', unitPrice: 15000, total: 15000, imageSrc: './court_markings.jpg' },
+
+    // 3. งานหลังคาและอุปกรณ์ (Roofing & Equipment)
+    { id: 12, category: 'งานหลังคา (Roofing)', item: 'งานดึงสลิงติดผ้าใบกันแดด (Sunshade Sail with Cable Tension)', qty: 160.5, unit: 'ตร.ม.', unitPrice: 1200, total: 192600, imageSrc: './tensile_roof.jpg' },
+    { id: 13, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'เสาแป้นบาสเกตบอล เหล็กกล่อง 100x100 t3.2 พร้อมแป้นกระจกอะคริลิกใส', qty: 1, unit: 'ชุด', unitPrice: 55000, total: 55000, imageSrc: './sports_equipment.jpg' },
+    { id: 14, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'ประตูโกลหนู 120x80x54 ซม. พร้อมตาข่าย', qty: 2, unit: 'ชุด', unitPrice: 8500, total: 17000, imageSrc: './sports_equipment.jpg' },
+    { id: 15, category: 'งานภูมิทัศน์ (Landscape & Fencing)', item: 'งานตาข่ายกันลูกบอลหลังประตู (โครงสร้างเสาและตาข่าย 2 ด้าน)', qty: 1, unit: 'เหมา', unitPrice: 15000, total: 15000, imageSrc: './fencing_net.jpg' },
+
+    // 4. งานระบบไฟฟ้า (Electrical)
+    { id: 16, category: 'งานระบบไฟฟ้า (Electrical)', item: 'เสาไฟเหล็กกัลวาไนซ์ สูง 6 ม.', qty: 4, unit: 'ต้น', unitPrice: 8500, total: 34000, imageSrc: './led_lighting.jpg' },
+    { id: 17, category: 'งานระบบไฟฟ้า (Electrical)', item: 'โคมไฟ LED Floodlight 400W พร้อมติดตั้ง', qty: 8, unit: 'โคม', unitPrice: 8500, total: 68000, imageSrc: './led_lighting.jpg' },
+    { id: 18, category: 'งานระบบไฟฟ้า (Electrical)', item: 'ตู้คอนโทรล สายไฟ NYY และท่อร้อยสาย', qty: 1, unit: 'เหมา', unitPrice: 18000, total: 18000, imageSrc: './led_lighting.jpg' }
   ];
 
   const totalAmount = boqItems.reduce((sum, item) => sum + item.total, 0);
