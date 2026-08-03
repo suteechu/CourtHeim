@@ -2,83 +2,79 @@ import React from 'react';
 
 const Hero = () => {
   return (
-    <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden bg-gray-900">
-      {/* Dynamic Background with SVG Pattern */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0a192f]/95 via-[#0a192f]/80 to-transparent z-10" />
-        <div 
-          className="absolute inset-0 z-10 opacity-20 mix-blend-overlay"
-          style={{ backgroundImage: 'radial-gradient(#ffffff 1px, transparent 1px)', backgroundSize: '20px 20px' }}
-        />
-        <div className="absolute right-0 top-0 bottom-0 w-1/2 bg-gradient-to-l from-heim-red/20 to-transparent z-10 transform skew-x-[-15deg] translate-x-32" />
-        <img 
-          src="./hero-bg.jpg" 
-          alt="Sports Field Background" 
-          className="w-full h-full object-cover grayscale opacity-60"
-        />
-      </div>
+    <section id="home" className="relative min-h-screen flex items-center justify-center bg-[#f8fafc] overflow-hidden pt-20">
       
-      <div className="container mx-auto px-6 relative z-20">
-        <div className="max-w-4xl">
-          {/* Sporty Badge */}
-          <div className="inline-block transform -skew-x-12 bg-heim-red mb-6 px-4 py-1.5 shadow-[4px_4px_0px_0px_rgba(255,255,255,0.2)]">
-            <span className="block transform skew-x-12 text-white font-bold tracking-widest text-sm uppercase">
-              INTERNAL DOCUMENT
-            </span>
+      {/* Decorative Minimalist Elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] right-[-5%] w-1/2 h-[120%] bg-gradient-to-l from-gray-200/40 to-transparent transform rotate-12"></div>
+        <div className="absolute bottom-10 left-10 text-gray-200 text-9xl font-black italic opacity-30 select-none">SCG HEIM</div>
+      </div>
+
+      <div className="container mx-auto px-6 relative z-20 flex flex-col lg:flex-row items-center gap-12">
+        
+        {/* Text Content */}
+        <div className="lg:w-1/2 w-full text-left">
+          <div className="inline-flex items-center gap-4 mb-8">
+            <span className="w-12 h-1 bg-heim-red"></span>
+            <span className="text-gray-900 font-bold tracking-[0.2em] text-sm uppercase">INTERNAL DOCUMENT</span>
           </div>
 
-          {/* Aggressive Typography */}
-          <h1 className="text-5xl md:text-7xl font-bold text-white leading-[1.1] mb-6 uppercase italic tracking-tight">
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">คู่มือโครงการสนามกีฬา</span>
-            <span className="block text-heim-red drop-shadow-[0_0_15px_rgba(220,38,38,0.5)] mt-2">SCG HEIM Project</span>
+          <h1 className="text-5xl md:text-7xl font-black text-gray-900 leading-[1.1] mb-6 tracking-tighter uppercase">
+            SCG HEIM <br/>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-500">
+              Project Manual
+            </span>
           </h1>
           
-          <div className="w-24 h-1.5 bg-heim-red mb-8 transform -skew-x-12"></div>
+          <h2 className="text-2xl text-gray-800 font-bold mb-6">
+            คู่มือโครงการสนามกีฬาอเนกประสงค์
+          </h2>
 
-          <p className="text-xl text-gray-300 mb-12 max-w-2xl leading-relaxed border-l-4 border-heim-red pl-6 font-medium">
+          <p className="text-lg text-gray-600 mb-10 max-w-xl leading-relaxed font-light">
             ศูนย์รวมข้อมูลอ้างอิง สเปกวิศวกรรม (Technical Specs) และมาตรฐานปฏิบัติงาน สำหรับทีมงาน SCG HEIM เพื่อควบคุมคุณภาพการก่อสร้างและการส่งมอบพื้นที่
           </p>
 
-          {/* Sporty Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-6">
-            <a href="#specifications" className="group relative px-8 py-4 bg-heim-blue text-white font-bold text-lg uppercase tracking-wider transform -skew-x-12 transition-all hover:bg-blue-800 shadow-[6px_6px_0_0_#dc2626] hover:shadow-[2px_2px_0_0_#dc2626] hover:translate-x-1 hover:translate-y-1">
-              <span className="block transform skew-x-12 flex items-center justify-center">
-                ดูสเปกวิศวกรรม (Specs)
-                <svg className="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
-              </span>
+          {/* Minimalist Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4">
+            <a href="#specifications" className="px-8 py-4 bg-gray-900 text-white font-bold text-sm uppercase tracking-widest hover:bg-black transition-all flex items-center justify-center group shadow-xl hover:shadow-2xl">
+              ดูสเปกวิศวกรรม
+              <svg className="w-4 h-4 ml-3 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
             </a>
             
-            <a href="#boq" className="group relative px-8 py-4 bg-transparent border-2 border-white text-white font-bold text-lg uppercase tracking-wider transform -skew-x-12 transition-all hover:bg-white hover:text-heim-blue shadow-[6px_6px_0_0_#ffffff40] hover:shadow-[2px_2px_0_0_#ffffff40] hover:translate-x-1 hover:translate-y-1">
-              <span className="block transform skew-x-12 flex items-center justify-center">
-                ดูราคา (BOQ)
-              </span>
+            <a href="#boq" className="px-8 py-4 bg-white border border-gray-300 text-gray-900 font-bold text-sm uppercase tracking-widest hover:border-gray-900 transition-all flex items-center justify-center shadow-sm hover:shadow-md">
+              ดูราคาประเมิน
             </a>
 
-            <a href="#blueprints" className="group relative px-8 py-4 bg-heim-red text-white font-bold text-lg uppercase tracking-wider transform -skew-x-12 transition-all hover:bg-red-700 shadow-[6px_6px_0_0_rgba(255,255,255,0.2)] hover:shadow-[2px_2px_0_0_rgba(255,255,255,0.2)] hover:translate-x-1 hover:translate-y-1 flex items-center justify-center">
-              <span className="block transform skew-x-12 flex items-center justify-center">
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                แบบแปลน (Blueprints)
-              </span>
+            <a href="#blueprints" className="px-8 py-4 bg-heim-red text-white font-bold text-sm uppercase tracking-widest hover:bg-red-700 transition-all flex items-center justify-center shadow-xl hover:shadow-2xl">
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              แบบแปลน
             </a>
           </div>
         </div>
-      </div>
 
-      {/* Decorative Sport Stripes */}
-      <div className="absolute bottom-0 right-10 z-20 flex gap-2 transform skew-x-[-15deg] opacity-50">
-        <div className="w-4 h-32 bg-heim-red"></div>
-        <div className="w-2 h-32 bg-white"></div>
-        <div className="w-8 h-32 bg-heim-blue"></div>
-      </div>
-
-      {/* Scroll indicator */}
-      <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20 animate-bounce">
-        <a href="#courts" className="text-white opacity-50 hover:opacity-100 transition-opacity flex flex-col items-center">
-          <span className="text-xs uppercase tracking-[0.2em] font-bold mb-2">Scroll</span>
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-          </svg>
-        </a>
+        {/* Hero Image Area */}
+        <div className="lg:w-1/2 w-full relative">
+          <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] transform transition-transform hover:scale-[1.02] duration-700 border-4 border-white">
+            <img 
+              src="./hero-bg.jpg" 
+              alt="Sports Field" 
+              className="w-full h-full object-cover"
+            />
+            {/* Subtle overlay to make it look premium */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent mix-blend-overlay pointer-events-none"></div>
+          </div>
+          
+          {/* Floating minimal stat card */}
+          <div className="absolute -bottom-6 -left-6 md:-bottom-8 md:-left-8 bg-white/90 backdrop-blur-md p-5 rounded-2xl shadow-xl border border-white flex items-center gap-4 animate-fade-in-up">
+            <div className="w-12 h-12 bg-heim-red/10 rounded-full flex items-center justify-center text-heim-red">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">พื้นที่สนามมาตรฐาน</p>
+              <p className="text-2xl font-black text-gray-900 tracking-tighter">175.5 <span className="text-sm font-medium text-gray-500 tracking-normal">sq.m</span></p>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
