@@ -2,6 +2,15 @@ import React, { useState } from 'react';
 
 const BOQ = () => {
   const [expandedCategories, setExpandedCategories] = useState({
+    'งานโครงสร้าง (Structural)': false,
+    'งานสถาปัตยกรรม (Architectural)': false,
+    'งานหลังคา (Roofing)': false,
+    'อุปกรณ์กีฬา (Sports Equipment)': false,
+    'งานภูมิทัศน์ (Landscape & Fencing)': false,
+    'งานระบบไฟฟ้า (Electrical)': false,
+  });
+
+  const [selectedCategories, setSelectedCategories] = useState({
     'งานโครงสร้าง (Structural)': true,
     'งานสถาปัตยกรรม (Architectural)': true,
     'งานหลังคา (Roofing)': true,
@@ -9,6 +18,14 @@ const BOQ = () => {
     'งานภูมิทัศน์ (Landscape & Fencing)': true,
     'งานระบบไฟฟ้า (Electrical)': true,
   });
+
+  const toggleSelection = (category, e) => {
+    e.stopPropagation();
+    setSelectedCategories(prev => ({
+      ...prev,
+      [category]: !prev[category]
+    }));
+  };
 
   const toggleCategory = (category) => {
     setExpandedCategories(prev => ({
@@ -62,7 +79,9 @@ const BOQ = () => {
     { id: 22, category: 'งานระบบไฟฟ้า (Electrical)', item: 'ตู้คอนโทรล สายไฟ NYY และท่อร้อยสาย', qty: 1, unit: 'เหมา', materialPrice: 0, laborPrice: 0, total: 0 }
   ]);
 
-  const totalAmount = boqItems.reduce((sum, item) => sum + item.total, 0);
+  const totalAmount = boqItems.reduce((sum, item) => {
+    return selectedCategories[item.category] !== false ? sum + item.total : sum;
+  }, 0);
   const vat = totalAmount * 0.07;
   const grandTotal = totalAmount + vat;
 
@@ -84,6 +103,8 @@ const BOQ = () => {
     let csvContent = BOM + headers.join(',') + '\n';
     
     Object.entries(groupedBoq).forEach(([category, items], catIndex) => {
+      if (selectedCategories[category] === false) return; // Skip unselected categories
+
       const safeCategory = `"${category.replace(/"/g, '""')}"`;
       csvContent += `${catIndex + 1},${safeCategory},,,,,,\n`;
 
@@ -250,7 +271,19 @@ const BOQ = () => {
                       <td className="px-3 py-2 text-center text-gray-500">
                         <svg className={`w-4 h-4 mx-auto transition-transform ${isExpanded ? 'rotate-90' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
                       </td>
-                      <td className="px-3 py-2" colSpan={5}>{catIndex + 1}. {category}</td>
+                      <td className="px-3 py-2" colSpan={5}>
+                        <div className="flex items-center gap-3">
+                          <input 
+                            type="checkbox"
+                            className="w-4 h-4 text-heim-blue rounded focus:ring-heim-blue cursor-pointer border-gray-300"
+                            checked={selectedCategories[category] !== false}
+                            onChange={(e) => toggleSelection(category, e)}
+                            onClick={(e) => e.stopPropagation()}
+                            title="เลือก/ไม่เลือกหมวดหมู่นี้เพื่อคำนวณราคารวม"
+                          />
+                          <span>{catIndex + 1}. {category}</span>
+                        </div>
+                      </td>
                       <td className="px-3 py-2 text-right text-heim-blue">{categoryTotal.toLocaleString('th-TH')}</td>
                     </tr>
                     {isExpanded && items.map((item, itemIndex) => (
