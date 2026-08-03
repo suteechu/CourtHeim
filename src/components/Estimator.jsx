@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 const Estimator = () => {
-  const [area, setArea] = useState(177.50);
+  const [area, setArea] = useState(178);
 
   const estimatedDays = Math.max(30, Math.ceil(area / 10) + 20);
   const concreteVolume = (area * 0.20).toFixed(1);

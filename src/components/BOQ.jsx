@@ -49,25 +49,25 @@ const BOQ = () => {
 
   const [boqItems, setBoqItems] = useState([
     // 1. งานเตรียมพื้นที่และโครงสร้าง (Site Prep & Structural)
-    { id: 1, category: 'งานโครงสร้าง (Structural)', item: 'งานเตรียมพื้นที่ ปรับระดับบดอัดดินเดิม และทำ Slope 1:200 (Subgrade & Slope 1:200)', qty: 177.50, unit: 'ตร.ม.', materialPrice: 0, laborPrice: 50, total: 8875 },
-    { id: 2, category: 'งานโครงสร้าง (Structural)', item: 'งานหินคลุกบดอัดแน่น หนา 0.10 ม. (Crushed Stone Subbase)', qty: 17.7500, unit: 'คิว', materialPrice: 550, laborPrice: 150, total: 12425 },
-    { id: 3, category: 'งานโครงสร้าง (Structural)', item: 'งานทรายหยาบรองพื้น หนา 0.05 ม. (Sand Cushion)', qty: 8.8750, unit: 'คิว', materialPrice: 350, laborPrice: 100, total: 3993.75 },
-    { id: 4, category: 'งานโครงสร้าง (Structural)', item: 'แผ่นพลาสติกปูรองกันความชื้น (PE Sheet 0.15mm)', qty: 177.50, unit: 'ตร.ม.', materialPrice: 10, laborPrice: 5, total: 2662.5 },
-    { id: 5, category: 'งานโครงสร้าง (Structural)', item: 'เหล็กตะแกรง Wiremesh #4mm @0.20m', qty: 177.50, unit: 'ตร.ม.', materialPrice: 35, laborPrice: 10, total: 7987.5 },
-    { id: 6, category: 'งานโครงสร้าง (Structural)', item: 'คอนกรีตผสมเสร็จ 280 ksc หนา 200 มม. พร้อมขัดหยาบปรับ Slope 1:200', qty: 35.5000, unit: 'คิว', materialPrice: 2000, laborPrice: 200, total: 78100 },
+    { id: 1, category: 'งานโครงสร้าง (Structural)', item: 'งานเตรียมพื้นที่ ปรับระดับบดอัดดินเดิม และทำ Slope 1:200 (Subgrade & Slope 1:200)', qty: 178, unit: 'ตร.ม.', materialPrice: 0, laborPrice: 50, total: 8900 },
+    { id: 2, category: 'งานโครงสร้าง (Structural)', item: 'งานหินคลุกบดอัดแน่น หนา 0.10 ม. (Crushed Stone Subbase)', qty: 17.800000, unit: 'คิว', materialPrice: 550, laborPrice: 150, total: 12460 },
+    { id: 3, category: 'งานโครงสร้าง (Structural)', item: 'งานทรายหยาบรองพื้น หนา 0.05 ม. (Sand Cushion)', qty: 8.9000, unit: 'คิว', materialPrice: 350, laborPrice: 100, total: 4005 },
+    { id: 4, category: 'งานโครงสร้าง (Structural)', item: 'แผ่นพลาสติกปูรองกันความชื้น (PE Sheet 0.15mm)', qty: 178, unit: 'ตร.ม.', materialPrice: 10, laborPrice: 5, total: 2670 },
+    { id: 5, category: 'งานโครงสร้าง (Structural)', item: 'เหล็กตะแกรง Wiremesh #4mm @0.20m', qty: 178, unit: 'ตร.ม.', materialPrice: 35, laborPrice: 10, total: 8010 },
+    { id: 6, category: 'งานโครงสร้าง (Structural)', item: 'คอนกรีตผสมเสร็จ 280 ksc หนา 200 มม. พร้อมขัดหยาบปรับ Slope 1:200', qty: 35.6000, unit: 'คิว', materialPrice: 2000, laborPrice: 200, total: 78320 },
     { id: 7, category: 'งานโครงสร้าง (Structural)', item: 'งานไม้แบบและตั้งแบบ (Formwork)', qty: 1, unit: 'เหมา', materialPrice: 3500, laborPrice: 0, total: 3500 },
     { id: 8, category: 'งานโครงสร้าง (Structural)', item: 'งานตัด Joint และหยอดยางมะตอย (Concrete Joint)', qty: 71, unit: 'ม.', materialPrice: 40, laborPrice: 20, total: 4260 },
     { id: 23, category: 'งานโครงสร้าง (Structural)', item: 'เหล็ก Dowel Bar 16มม. @0.30ม. (เหล็กเดือยตรงรอยต่อ)', qty: 71, unit: 'ม.', materialPrice: 60, laborPrice: 20, total: 5680 },
-    { id: 24, category: 'งานโครงสร้าง (Structural)', item: 'น้ำยาบ่มคอนกรีต (Curing Compound)', qty: 177.50, unit: 'ตร.ม.', materialPrice: 15, laborPrice: 5, total: 3550 },
+    { id: 24, category: 'งานโครงสร้าง (Structural)', item: 'น้ำยาบ่มคอนกรีต (Curing Compound)', qty: 178, unit: 'ตร.ม.', materialPrice: 15, laborPrice: 5, total: 3560 },
     
     // 2. งานสถาปัตยกรรมพื้นผิว (Surface Coating)
-    { id: 9, category: 'งานสถาปัตยกรรม (Architectural)', item: 'น้ำยารองพื้น Primer อะคริลิก (Acrylic Primer)', qty: 177.50, unit: 'ตร.ม.', materialPrice: 60, laborPrice: 40, total: 17750 },
-    { id: 10, category: 'งานสถาปัตยกรรม (Architectural)', item: 'ชั้นยางสังเคราะห์รองพื้น (Cushion Layer) 2 ชั้น', qty: 177.50, unit: 'ตร.ม.', materialPrice: 200, laborPrice: 150, total: 62125 },
-    { id: 11, category: 'งานสถาปัตยกรรม (Architectural)', item: 'สีทับหน้าอะคริลิก 100% ทน UV (Acrylic Topcoat) 3 ชั้น', qty: 177.50, unit: 'ตร.ม.', materialPrice: 150, laborPrice: 100, total: 44375 },
+    { id: 9, category: 'งานสถาปัตยกรรม (Architectural)', item: 'น้ำยารองพื้น Primer อะคริลิก (Acrylic Primer)', qty: 178, unit: 'ตร.ม.', materialPrice: 60, laborPrice: 40, total: 17800 },
+    { id: 10, category: 'งานสถาปัตยกรรม (Architectural)', item: 'ชั้นยางสังเคราะห์รองพื้น (Cushion Layer) 2 ชั้น', qty: 178, unit: 'ตร.ม.', materialPrice: 200, laborPrice: 150, total: 62300 },
+    { id: 11, category: 'งานสถาปัตยกรรม (Architectural)', item: 'สีทับหน้าอะคริลิก 100% ทน UV (Acrylic Topcoat) 3 ชั้น', qty: 178, unit: 'ตร.ม.', materialPrice: 150, laborPrice: 100, total: 44500 },
     { id: 12, category: 'งานสถาปัตยกรรม (Architectural)', item: 'งานตีเส้นสนาม (Futsal, Basketball, Takraw)', qty: 1, unit: 'เหมา', materialPrice: 5000, laborPrice: 10000, total: 15000 },
 
     // 3. งานหลังคาและอุปกรณ์ (Roofing & Equipment)
-    { id: 13, category: 'งานหลังคา (Roofing)', item: 'งานผ้าใบกันแดด HDPE (4 แผ่น ขนาด 10.7x4.1 ม.)', qty: 177.50, unit: 'ตร.ม.', materialPrice: 600, laborPrice: 150, total: 133125 },
+    { id: 13, category: 'งานหลังคา (Roofing)', item: 'งานผ้าใบกันแดด HDPE (4 แผ่น ขนาด 10.7x4.1 ม.)', qty: 178, unit: 'ตร.ม.', materialPrice: 600, laborPrice: 150, total: 133500 },
     { id: 14, category: 'งานหลังคา (Roofing)', item: 'ชุดสลิงสแตนเลส 8mm ดึงตึง (ยาวรวม 90 ม.) พร้อมอุปกรณ์ยึด', qty: 1, unit: 'ชุด', materialPrice: 25000, laborPrice: 15000, total: 40000 },
     { id: 15, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'แป้นบาสฝังพื้น 72 นิ้ว (HOOP IT รุ่น SPG-1209)', link: 'https://xn--q3ccb6dvb8erc.com/%e0%b9%81%e0%b8%9b%e0%b9%89%e0%b8%99%e0%b8%9a%e0%b8%b2%e0%b8%aa%e0%b8%9d%e0%b8%b1%e0%b8%87%e0%b8%9e%e0%b8%b7%e0%b9%89%e0%b8%99%e0%b8%a1%e0%b8%b2%e0%b8%95%e0%b8%a3%e0%b8%90%e0%b8%b2%e0%b8%99%e0%b9%81/', qty: 1, unit: 'ชุด', materialPrice: 40000, laborPrice: 0, total: 40000 },
     { id: 16, category: 'อุปกรณ์กีฬา (Sports Equipment)', item: 'โกลหนู (WINNER) เหล็กกลม 2 นิ้ว ขนาด 200x100 ซม. พร้อมตาข่าย', link: 'https://www.winnersports2504.com/product/54/%E0%B9%82%E0%B8%81%E0%B8%A5%E0%B8%AB%E0%B8%99%E0%B8%B9-%E0%B8%9E%E0%B8%A3%E0%B9%89%E0%B8%AD%E0%B8%A1%E0%B8%95%E0%B8%B2%E0%B8%82%E0%B9%88%E0%B8%B2%E0%B8%A2-winner?srsltid=AfmBOorCf4V9sdJztSgDRhgif1jlxOBgLPRB9o21VRN6--1V0C15uAZc', qty: 1, unit: 'คู่', materialPrice: 15000, laborPrice: 0, total: 15000 },
@@ -215,7 +215,7 @@ const BOQ = () => {
           </h2>
           <div className="h-1 w-24 bg-heim-red mx-auto rounded-full mb-6"></div>
           <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-            สำหรับการก่อสร้างสนามกีฬามัลติฟังก์ชัน ขนาด 10.70 x 16.40 เมตร (177.50 ตร.ม.)
+            สำหรับการก่อสร้างสนามกีฬามัลติฟังก์ชัน ขนาด 10.70 x 16.40 เมตร (178 ตร.ม.)
           </p>
         </div>
 
