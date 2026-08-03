@@ -29,6 +29,9 @@ const Hero = () => {
             <a href="#specifications" className="px-8 py-4 bg-heim-blue text-white rounded-full font-medium text-lg text-center hover:bg-blue-800 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1">
               ดูสเปกวิศวกรรม (Specs)
             </a>
+            <a href="#boq" className="px-8 py-4 bg-heim-red text-white rounded-full font-medium text-lg text-center hover:bg-red-700 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1">
+              ดูราคา (BOQ)
+            </a>
             <a href="./blueprint.html" target="_blank" className="px-8 py-4 bg-white/10 text-white backdrop-blur-md border border-white/20 rounded-full font-medium text-lg text-center hover:bg-white/20 transition-all flex items-center justify-center">
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
               ดาวน์โหลดแบบแปลน (Blueprints)
