@@ -185,7 +185,7 @@ const Specifications = () => {
             </ul>
           </div>
 
-
+        </div>
 
         {/* Construction Method & Quality Control */}
         <div className="mt-12 bg-white p-8 rounded-2xl border border-gray-200 shadow-sm">
