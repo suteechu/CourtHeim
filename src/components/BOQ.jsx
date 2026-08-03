@@ -61,9 +61,9 @@ const BOQ = () => {
     { id: 24, category: 'งานโครงสร้าง (Structural)', item: 'น้ำยาบ่มคอนกรีต (Curing Compound)', qty: 178, unit: 'ตร.ม.', materialPrice: 15, laborPrice: 5, total: 3560 },
     
     // 2. งานสถาปัตยกรรมพื้นผิว (Surface Coating)
-    { id: 9, category: 'งานสถาปัตยกรรม (Architectural)', item: 'น้ำยารองพื้น Primer อะคริลิก (Acrylic Primer)', qty: 178, unit: 'ตร.ม.', materialPrice: 60, laborPrice: 40, total: 17800 },
-    { id: 10, category: 'งานสถาปัตยกรรม (Architectural)', item: 'ชั้นยางสังเคราะห์รองพื้น (Cushion Layer) 2 ชั้น', qty: 178, unit: 'ตร.ม.', materialPrice: 200, laborPrice: 150, total: 62300 },
-    { id: 11, category: 'งานสถาปัตยกรรม (Architectural)', item: 'สีทับหน้าอะคริลิก 100% ทน UV (Acrylic Topcoat) 3 ชั้น', qty: 178, unit: 'ตร.ม.', materialPrice: 150, laborPrice: 100, total: 44500 },
+    { id: 9, category: 'งานสถาปัตยกรรม (Architectural)', item: 'น้ำยารองพื้น Primer อะคริลิก (Acrylic Primer)', link: 'https://www.toagroup.com/th/product/primer', qty: 178, unit: 'ตร.ม.', materialPrice: 60, laborPrice: 40, total: 17800 },
+    { id: 10, category: 'งานสถาปัตยกรรม (Architectural)', item: 'ชั้นยางสังเคราะห์รองพื้น (Cushion Layer) 2 ชั้น', link: 'https://www.toagroup.com/th/products/special-paint', qty: 178, unit: 'ตร.ม.', materialPrice: 200, laborPrice: 150, total: 62300 },
+    { id: 11, category: 'งานสถาปัตยกรรม (Architectural)', item: 'สีทับหน้าอะคริลิก 100% ทน UV (Acrylic Topcoat) 3 ชั้น', link: 'https://www.toagroup.com/th/product/waterproofing/waterproofing-for-roof-and-deck/312/toa-roof-paint', qty: 178, unit: 'ตร.ม.', materialPrice: 150, laborPrice: 100, total: 44500 },
     { id: 12, category: 'งานสถาปัตยกรรม (Architectural)', item: 'งานตีเส้นสนาม (Futsal, Basketball, Takraw)', qty: 1, unit: 'เหมา', materialPrice: 5000, laborPrice: 10000, total: 15000 },
 
     // 3. งานหลังคาและอุปกรณ์ (Roofing & Equipment)
