@@ -57,6 +57,8 @@ const BOQ = () => {
     { id: 6, category: 'งานโครงสร้าง (Structural)', item: 'คอนกรีตผสมเสร็จ 280 ksc หนา 200 มม. พร้อมขัดหยาบปรับ Slope 1:200', qty: 35.1, unit: 'ลบ.ม.', materialPrice: 1800, laborPrice: 400, total: 77220 },
     { id: 7, category: 'งานโครงสร้าง (Structural)', item: 'งานไม้แบบและตั้งแบบ (Formwork)', qty: 1, unit: 'เหมา', materialPrice: 3500, laborPrice: 5000, total: 8500 },
     { id: 8, category: 'งานโครงสร้าง (Structural)', item: 'งานตัด Joint และหยอดยางมะตอย (Concrete Joint)', qty: 71, unit: 'ม.', materialPrice: 40, laborPrice: 20, total: 4260 },
+    { id: 23, category: 'งานโครงสร้าง (Structural)', item: 'เหล็ก Dowel Bar 16มม. @0.30ม. (เหล็กเดือยตรงรอยต่อ)', qty: 71, unit: 'ม.', materialPrice: 60, laborPrice: 20, total: 5680 },
+    { id: 24, category: 'งานโครงสร้าง (Structural)', item: 'น้ำยาบ่มคอนกรีต (Curing Compound)', qty: 175.5, unit: 'ตร.ม.', materialPrice: 15, laborPrice: 5, total: 3510 },
     
     // 2. งานสถาปัตยกรรมพื้นผิว (Surface Coating)
     { id: 9, category: 'งานสถาปัตยกรรม (Architectural)', item: 'น้ำยารองพื้น Primer อะคริลิก (Acrylic Primer)', qty: 175.5, unit: 'ตร.ม.', materialPrice: 60, laborPrice: 40, total: 17550 },
