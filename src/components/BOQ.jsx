@@ -38,6 +38,12 @@ const BOQ = () => {
     return new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB' }).format(amount);
   };
 
+  const groupedBoq = boqItems.reduce((acc, item) => {
+    if (!acc[item.category]) acc[item.category] = [];
+    acc[item.category].push(item);
+    return acc;
+  }, {});
+
   const exportToCSV = () => {
     // UTF-8 BOM for Excel
     const BOM = '\uFEFF';
@@ -45,16 +51,20 @@ const BOQ = () => {
     
     let csvContent = BOM + headers.join(',') + '\n';
     
-    boqItems.forEach((item, index) => {
-      const category = `"${item.category.replace(/"/g, '""')}"`;
-      const description = `"${item.item.replace(/"/g, '""')}"`;
-      const qty = item.qty;
-      const unit = `"${item.unit.replace(/"/g, '""')}"`;
-      const materialPrice = item.materialPrice;
-      const laborPrice = item.laborPrice;
-      const total = item.total;
-      
-      csvContent += `${index + 1},${category},${description},${qty},${unit},${materialPrice},${laborPrice},${total}\n`;
+    Object.entries(groupedBoq).forEach(([category, items], catIndex) => {
+      const safeCategory = `"${category.replace(/"/g, '""')}"`;
+      csvContent += `${catIndex + 1},${safeCategory},,,,,,\n`;
+
+      items.forEach((item, itemIndex) => {
+        const description = `"${item.item.replace(/"/g, '""')}"`;
+        const qty = item.qty;
+        const unit = `"${item.unit.replace(/"/g, '""')}"`;
+        const materialPrice = item.materialPrice;
+        const laborPrice = item.laborPrice;
+        const total = item.total;
+        
+        csvContent += `${catIndex + 1}.${itemIndex + 1},${safeCategory},${description},${qty},${unit},${materialPrice},${laborPrice},${total}\n`;
+      });
     });
 
     csvContent += `\n,,,,,,รวมเป็นเงิน (Sub Total),${totalAmount}\n`;
@@ -105,24 +115,22 @@ const BOQ = () => {
       
       const newItems = [];
       let startIdx = 1; // skip header
+      let nextId = 1;
       
       for (let i = startIdx; i < lines.length; i++) {
         const row = parseCSVRow(lines[i]);
         if (row.length >= 8) {
           if (!row[0] || row[0].trim() === '') break;
-          
-          const id = parseInt(row[0].trim(), 10);
-          if (isNaN(id)) continue;
+          if (!row[2] || row[2].trim() === '') continue; // skip category header row
 
           const qty = parseFloat(row[3].trim().replace(/,/g, '')) || 0;
           const materialPrice = parseFloat(row[5].trim().replace(/,/g, '')) || 0;
           const laborPrice = parseFloat(row[6].trim().replace(/,/g, '')) || 0;
           
-          // Recalculate total just to be safe, or use the imported total
           const total = parseFloat(row[7].trim().replace(/,/g, '')) || (qty * (materialPrice + laborPrice));
 
           newItems.push({
-            id: id,
+            id: nextId++,
             category: row[1].trim(),
             item: row[2].trim(),
             qty: qty,
@@ -186,25 +194,32 @@ const BOQ = () => {
                 </tr>
               </thead>
               <tbody className="text-sm divide-y divide-gray-200">
-                {boqItems.map((item, index) => (
-                  <tr key={item.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="p-4 text-center text-gray-500">{index + 1}</td>
-                    <td className="p-4">
-                      <div 
-                        className="group flex items-start cursor-pointer"
-                        onClick={() => setModalContent({ src: item.imageSrc, caption: item.item })}
-                      >
-                        <p className="font-medium text-gray-800 group-hover:text-heim-blue transition-colors mr-2">{item.category}</p>
-                        <svg className="w-5 h-5 text-gray-300 group-hover:text-heim-blue opacity-50 group-hover:opacity-100 transition-all shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                      </div>
-                      <span className="text-sm text-gray-500 block mt-1 leading-relaxed">{item.item}</span>
-                    </td>
-                    <td className="p-4 text-right text-gray-700">{item.qty}</td>
-                    <td className="p-4 text-center text-gray-500">{item.unit}</td>
-                    <td className="p-4 text-right text-gray-700">{item.materialPrice.toLocaleString('th-TH')}</td>
-                    <td className="p-4 text-right text-gray-700">{item.laborPrice.toLocaleString('th-TH')}</td>
-                    <td className="p-4 text-right font-medium text-gray-800">{item.total.toLocaleString('th-TH')}</td>
-                  </tr>
+                {Object.entries(groupedBoq).map(([category, items], catIndex) => (
+                  <React.Fragment key={category}>
+                    <tr className="bg-blue-50/50 font-semibold text-heim-blue">
+                      <td className="p-4 text-center">{catIndex + 1}</td>
+                      <td className="p-4" colSpan={6}>{category}</td>
+                    </tr>
+                    {items.map((item, itemIndex) => (
+                      <tr key={item.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="p-4 text-center text-gray-500">{`${catIndex + 1}.${itemIndex + 1}`}</td>
+                        <td className="p-4 pl-8">
+                          <div 
+                            className="group flex items-start cursor-pointer"
+                            onClick={() => setModalContent({ src: item.imageSrc, caption: item.item })}
+                          >
+                            <span className="text-gray-800 group-hover:text-heim-blue transition-colors leading-relaxed block">{item.item}</span>
+                            <svg className="w-4 h-4 text-gray-300 group-hover:text-heim-blue opacity-50 group-hover:opacity-100 transition-all shrink-0 ml-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                          </div>
+                        </td>
+                        <td className="p-4 text-right text-gray-700">{item.qty}</td>
+                        <td className="p-4 text-center text-gray-500">{item.unit}</td>
+                        <td className="p-4 text-right text-gray-700">{item.materialPrice.toLocaleString('th-TH')}</td>
+                        <td className="p-4 text-right text-gray-700">{item.laborPrice.toLocaleString('th-TH')}</td>
+                        <td className="p-4 text-right font-medium text-gray-800">{item.total.toLocaleString('th-TH')}</td>
+                      </tr>
+                    ))}
+                  </React.Fragment>
                 ))}
               </tbody>
             </table>
