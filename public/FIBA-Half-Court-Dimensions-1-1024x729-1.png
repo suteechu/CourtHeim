@@ -1,0 +1,1226 @@
+import { n as __exportAll, r as __toESM, t as __commonJSMin } from "./rolldown-runtime-DC62tzP2.js";
+import { t as require_react } from "./react.js";
+import { t as require_client } from "./react-dom_client.js";
+import { $ as CameraHelper, $n as Raycaster, $t as LinearMipmapNearestFilter, A as clear$1, An as PointLight, Ar as Vector3, At as Group, B as AnimationClip, Bn as RGBA_ASTC_4x4_Format, Bt as InterleavedBufferAttribute, Cn as Object3D, Cr as Uint16BufferAttribute, Ct as EventDispatcher$2, D as useLoader, Dn as PerspectiveCamera$1, Dr as UnsignedIntType, Dt as FloatType, E as useInstanceHandle, En as Path, Er as UnsignedByteType, Et as Float32BufferAttribute, F as ShaderChunk, Fn as Quaternion, Fr as WireframeGeometry, Ft as InstancedBufferGeometry, G as Bone, Gn as RGBA_S3TC_DXT5_Format, Gt as Line$1, H as AudioListener, Hn as RGBA_BPTC_Format, Ht as InterpolateDiscrete, I as UniformsLib, In as QuaternionKeyframeTrack, It as InstancedInterleavedBuffer, J as BoxGeometry, Jn as RGB_PVRTC_4BPPV1_Format, Jt as LineLoop, K as Box2, Kn as RGB_ETC1_Format, Kt as Line3, L as WebGLCubeRenderTarget, Ln as RGBADepthPacking, Lt as InstancedMesh, M as suspend, Mn as PointsMaterial, Mr as VectorKeyframeTrack, Mt as IcosahedronGeometry, N as createStore$1, Nn as PropertyBinding, Nr as VideoTexture$1, Nt as ImageBitmapLoader, On as Plane$1, Or as UnsignedShortType, Ot as Frustum, P as require_with_selector, Pn as QuadraticBezierCurve3, Pr as WebGLRenderTarget, Pt as InstancedBufferAttribute, Q as Camera, Qn as Ray, Qt as LinearMipmapLinearFilter, R as WebGLRenderer, Rn as RGBAFormat, Rt as IntType, Sn as NumberKeyframeTrack, Sr as Triangle, St as Euler, Tn as OrthographicCamera$1, Tr as UniformsUtils, Tt as FileLoader, U as AudioLoader, Un as RGBA_ETC2_EAC_Format, Ut as InterpolateLinear, V as AnimationMixer, Vn as RGBA_ASTC_6x6_Format, Vt as Interpolant, W as BatchedMesh, Wn as RGBA_PVRTC_4BPPV1_Format, Wt as KeepStencilOp, X as BufferGeometry, Xn as RGFormat, Xt as LinearFilter, Y as BufferAttribute, Yn as RGB_S3TC_DXT1_Format, Yt as LineSegments, Z as ByteType, Zn as RGIntegerFormat, Zt as LinearMipMapLinearFilter, _n as MeshStandardMaterial, _r as SpotLight$1, _t as DepthTexture, a as addEffect, an as Material, ar as Scene, at as CompressedTexture, bn as NearestMipmapLinearFilter, br as TextureLoader, bt as EdgesGeometry, c as applyProps, cn as Matrix4, cr as ShapePath, ct as CubicBezierCurve3, dn as MeshDepthMaterial, dr as Skeleton, dt as CylinderGeometry, en as LinearSRGBColorSpace$2, er as RedFormat, et as CanvasTexture, fn as MeshDistanceMaterial, fr as SkeletonHelper, ft as DataTexture, g as extend, gn as MeshPhysicalMaterial, gr as Spherical, gt as DepthFormat, hn as MeshPhongMaterial, hr as SphereGeometry, ht as DefaultLoadingManager, i as addAfterEffect, in as MOUSE, ir as SRGBColorSpace$2, it as Color, j as preload, jn as Points$1, jr as Vector4, jt as HalfFloatType, k as useThree, kn as PlaneGeometry, kr as Vector2, kt as GridHelper, ln as Mesh, lr as ShapeUtils, lt as Curve, mn as MeshNormalMaterial, mr as Sphere$1, mt as DataUtils, nn as LoaderUtils, nr as RepeatWrapping, nt as ClampToEdgeWrapping, on as MathUtils, or as ShaderMaterial, ot as CubeCamera$1, p as createPortal, pn as MeshLambertMaterial, pr as SkinnedMesh, pt as DataTextureLoader, q as Box3, qn as RGB_ETC2_Format, qt as LineBasicMaterial, rn as LoadingManager, rr as ReplaceStencilOp, rt as Clock, sn as Matrix3, sr as Shape$1, st as CubeTextureLoader, tn as Loader$1, tr as RedIntegerFormat, tt as CatmullRomCurve3, u as context$10, un as MeshBasicMaterial, ur as ShortType, ut as CurvePath, vn as MirroredRepeatWrapping, vr as TOUCH, vt as DirectionalLight, w as useFrame, wn as OctahedronGeometry, wr as Uniform, wt as ExtrudeGeometry, xn as NearestMipmapNearestFilter, xr as TorusGeometry, xt as EllipseCurve, yn as NearestFilter, yr as Texture$1, yt as DynamicDrawUsage, z as AmbientLight, zn as RGBAIntegerFormat, zt as InterleavedBuffer } from "./react-three-fiber.esm-BsitdWw8.js";
+//#region node_modules/@babel/runtime/helpers/esm/extends.js
+function _extends$1() {
+	return _extends$1 = Object.assign ? Object.assign.bind() : function(n) {
+		for (var e = 1; e < arguments.length; e++) {
+			var t = arguments[e];
+			for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]);
+		}
+		return n;
+	}, _extends$1.apply(null, arguments);
+}
+//#endregion
+//#region node_modules/@react-three/drei/web/Html.js
+var import_react = /* @__PURE__ */ __toESM(require_react());
+var import_client = /* @__PURE__ */ __toESM(require_client());
+var v1 = /* @__PURE__ */ new Vector3();
+var v2 = /* @__PURE__ */ new Vector3();
+var v3 = /* @__PURE__ */ new Vector3();
+var v4 = /* @__PURE__ */ new Vector2();
+function defaultCalculatePosition(el, camera, size) {
+	const objectPos = v1.setFromMatrixPosition(el.matrixWorld);
+	objectPos.project(camera);
+	const widthHalf = size.width / 2;
+	const heightHalf = size.height / 2;
+	return [objectPos.x * widthHalf + widthHalf, -(objectPos.y * heightHalf) + heightHalf];
+}
+function isObjectBehindCamera(el, camera) {
+	const objectPos = v1.setFromMatrixPosition(el.matrixWorld);
+	const cameraPos = v2.setFromMatrixPosition(camera.matrixWorld);
+	const deltaCamObj = objectPos.sub(cameraPos);
+	const camDir = camera.getWorldDirection(v3);
+	return deltaCamObj.angleTo(camDir) > Math.PI / 2;
+}
+function isObjectVisible(el, camera, raycaster, occlude) {
+	const elPos = v1.setFromMatrixPosition(el.matrixWorld);
+	const screenPos = elPos.clone();
+	screenPos.project(camera);
+	v4.set(screenPos.x, screenPos.y);
+	raycaster.setFromCamera(v4, camera);
+	const intersects = raycaster.intersectObjects(occlude, true);
+	if (intersects.length) {
+		const intersectionDistance = intersects[0].distance;
+		return elPos.distanceTo(raycaster.ray.origin) < intersectionDistance;
+	}
+	return true;
+}
+function objectScale(el, camera) {
+	if (camera instanceof OrthographicCamera$1) return camera.zoom;
+	else if (camera instanceof PerspectiveCamera$1) {
+		const objectPos = v1.setFromMatrixPosition(el.matrixWorld);
+		const cameraPos = v2.setFromMatrixPosition(camera.matrixWorld);
+		const vFOV = camera.fov * Math.PI / 180;
+		const dist = objectPos.distanceTo(cameraPos);
+		return 1 / (2 * Math.tan(vFOV / 2) * dist);
+	} else return 1;
+}
+function objectZIndex(el, camera, zIndexRange) {
+	if (camera instanceof PerspectiveCamera$1 || camera instanceof OrthographicCamera$1) {
+		const objectPos = v1.setFromMatrixPosition(el.matrixWorld);
+		const cameraPos = v2.setFromMatrixPosition(camera.matrixWorld);
+		const dist = objectPos.distanceTo(cameraPos);
+		const A = (zIndexRange[1] - zIndexRange[0]) / (camera.far - camera.near);
+		const B = zIndexRange[1] - A * camera.far;
+		return Math.round(A * dist + B);
+	}
+}
+var epsilon = (value) => Math.abs(value) < 1e-10 ? 0 : value;
+function getCSSMatrix(matrix, multipliers, prepend = "") {
+	let matrix3d = "matrix3d(";
+	for (let i = 0; i !== 16; i++) matrix3d += epsilon(multipliers[i] * matrix.elements[i]) + (i !== 15 ? "," : ")");
+	return prepend + matrix3d;
+}
+var getCameraCSSMatrix = ((multipliers) => {
+	return (matrix) => getCSSMatrix(matrix, multipliers);
+})([
+	1,
+	-1,
+	1,
+	1,
+	1,
+	-1,
+	1,
+	1,
+	1,
+	-1,
+	1,
+	1,
+	1,
+	-1,
+	1,
+	1
+]);
+var getObjectCSSMatrix = ((scaleMultipliers) => {
+	return (matrix, factor) => getCSSMatrix(matrix, scaleMultipliers(factor), "translate(-50%,-50%)");
+})((f) => [
+	1 / f,
+	1 / f,
+	1 / f,
+	1,
+	-1 / f,
+	-1 / f,
+	-1 / f,
+	-1,
+	1 / f,
+	1 / f,
+	1 / f,
+	1,
+	1,
+	1,
+	1,
+	1
+]);
+function isRefObject$1(ref) {
+	return ref && typeof ref === "object" && "current" in ref;
+}
+var Html = /* @__PURE__ */ import_react.forwardRef(({ children, eps = .001, style, className, prepend, center, fullscreen, portal, distanceFactor, sprite = false, transform = false, occlude, onOcclude, castShadow, receiveShadow, material, geometry, zIndexRange = [16777271, 0], calculatePosition = defaultCalculatePosition, as = "div", wrapperClass, pointerEvents = "auto", ...props }, ref) => {
+	const { gl, camera, scene, size, raycaster, events, viewport } = useThree();
+	const [el] = import_react.useState(() => document.createElement(as));
+	const root = import_react.useRef(null);
+	const group = import_react.useRef(null);
+	const oldZoom = import_react.useRef(0);
+	const oldPosition = import_react.useRef([0, 0]);
+	const transformOuterRef = import_react.useRef(null);
+	const transformInnerRef = import_react.useRef(null);
+	const target = (portal == null ? void 0 : portal.current) || events.connected || gl.domElement.parentNode;
+	const occlusionMeshRef = import_react.useRef(null);
+	const isMeshSizeSet = import_react.useRef(false);
+	const isRayCastOcclusion = import_react.useMemo(() => {
+		return occlude && occlude !== "blending" || Array.isArray(occlude) && occlude.length && isRefObject$1(occlude[0]);
+	}, [occlude]);
+	import_react.useLayoutEffect(() => {
+		const el = gl.domElement;
+		if (occlude && occlude === "blending") {
+			el.style.zIndex = `${Math.floor(zIndexRange[0] / 2)}`;
+			el.style.position = "absolute";
+			el.style.pointerEvents = "none";
+		} else {
+			el.style.zIndex = null;
+			el.style.position = null;
+			el.style.pointerEvents = null;
+		}
+	}, [occlude]);
+	import_react.useLayoutEffect(() => {
+		if (group.current) {
+			const currentRoot = root.current = import_client.createRoot(el);
+			scene.updateMatrixWorld();
+			if (transform) el.style.cssText = `position:absolute;top:0;left:0;pointer-events:none;overflow:hidden;`;
+			else {
+				const vec = calculatePosition(group.current, camera, size);
+				el.style.cssText = `position:absolute;top:0;left:0;transform:translate3d(${vec[0]}px,${vec[1]}px,0);transform-origin:0 0;`;
+			}
+			if (target) if (prepend) target.prepend(el);
+			else target.appendChild(el);
+			return () => {
+				if (target) target.removeChild(el);
+				currentRoot.unmount();
+			};
+		}
+	}, [target, transform]);
+	import_react.useLayoutEffect(() => {
+		if (wrapperClass) el.className = wrapperClass;
+	}, [wrapperClass]);
+	const styles = import_react.useMemo(() => {
+		if (transform) return {
+			position: "absolute",
+			top: 0,
+			left: 0,
+			width: size.width,
+			height: size.height,
+			transformStyle: "preserve-3d",
+			pointerEvents: "none"
+		};
+		else return {
+			position: "absolute",
+			transform: center ? "translate3d(-50%,-50%,0)" : "none",
+			...fullscreen && {
+				top: -size.height / 2,
+				left: -size.width / 2,
+				width: size.width,
+				height: size.height
+			},
+			...style
+		};
+	}, [
+		style,
+		center,
+		fullscreen,
+		size,
+		transform
+	]);
+	const transformInnerStyles = import_react.useMemo(() => ({
+		position: "absolute",
+		pointerEvents
+	}), [pointerEvents]);
+	import_react.useLayoutEffect(() => {
+		isMeshSizeSet.current = false;
+		if (transform) {
+			var _root$current;
+			(_root$current = root.current) == null || _root$current.render(/*#__PURE__*/ import_react.createElement("div", {
+				ref: transformOuterRef,
+				style: styles
+			}, /*#__PURE__*/ import_react.createElement("div", {
+				ref: transformInnerRef,
+				style: transformInnerStyles
+			}, /*#__PURE__*/ import_react.createElement("div", {
+				ref,
+				className,
+				style,
+				children
+			}))));
+		} else {
+			var _root$current2;
+			(_root$current2 = root.current) == null || _root$current2.render(/*#__PURE__*/ import_react.createElement("div", {
+				ref,
+				style: styles,
+				className,
+				children
+			}));
+		}
+	});
+	const visible = import_react.useRef(true);
+	useFrame((gl) => {
+		if (group.current) {
+			camera.updateMatrixWorld();
+			group.current.updateWorldMatrix(true, false);
+			const vec = transform ? oldPosition.current : calculatePosition(group.current, camera, size);
+			if (transform || Math.abs(oldZoom.current - camera.zoom) > eps || Math.abs(oldPosition.current[0] - vec[0]) > eps || Math.abs(oldPosition.current[1] - vec[1]) > eps) {
+				const isBehindCamera = isObjectBehindCamera(group.current, camera);
+				let raytraceTarget = false;
+				if (isRayCastOcclusion) {
+					if (Array.isArray(occlude)) raytraceTarget = occlude.map((item) => item.current);
+					else if (occlude !== "blending") raytraceTarget = [scene];
+				}
+				const previouslyVisible = visible.current;
+				if (raytraceTarget) {
+					const isvisible = isObjectVisible(group.current, camera, raycaster, raytraceTarget);
+					visible.current = isvisible && !isBehindCamera;
+				} else visible.current = !isBehindCamera;
+				if (previouslyVisible !== visible.current) if (onOcclude) onOcclude(!visible.current);
+				else el.style.display = visible.current ? "block" : "none";
+				const halfRange = Math.floor(zIndexRange[0] / 2);
+				const zRange = occlude ? isRayCastOcclusion ? [zIndexRange[0], halfRange] : [halfRange - 1, 0] : zIndexRange;
+				el.style.zIndex = `${objectZIndex(group.current, camera, zRange)}`;
+				if (transform) {
+					const [widthHalf, heightHalf] = [size.width / 2, size.height / 2];
+					const fov = camera.projectionMatrix.elements[5] * heightHalf;
+					const { isOrthographicCamera, top, left, bottom, right } = camera;
+					const cameraMatrix = getCameraCSSMatrix(camera.matrixWorldInverse);
+					const cameraTransform = isOrthographicCamera ? `scale(${fov})translate(${epsilon(-(right + left) / 2)}px,${epsilon((top + bottom) / 2)}px)` : `translateZ(${fov}px)`;
+					let matrix = group.current.matrixWorld;
+					if (sprite) {
+						matrix = camera.matrixWorldInverse.clone().transpose().copyPosition(matrix).scale(group.current.scale);
+						matrix.elements[3] = matrix.elements[7] = matrix.elements[11] = 0;
+						matrix.elements[15] = 1;
+					}
+					el.style.width = size.width + "px";
+					el.style.height = size.height + "px";
+					el.style.perspective = isOrthographicCamera ? "" : `${fov}px`;
+					if (transformOuterRef.current && transformInnerRef.current) {
+						transformOuterRef.current.style.transform = `${cameraTransform}${cameraMatrix}translate(${widthHalf}px,${heightHalf}px)`;
+						transformInnerRef.current.style.transform = getObjectCSSMatrix(matrix, 1 / ((distanceFactor || 10) / 400));
+					}
+				} else {
+					const scale = distanceFactor === void 0 ? 1 : objectScale(group.current, camera) * distanceFactor;
+					el.style.transform = `translate3d(${vec[0]}px,${vec[1]}px,0) scale(${scale})`;
+				}
+				oldPosition.current = vec;
+				oldZoom.current = camera.zoom;
+			}
+		}
+		if (!isRayCastOcclusion && occlusionMeshRef.current && !isMeshSizeSet.current) if (transform) {
+			if (transformOuterRef.current) {
+				const el = transformOuterRef.current.children[0];
+				if (el != null && el.clientWidth && el != null && el.clientHeight) {
+					const { isOrthographicCamera } = camera;
+					if (isOrthographicCamera || geometry) {
+						if (props.scale) if (!Array.isArray(props.scale)) occlusionMeshRef.current.scale.setScalar(1 / props.scale);
+						else if (props.scale instanceof Vector3) occlusionMeshRef.current.scale.copy(props.scale.clone().divideScalar(1));
+						else occlusionMeshRef.current.scale.set(1 / props.scale[0], 1 / props.scale[1], 1 / props.scale[2]);
+					} else {
+						const ratio = (distanceFactor || 10) / 400;
+						const w = el.clientWidth * ratio;
+						const h = el.clientHeight * ratio;
+						occlusionMeshRef.current.scale.set(w, h, 1);
+					}
+					isMeshSizeSet.current = true;
+				}
+			}
+		} else {
+			const ele = el.children[0];
+			if (ele != null && ele.clientWidth && ele != null && ele.clientHeight) {
+				const ratio = 1 / viewport.factor;
+				const w = ele.clientWidth * ratio;
+				const h = ele.clientHeight * ratio;
+				occlusionMeshRef.current.scale.set(w, h, 1);
+				isMeshSizeSet.current = true;
+			}
+			occlusionMeshRef.current.lookAt(gl.camera.position);
+		}
+	});
+	const shaders = import_react.useMemo(() => ({
+		vertexShader: !transform ? `
+          /*
+            This shader is from the THREE's SpriteMaterial.
+            We need to turn the backing plane into a Sprite
+            (make it always face the camera) if "transfrom"
+            is false.
+          */
+          #include <common>
+
+          void main() {
+            vec2 center = vec2(0., 1.);
+            float rotation = 0.0;
+
+            // This is somewhat arbitrary, but it seems to work well
+            // Need to figure out how to derive this dynamically if it even matters
+            float size = 0.03;
+
+            vec4 mvPosition = modelViewMatrix * vec4( 0.0, 0.0, 0.0, 1.0 );
+            vec2 scale;
+            scale.x = length( vec3( modelMatrix[ 0 ].x, modelMatrix[ 0 ].y, modelMatrix[ 0 ].z ) );
+            scale.y = length( vec3( modelMatrix[ 1 ].x, modelMatrix[ 1 ].y, modelMatrix[ 1 ].z ) );
+
+            bool isPerspective = isPerspectiveMatrix( projectionMatrix );
+            if ( isPerspective ) scale *= - mvPosition.z;
+
+            vec2 alignedPosition = ( position.xy - ( center - vec2( 0.5 ) ) ) * scale * size;
+            vec2 rotatedPosition;
+            rotatedPosition.x = cos( rotation ) * alignedPosition.x - sin( rotation ) * alignedPosition.y;
+            rotatedPosition.y = sin( rotation ) * alignedPosition.x + cos( rotation ) * alignedPosition.y;
+            mvPosition.xy += rotatedPosition;
+
+            gl_Position = projectionMatrix * mvPosition;
+          }
+      ` : void 0,
+		fragmentShader: `
+        void main() {
+          gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+        }
+      `
+	}), [transform]);
+	return /*#__PURE__*/ import_react.createElement("group", _extends$1({}, props, { ref: group }), occlude && !isRayCastOcclusion && /*#__PURE__*/ import_react.createElement("mesh", {
+		castShadow,
+		receiveShadow,
+		ref: occlusionMeshRef
+	}, geometry || /*#__PURE__*/ import_react.createElement("planeGeometry", null), material || /*#__PURE__*/ import_react.createElement("shaderMaterial", {
+		side: 2,
+		vertexShader: shaders.vertexShader,
+		fragmentShader: shaders.fragmentShader
+	})));
+});
+//#endregion
+//#region node_modules/@react-three/drei/web/CycleRaycast.js
+function CycleRaycast({ onChanged, portal, preventDefault = true, scroll = true, keyCode = 9 }) {
+	const cycle = import_react.useRef(0);
+	const setEvents = useThree((state) => state.setEvents);
+	const get = useThree((state) => state.get);
+	const gl = useThree((state) => state.gl);
+	import_react.useEffect(() => {
+		var _portal$current;
+		let hits = [];
+		let lastEvent = void 0;
+		const prev = get().events.filter;
+		const target = (_portal$current = portal == null ? void 0 : portal.current) !== null && _portal$current !== void 0 ? _portal$current : gl.domElement.parentNode;
+		const renderStatus = () => target && onChanged && onChanged(hits, Math.round(cycle.current) % hits.length);
+		setEvents({ filter: (intersections, state) => {
+			let clone = [...intersections];
+			if (clone.length !== hits.length || !hits.every((hit) => clone.map((e) => e.object.uuid).includes(hit.object.uuid))) {
+				cycle.current = 0;
+				hits = clone;
+				renderStatus();
+			}
+			if (prev) clone = prev(clone, state);
+			for (let i = 0; i < Math.round(cycle.current) % clone.length; i++) {
+				const first = clone.shift();
+				clone = [...clone, first];
+			}
+			return clone;
+		} });
+		const refresh = (fn) => {
+			var _get$events$handlers, _get$events$handlers2;
+			cycle.current = fn(cycle.current);
+			(_get$events$handlers = get().events.handlers) == null || _get$events$handlers.onPointerCancel(void 0);
+			(_get$events$handlers2 = get().events.handlers) == null || _get$events$handlers2.onPointerMove(lastEvent);
+			renderStatus();
+		};
+		const tabEvent = (event) => {
+			if ((event.keyCode || event.which) === keyCode) {
+				if (preventDefault) event.preventDefault();
+				if (hits.length > 1) refresh((current) => current + 1);
+			}
+		};
+		const wheelEvent = (event) => {
+			if (preventDefault) event.preventDefault();
+			let delta = 0;
+			if (!event) event = window.event;
+			if (event.wheelDelta) delta = event.wheelDelta / 120;
+			else if (event.detail) delta = -event.detail / 3;
+			if (hits.length > 1) refresh((current) => Math.abs(current - delta));
+		};
+		const moveEvent = (event) => lastEvent = event;
+		document.addEventListener("pointermove", moveEvent, { passive: true });
+		if (scroll) document.addEventListener("wheel", wheelEvent);
+		if (keyCode !== void 0) document.addEventListener("keydown", tabEvent);
+		return () => {
+			setEvents({ filter: prev });
+			if (keyCode !== void 0) document.removeEventListener("keydown", tabEvent);
+			if (scroll) document.removeEventListener("wheel", wheelEvent);
+			document.removeEventListener("pointermove", moveEvent);
+		};
+	}, [
+		gl,
+		get,
+		setEvents,
+		preventDefault,
+		scroll,
+		keyCode
+	]);
+	return null;
+}
+//#endregion
+//#region node_modules/@react-three/drei/web/useCursor.js
+function useCursor(hovered, onPointerOver = "pointer", onPointerOut = "auto", container = document.body) {
+	import_react.useEffect(() => {
+		if (hovered) {
+			container.style.cursor = onPointerOver;
+			return () => void (container.style.cursor = onPointerOut);
+		}
+	}, [hovered]);
+}
+//#endregion
+//#region node_modules/zustand/esm/react.mjs
+var identity$2 = (arg) => arg;
+function useStore$1(api, selector = identity$2) {
+	const slice = import_react.useSyncExternalStore(api.subscribe, import_react.useCallback(() => selector(api.getState()), [api, selector]), import_react.useCallback(() => selector(api.getInitialState()), [api, selector]));
+	import_react.useDebugValue(slice);
+	return slice;
+}
+var createImpl$1 = (createState) => {
+	const api = createStore$1(createState);
+	const useBoundStore = (selector) => useStore$1(api, selector);
+	Object.assign(useBoundStore, api);
+	return useBoundStore;
+};
+var create$2 = ((createState) => createState ? createImpl$1(createState) : createImpl$1);
+//#endregion
+//#region node_modules/@react-three/drei/core/Progress.js
+var saveLastTotalLoaded = 0;
+var useProgress = /* @__PURE__ */ create$2((set) => {
+	DefaultLoadingManager.onStart = (item, loaded, total) => {
+		set({
+			active: true,
+			item,
+			loaded,
+			total,
+			progress: (loaded - saveLastTotalLoaded) / (total - saveLastTotalLoaded) * 100
+		});
+	};
+	DefaultLoadingManager.onLoad = () => {
+		set({ active: false });
+	};
+	DefaultLoadingManager.onError = (item) => set((state) => ({ errors: [...state.errors, item] }));
+	DefaultLoadingManager.onProgress = (item, loaded, total) => {
+		if (loaded === total) saveLastTotalLoaded = total;
+		set({
+			active: true,
+			item,
+			loaded,
+			total,
+			progress: (loaded - saveLastTotalLoaded) / (total - saveLastTotalLoaded) * 100 || 100
+		});
+	};
+	return {
+		errors: [],
+		active: false,
+		progress: 0,
+		item: "",
+		loaded: 0,
+		total: 0
+	};
+});
+function Progress({ children }) {
+	const result = useProgress();
+	return /*#__PURE__*/ import_react.createElement(import_react.Fragment, null, children == null ? void 0 : children(result));
+}
+//#endregion
+//#region node_modules/@react-three/drei/web/Loader.js
+var defaultDataInterpolation = (p) => `Loading ${p.toFixed(2)}%`;
+function Loader({ containerStyles, innerStyles, barStyles, dataStyles, dataInterpolation = defaultDataInterpolation, initialState = (active) => active }) {
+	const { active, progress } = useProgress();
+	const progressRef = import_react.useRef(0);
+	const rafRef = import_react.useRef(0);
+	const progressSpanRef = import_react.useRef(null);
+	const [shown, setShown] = import_react.useState(initialState(active));
+	import_react.useEffect(() => {
+		let t;
+		if (active !== shown) t = setTimeout(() => setShown(active), 300);
+		return () => clearTimeout(t);
+	}, [shown, active]);
+	const updateProgress = import_react.useCallback(() => {
+		if (!progressSpanRef.current) return;
+		progressRef.current += (progress - progressRef.current) / 2;
+		if (progressRef.current > .95 * progress || progress === 100) progressRef.current = progress;
+		progressSpanRef.current.innerText = dataInterpolation(progressRef.current);
+		if (progressRef.current < progress) rafRef.current = requestAnimationFrame(updateProgress);
+	}, [dataInterpolation, progress]);
+	import_react.useEffect(() => {
+		updateProgress();
+		return () => cancelAnimationFrame(rafRef.current);
+	}, [updateProgress]);
+	return shown ? /*#__PURE__*/ import_react.createElement("div", { style: {
+		...styles.container,
+		opacity: active ? 1 : 0,
+		...containerStyles
+	} }, /*#__PURE__*/ import_react.createElement("div", null, /*#__PURE__*/ import_react.createElement("div", { style: {
+		...styles.inner,
+		...innerStyles
+	} }, /*#__PURE__*/ import_react.createElement("div", { style: {
+		...styles.bar,
+		transform: `scaleX(${progress / 100})`,
+		...barStyles
+	} }), /*#__PURE__*/ import_react.createElement("span", {
+		ref: progressSpanRef,
+		style: {
+			...styles.data,
+			...dataStyles
+		}
+	})))) : null;
+}
+var styles = {
+	container: {
+		position: "absolute",
+		top: 0,
+		left: 0,
+		width: "100%",
+		height: "100%",
+		background: "#171717",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		transition: "opacity 300ms ease",
+		zIndex: 1e3
+	},
+	inner: {
+		width: 100,
+		height: 3,
+		background: "#272727",
+		textAlign: "center"
+	},
+	bar: {
+		height: 3,
+		width: "100%",
+		background: "white",
+		transition: "transform 200ms",
+		transformOrigin: "left center"
+	},
+	data: {
+		display: "inline-block",
+		position: "relative",
+		fontVariantNumeric: "tabular-nums",
+		marginTop: "0.8em",
+		color: "#f0f0f0",
+		fontSize: "0.6em",
+		fontFamily: `-apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", "Helvetica Neue", Helvetica, Arial, Roboto, Ubuntu, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"`,
+		whiteSpace: "nowrap"
+	}
+};
+//#endregion
+//#region node_modules/@use-gesture/core/dist/maths-0ab39ae9.esm.js
+function clamp$2(v, min, max) {
+	return Math.max(min, Math.min(v, max));
+}
+var V = {
+	toVector(v, fallback) {
+		if (v === void 0) v = fallback;
+		return Array.isArray(v) ? v : [v, v];
+	},
+	add(v1, v2) {
+		return [v1[0] + v2[0], v1[1] + v2[1]];
+	},
+	sub(v1, v2) {
+		return [v1[0] - v2[0], v1[1] - v2[1]];
+	},
+	addTo(v1, v2) {
+		v1[0] += v2[0];
+		v1[1] += v2[1];
+	},
+	subTo(v1, v2) {
+		v1[0] -= v2[0];
+		v1[1] -= v2[1];
+	}
+};
+function rubberband(distance, dimension, constant) {
+	if (dimension === 0 || Math.abs(dimension) === Infinity) return Math.pow(distance, constant * 5);
+	return distance * dimension * constant / (dimension + constant * distance);
+}
+function rubberbandIfOutOfBounds(position, min, max, constant = .15) {
+	if (constant === 0) return clamp$2(position, min, max);
+	if (position < min) return -rubberband(min - position, max - min, constant) + min;
+	if (position > max) return +rubberband(position - max, max - min, constant) + max;
+	return position;
+}
+function computeRubberband(bounds, [Vx, Vy], [Rx, Ry]) {
+	const [[X0, X1], [Y0, Y1]] = bounds;
+	return [rubberbandIfOutOfBounds(Vx, X0, X1, Rx), rubberbandIfOutOfBounds(Vy, Y0, Y1, Ry)];
+}
+//#endregion
+//#region node_modules/@use-gesture/core/dist/actions-fe213e88.esm.js
+function _toPrimitive$1(input, hint) {
+	if (typeof input !== "object" || input === null) return input;
+	var prim = input[Symbol.toPrimitive];
+	if (prim !== void 0) {
+		var res = prim.call(input, hint || "default");
+		if (typeof res !== "object") return res;
+		throw new TypeError("@@toPrimitive must return a primitive value.");
+	}
+	return (hint === "string" ? String : Number)(input);
+}
+function _toPropertyKey$1(arg) {
+	var key = _toPrimitive$1(arg, "string");
+	return typeof key === "symbol" ? key : String(key);
+}
+function _defineProperty$2(obj, key, value) {
+	key = _toPropertyKey$1(key);
+	if (key in obj) Object.defineProperty(obj, key, {
+		value,
+		enumerable: true,
+		configurable: true,
+		writable: true
+	});
+	else obj[key] = value;
+	return obj;
+}
+function ownKeys$1(e, r) {
+	var t = Object.keys(e);
+	if (Object.getOwnPropertySymbols) {
+		var o = Object.getOwnPropertySymbols(e);
+		r && (o = o.filter(function(r) {
+			return Object.getOwnPropertyDescriptor(e, r).enumerable;
+		})), t.push.apply(t, o);
+	}
+	return t;
+}
+function _objectSpread2$1(e) {
+	for (var r = 1; r < arguments.length; r++) {
+		var t = null != arguments[r] ? arguments[r] : {};
+		r % 2 ? ownKeys$1(Object(t), !0).forEach(function(r) {
+			_defineProperty$2(e, r, t[r]);
+		}) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys$1(Object(t)).forEach(function(r) {
+			Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r));
+		});
+	}
+	return e;
+}
+var EVENT_TYPE_MAP = {
+	pointer: {
+		start: "down",
+		change: "move",
+		end: "up"
+	},
+	mouse: {
+		start: "down",
+		change: "move",
+		end: "up"
+	},
+	touch: {
+		start: "start",
+		change: "move",
+		end: "end"
+	},
+	gesture: {
+		start: "start",
+		change: "change",
+		end: "end"
+	}
+};
+function capitalize(string) {
+	if (!string) return "";
+	return string[0].toUpperCase() + string.slice(1);
+}
+var actionsWithoutCaptureSupported = ["enter", "leave"];
+function hasCapture(capture = false, actionKey) {
+	return capture && !actionsWithoutCaptureSupported.includes(actionKey);
+}
+function toHandlerProp(device, action = "", capture = false) {
+	const deviceProps = EVENT_TYPE_MAP[device];
+	const actionKey = deviceProps ? deviceProps[action] || action : action;
+	return "on" + capitalize(device) + capitalize(actionKey) + (hasCapture(capture, actionKey) ? "Capture" : "");
+}
+var pointerCaptureEvents = ["gotpointercapture", "lostpointercapture"];
+function parseProp(prop) {
+	let eventKey = prop.substring(2).toLowerCase();
+	const passive = !!~eventKey.indexOf("passive");
+	if (passive) eventKey = eventKey.replace("passive", "");
+	const captureKey = pointerCaptureEvents.includes(eventKey) ? "capturecapture" : "capture";
+	const capture = !!~eventKey.indexOf(captureKey);
+	if (capture) eventKey = eventKey.replace("capture", "");
+	return {
+		device: eventKey,
+		capture,
+		passive
+	};
+}
+function toDomEventType(device, action = "") {
+	const deviceProps = EVENT_TYPE_MAP[device];
+	return device + (deviceProps ? deviceProps[action] || action : action);
+}
+function isTouch(event) {
+	return "touches" in event;
+}
+function getPointerType(event) {
+	if (isTouch(event)) return "touch";
+	if ("pointerType" in event) return event.pointerType;
+	return "mouse";
+}
+function getCurrentTargetTouchList(event) {
+	return Array.from(event.touches).filter((e) => {
+		var _event$currentTarget, _event$currentTarget$;
+		return e.target === event.currentTarget || ((_event$currentTarget = event.currentTarget) === null || _event$currentTarget === void 0 || (_event$currentTarget$ = _event$currentTarget.contains) === null || _event$currentTarget$ === void 0 ? void 0 : _event$currentTarget$.call(_event$currentTarget, e.target));
+	});
+}
+function getTouchList(event) {
+	return event.type === "touchend" || event.type === "touchcancel" ? event.changedTouches : event.targetTouches;
+}
+function getValueEvent(event) {
+	return isTouch(event) ? getTouchList(event)[0] : event;
+}
+function distanceAngle(P1, P2) {
+	try {
+		const dx = P2.clientX - P1.clientX;
+		const dy = P2.clientY - P1.clientY;
+		const cx = (P2.clientX + P1.clientX) / 2;
+		const cy = (P2.clientY + P1.clientY) / 2;
+		const distance = Math.hypot(dx, dy);
+		return {
+			angle: -(Math.atan2(dx, dy) * 180) / Math.PI,
+			distance,
+			origin: [cx, cy]
+		};
+	} catch (_unused) {}
+	return null;
+}
+function touchIds(event) {
+	return getCurrentTargetTouchList(event).map((touch) => touch.identifier);
+}
+function touchDistanceAngle(event, ids) {
+	const [P1, P2] = Array.from(event.touches).filter((touch) => ids.includes(touch.identifier));
+	return distanceAngle(P1, P2);
+}
+function pointerId(event) {
+	const valueEvent = getValueEvent(event);
+	return isTouch(event) ? valueEvent.identifier : valueEvent.pointerId;
+}
+function pointerValues(event) {
+	const valueEvent = getValueEvent(event);
+	return [valueEvent.clientX, valueEvent.clientY];
+}
+var LINE_HEIGHT = 40;
+var PAGE_HEIGHT = 800;
+function wheelValues(event) {
+	let { deltaX, deltaY, deltaMode } = event;
+	if (deltaMode === 1) {
+		deltaX *= LINE_HEIGHT;
+		deltaY *= LINE_HEIGHT;
+	} else if (deltaMode === 2) {
+		deltaX *= PAGE_HEIGHT;
+		deltaY *= PAGE_HEIGHT;
+	}
+	return [deltaX, deltaY];
+}
+function scrollValues(event) {
+	var _ref, _ref2;
+	const { scrollX, scrollY, scrollLeft, scrollTop } = event.currentTarget;
+	return [(_ref = scrollX !== null && scrollX !== void 0 ? scrollX : scrollLeft) !== null && _ref !== void 0 ? _ref : 0, (_ref2 = scrollY !== null && scrollY !== void 0 ? scrollY : scrollTop) !== null && _ref2 !== void 0 ? _ref2 : 0];
+}
+function getEventDetails(event) {
+	const payload = {};
+	if ("buttons" in event) payload.buttons = event.buttons;
+	if ("shiftKey" in event) {
+		const { shiftKey, altKey, metaKey, ctrlKey } = event;
+		Object.assign(payload, {
+			shiftKey,
+			altKey,
+			metaKey,
+			ctrlKey
+		});
+	}
+	return payload;
+}
+function call$1(v, ...args) {
+	if (typeof v === "function") return v(...args);
+	else return v;
+}
+function noop$1() {}
+function chain(...fns) {
+	if (fns.length === 0) return noop$1;
+	if (fns.length === 1) return fns[0];
+	return function() {
+		let result;
+		for (const fn of fns) result = fn.apply(this, arguments) || result;
+		return result;
+	};
+}
+function assignDefault(value, fallback) {
+	return Object.assign({}, fallback, value || {});
+}
+var BEFORE_LAST_KINEMATICS_DELAY = 32;
+var Engine = class {
+	constructor(ctrl, args, key) {
+		this.ctrl = ctrl;
+		this.args = args;
+		this.key = key;
+		if (!this.state) {
+			this.state = {};
+			this.computeValues([0, 0]);
+			this.computeInitial();
+			if (this.init) this.init();
+			this.reset();
+		}
+	}
+	get state() {
+		return this.ctrl.state[this.key];
+	}
+	set state(state) {
+		this.ctrl.state[this.key] = state;
+	}
+	get shared() {
+		return this.ctrl.state.shared;
+	}
+	get eventStore() {
+		return this.ctrl.gestureEventStores[this.key];
+	}
+	get timeoutStore() {
+		return this.ctrl.gestureTimeoutStores[this.key];
+	}
+	get config() {
+		return this.ctrl.config[this.key];
+	}
+	get sharedConfig() {
+		return this.ctrl.config.shared;
+	}
+	get handler() {
+		return this.ctrl.handlers[this.key];
+	}
+	reset() {
+		const { state, shared, ingKey, args } = this;
+		shared[ingKey] = state._active = state.active = state._blocked = state._force = false;
+		state._step = [false, false];
+		state.intentional = false;
+		state._movement = [0, 0];
+		state._distance = [0, 0];
+		state._direction = [0, 0];
+		state._delta = [0, 0];
+		state._bounds = [[-Infinity, Infinity], [-Infinity, Infinity]];
+		state.args = args;
+		state.axis = void 0;
+		state.memo = void 0;
+		state.elapsedTime = state.timeDelta = 0;
+		state.direction = [0, 0];
+		state.distance = [0, 0];
+		state.overflow = [0, 0];
+		state._movementBound = [false, false];
+		state.velocity = [0, 0];
+		state.movement = [0, 0];
+		state.delta = [0, 0];
+		state.timeStamp = 0;
+	}
+	start(event) {
+		const state = this.state;
+		const config = this.config;
+		if (!state._active) {
+			this.reset();
+			this.computeInitial();
+			state._active = true;
+			state.target = event.target;
+			state.currentTarget = event.currentTarget;
+			state.lastOffset = config.from ? call$1(config.from, state) : state.offset;
+			state.offset = state.lastOffset;
+			state.startTime = state.timeStamp = event.timeStamp;
+		}
+	}
+	computeValues(values) {
+		const state = this.state;
+		state._values = values;
+		state.values = this.config.transform(values);
+	}
+	computeInitial() {
+		const state = this.state;
+		state._initial = state._values;
+		state.initial = state.values;
+	}
+	compute(event) {
+		const { state, config, shared } = this;
+		state.args = this.args;
+		let dt = 0;
+		if (event) {
+			state.event = event;
+			if (config.preventDefault && event.cancelable) state.event.preventDefault();
+			state.type = event.type;
+			shared.touches = this.ctrl.pointerIds.size || this.ctrl.touchIds.size;
+			shared.locked = !!document.pointerLockElement;
+			Object.assign(shared, getEventDetails(event));
+			shared.down = shared.pressed = shared.buttons % 2 === 1 || shared.touches > 0;
+			dt = event.timeStamp - state.timeStamp;
+			state.timeStamp = event.timeStamp;
+			state.elapsedTime = state.timeStamp - state.startTime;
+		}
+		if (state._active) {
+			const _absoluteDelta = state._delta.map(Math.abs);
+			V.addTo(state._distance, _absoluteDelta);
+		}
+		if (this.axisIntent) this.axisIntent(event);
+		const [_m0, _m1] = state._movement;
+		const [t0, t1] = config.threshold;
+		const { _step, values } = state;
+		if (config.hasCustomTransform) {
+			if (_step[0] === false) _step[0] = Math.abs(_m0) >= t0 && values[0];
+			if (_step[1] === false) _step[1] = Math.abs(_m1) >= t1 && values[1];
+		} else {
+			if (_step[0] === false) _step[0] = Math.abs(_m0) >= t0 && Math.sign(_m0) * t0;
+			if (_step[1] === false) _step[1] = Math.abs(_m1) >= t1 && Math.sign(_m1) * t1;
+		}
+		state.intentional = _step[0] !== false || _step[1] !== false;
+		if (!state.intentional) return;
+		const movement = [0, 0];
+		if (config.hasCustomTransform) {
+			const [v0, v1] = values;
+			movement[0] = _step[0] !== false ? v0 - _step[0] : 0;
+			movement[1] = _step[1] !== false ? v1 - _step[1] : 0;
+		} else {
+			movement[0] = _step[0] !== false ? _m0 - _step[0] : 0;
+			movement[1] = _step[1] !== false ? _m1 - _step[1] : 0;
+		}
+		if (this.restrictToAxis && !state._blocked) this.restrictToAxis(movement);
+		const previousOffset = state.offset;
+		const gestureIsActive = state._active && !state._blocked || state.active;
+		if (gestureIsActive) {
+			state.first = state._active && !state.active;
+			state.last = !state._active && state.active;
+			state.active = shared[this.ingKey] = state._active;
+			if (event) {
+				if (state.first) {
+					if ("bounds" in config) state._bounds = call$1(config.bounds, state);
+					if (this.setup) this.setup();
+				}
+				state.movement = movement;
+				this.computeOffset();
+			}
+		}
+		const [ox, oy] = state.offset;
+		const [[x0, x1], [y0, y1]] = state._bounds;
+		state.overflow = [ox < x0 ? -1 : ox > x1 ? 1 : 0, oy < y0 ? -1 : oy > y1 ? 1 : 0];
+		state._movementBound[0] = state.overflow[0] ? state._movementBound[0] === false ? state._movement[0] : state._movementBound[0] : false;
+		state._movementBound[1] = state.overflow[1] ? state._movementBound[1] === false ? state._movement[1] : state._movementBound[1] : false;
+		const rubberband = state._active ? config.rubberband || [0, 0] : [0, 0];
+		state.offset = computeRubberband(state._bounds, state.offset, rubberband);
+		state.delta = V.sub(state.offset, previousOffset);
+		this.computeMovement();
+		if (gestureIsActive && (!state.last || dt > BEFORE_LAST_KINEMATICS_DELAY)) {
+			state.delta = V.sub(state.offset, previousOffset);
+			const absoluteDelta = state.delta.map(Math.abs);
+			V.addTo(state.distance, absoluteDelta);
+			state.direction = state.delta.map(Math.sign);
+			state._direction = state._delta.map(Math.sign);
+			if (!state.first && dt > 0) {
+				state.velocity = [absoluteDelta[0] / dt, absoluteDelta[1] / dt];
+				state.timeDelta = dt;
+			}
+		}
+	}
+	emit() {
+		const state = this.state;
+		const shared = this.shared;
+		const config = this.config;
+		if (!state._active) this.clean();
+		if ((state._blocked || !state.intentional) && !state._force && !config.triggerAllEvents) return;
+		const memo = this.handler(_objectSpread2$1(_objectSpread2$1(_objectSpread2$1({}, shared), state), {}, { [this.aliasKey]: state.values }));
+		if (memo !== void 0) state.memo = memo;
+	}
+	clean() {
+		this.eventStore.clean();
+		this.timeoutStore.clean();
+	}
+};
+function selectAxis([dx, dy], threshold) {
+	const absDx = Math.abs(dx);
+	const absDy = Math.abs(dy);
+	if (absDx > absDy && absDx > threshold) return "x";
+	if (absDy > absDx && absDy > threshold) return "y";
+}
+var CoordinatesEngine = class extends Engine {
+	constructor(...args) {
+		super(...args);
+		_defineProperty$2(this, "aliasKey", "xy");
+	}
+	reset() {
+		super.reset();
+		this.state.axis = void 0;
+	}
+	init() {
+		this.state.offset = [0, 0];
+		this.state.lastOffset = [0, 0];
+	}
+	computeOffset() {
+		this.state.offset = V.add(this.state.lastOffset, this.state.movement);
+	}
+	computeMovement() {
+		this.state.movement = V.sub(this.state.offset, this.state.lastOffset);
+	}
+	axisIntent(event) {
+		const state = this.state;
+		const config = this.config;
+		if (!state.axis && event) {
+			const threshold = typeof config.axisThreshold === "object" ? config.axisThreshold[getPointerType(event)] : config.axisThreshold;
+			state.axis = selectAxis(state._movement, threshold);
+		}
+		state._blocked = (config.lockDirection || !!config.axis) && !state.axis || !!config.axis && config.axis !== state.axis;
+	}
+	restrictToAxis(v) {
+		if (this.config.axis || this.config.lockDirection) switch (this.state.axis) {
+			case "x":
+				v[1] = 0;
+				break;
+			case "y": v[0] = 0;
+		}
+	}
+};
+var identity$1 = (v) => v;
+var DEFAULT_RUBBERBAND = .15;
+var commonConfigResolver = {
+	enabled(value = true) {
+		return value;
+	},
+	eventOptions(value, _k, config) {
+		return _objectSpread2$1(_objectSpread2$1({}, config.shared.eventOptions), value);
+	},
+	preventDefault(value = false) {
+		return value;
+	},
+	triggerAllEvents(value = false) {
+		return value;
+	},
+	rubberband(value = 0) {
+		switch (value) {
+			case true: return [DEFAULT_RUBBERBAND, DEFAULT_RUBBERBAND];
+			case false: return [0, 0];
+			default: return V.toVector(value);
+		}
+	},
+	from(value) {
+		if (typeof value === "function") return value;
+		if (value != null) return V.toVector(value);
+	},
+	transform(value, _k, config) {
+		const transform = value || config.shared.transform;
+		this.hasCustomTransform = !!transform;
+		{
+			const originalTransform = transform || identity$1;
+			return (v) => {
+				const r = originalTransform(v);
+				if (!isFinite(r[0]) || !isFinite(r[1])) console.warn(`[@use-gesture]: config.transform() must produce a valid result, but it was: [${r[0]},1]`);
+				return r;
+			};
+		}
+	},
+	threshold(value) {
+		return V.toVector(value, 0);
+	}
+};
+Object.assign(commonConfigResolver, {
+	domTarget(value) {
+		if (value !== void 0) throw Error(`[@use-gesture]: \`domTarget\` option has been renamed to \`target\`.`);
+		return NaN;
+	},
+	lockDirection(value) {
+		if (value !== void 0) throw Error(`[@use-gesture]: \`lockDirection\` option has been merged with \`axis\`. Use it as in \`{ axis: 'lock' }\``);
+		return NaN;
+	},
+	initial(value) {
+		if (value !== void 0) throw Error(`[@use-gesture]: \`initial\` option has been renamed to \`from\`.`);
+		return NaN;
+	}
+});
+var DEFAULT_AXIS_THRESHOLD = 0;
+var coordinatesConfigResolver = _objectSpread2$1(_objectSpread2$1({}, commonConfigResolver), {}, {
+	axis(_v, _k, { axis }) {
+		this.lockDirection = axis === "lock";
+		if (!this.lockDirection) return axis;
+	},
+	axisThreshold(value = DEFAULT_AXIS_THRESHOLD) {
+		return value;
+	},
+	bounds(value = {}) {
+		if (typeof value === "function") return (state) => coordinatesConfigResolver.bounds(value(state));
+		if ("current" in value) return () => value.current;
+		if (typeof HTMLElement === "function" && value instanceof HTMLElement) return value;
+		const { left = -Infinity, right = Infinity, top = -Infinity, bottom = Infinity } = value;
+		return [[left, right], [top, bottom]];
+	}
+});
+var KEYS_DELTA_MAP = {
+	ArrowRight: (displacement, factor = 1) => [displacement * factor, 0],
+	ArrowLeft: (displacement, factor = 1) => [-1 * displacement * factor, 0],
+	ArrowUp: (displacement, factor = 1) => [0, -1 * displacement * factor],
+	ArrowDown: (displacement, factor = 1) => [0, displacement * factor]
+};
+var DragEngine = class extends CoordinatesEngine {
+	constructor(...args) {
+		super(...args);
+		_defineProperty$2(this, "ingKey", "dragging");
+	}
+	reset() {
+		super.reset();
+		const state = this.state;
+		state._pointerId = void 0;
+		state._pointerActive = false;
+		state._keyboardActive = false;
+		state._preventScroll = false;
+		state._delayed = false;
+		state.swipe = [0, 0];
+		state.tap = false;
+		state.canceled = false;
+		state.cancel = this.cancel.bind(this);
+	}
+	setup() {
+		const state = this.state;
+		if (state._bounds instanceof HTMLElement) {
+			const boundRect = state._bounds.getBoundingClientRect();
+			const targetRect = state.currentTarget.getBoundingClientRect();
+			const _bounds = {
+				left: boundRect.left - targetRect.left + state.offset[0],
+				right: boundRect.right - targetRect.right + state.offset[0],
+				top: boundRect.top - targetRect.top + state.offset[1],
+				bottom: boundRect.bottom - targetRect.bottom + state.offset[1]
+			};
+			state._bounds = coordinatesConfigResolver.bounds(_bounds);
+		}
+	}
+	cancel() {
+		const state = this.state;
+		if (state.canceled) return;
+		state.canceled = true;
+		state._active = false;
+		setTimeout(() => {
+			this.compute();
+			this.emit();
+		}, 0);
+	}
+	setActive() {
+		this.state._active = this.state._pointerActive || this.state._keyboardActive;
+	}
+	clean() {
+		this.pointerClean();
+		this.state._pointerActive = false;
+		this.state._keyboardActive = false;
+		super.clean();
+	}
+	pointerDown(event) {
+		const config = this.config;
+		const state = this.state;
+		if (event.buttons != null && (Array.isArray(config.pointerButtons) ? !config.pointerButtons.includes(event.buttons) : config.pointerButtons !== -1 && config.pointerButtons !== event.buttons)) return;
+		const ctrlIds = this.ctrl.setEventIds(event);
+		if (config.pointerCapture) event.target.setPointerCapture(event.pointerId);
+		if (ctrlIds && ctrlIds.size > 1 && state._pointerActive) return;
+		this.start(event);
+		this.setupPointer(event);
+		state._pointerId = pointerId(event);
+		state._pointerActive = true;
+		this.computeValues(pointerValues(event));
+		this.computeInitial();
+		if (config.preventScrollAxis && getPointerType(event) !== "mouse") {
+			state._active = false;
+			this.setupScrollPrevention(event);
+		} else if (config.delay > 0) {
+			this.setupDelayTrigger(event);
+			if (config.triggerAllEvents) {
+				this.compute(event);
+				this.emit();
+			}
+		} else this.startPointerDrag(event);
+	}
+	startPointerDrag(event) {
+		const state = this.state;
+		state._active = true;
+		state._preventScroll = true;
+		state._delayed = false;
+		this.compute(event);
+		this.emit();
+	}
+	pointerMove(event) {
+		const state = this.state;
+		const config = this.config;
+		if (!state._pointerActive) return;
+		const id = pointerId(event);
+		if (state._pointerId !== void 0 && id !== state._pointerId) return;
+		const _values = pointerValues(event);
+		if (document.pointerLockElement === event.target) state._delta = [event.movementX, event.movementY];
+		else {
+			state._delta = V.sub(_values, state._values);
+			this.computeValues(_values);
+		}
+		V.addTo(state._movement, state._delta);
+		this.compute(event);
+		if (state._delayed && state.intentional) {
+			this.timeoutStore.remove("dragDelay");
+			state.active = false;
+			this.startPointerDrag(event);
+			return;
+		}
+		if (config.preventScrollAxis && !state._preventScroll) if (state.axis) if (state.axis === config.preventScrollAxis || config.preventScrollAxis === "xy") {
+			state._active = false;
+			this.clean();
+			return;
+		} else {
+			this.timeoutStore.remove("startPointerDrag");
+			this.startPointerDrag(event);
+			return;
+		}
+		else return;
+		this.emit();
+	}
+	pointerUp(event) {
+		this.ctrl.setEve

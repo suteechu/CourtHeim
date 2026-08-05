@@ -1,0 +1,3699 @@
+this.bufferingItem) == null ? void 0 : _this$bufferingItem2.event;
+		if (waitingForItem) {
+			var _this$schedule$items5;
+			const scheduleIndex = this.schedule.findEventIndex(interstitialId);
+			const item = (_this$schedule$items5 = this.schedule.items) == null ? void 0 : _this$schedule$items5[scheduleIndex];
+			if (item) {
+				if (!this.playingItem && this.timelinePos > item.end) {
+					if (this.schedule.findItemIndexAtTime(this.timelinePos) !== scheduleIndex) {
+						interstitial.error = /* @__PURE__ */ new Error(`Interstitial ${assets.length ? "no longer within playback range" : "asset-list is empty"} ${this.timelinePos} ${interstitial}`);
+						this.log(interstitial.error.message);
+						this.updateSchedule(true);
+						this.primaryFallback(interstitial);
+						return;
+					}
+				}
+				this.setBufferingItem(item);
+			}
+			this.setSchedulePosition(scheduleIndex);
+		} else if ((bufferingEvent == null ? void 0 : bufferingEvent.identifier) === interstitialId) {
+			const assetItem = interstitial.assetList[0];
+			if (assetItem) {
+				const player = this.getAssetPlayer(assetItem.identifier);
+				if (bufferingEvent.appendInPlace) {
+					const media = this.primaryMedia;
+					if (player && media) this.bufferAssetPlayer(player, media);
+				} else if (player) player.loadSource();
+			}
+		}
+	}
+	onError(event, data) {
+		if (!this.schedule) return;
+		switch (data.details) {
+			case ErrorDetails.ASSET_LIST_PARSING_ERROR:
+			case ErrorDetails.ASSET_LIST_LOAD_ERROR:
+			case ErrorDetails.ASSET_LIST_LOAD_TIMEOUT: {
+				const interstitial = data.interstitial;
+				if (interstitial) {
+					this.updateSchedule(true);
+					this.primaryFallback(interstitial);
+				}
+				break;
+			}
+			case ErrorDetails.BUFFER_STALLED_ERROR: {
+				const stallingItem = this.endedItem || this.waitingItem || this.playingItem;
+				if (this.isInterstitial(stallingItem) && stallingItem.event.appendInPlace) {
+					this.handleInPlaceStall(stallingItem.event);
+					return;
+				}
+				this.log(`Primary player stall @${this.timelinePos} bufferedPos: ${this.bufferedPos}`);
+				this.onTimeupdate();
+				this.checkBuffer(true);
+				break;
+			}
+		}
+	}
+};
+var TICK_INTERVAL$2 = 500;
+var SubtitleStreamController = class extends BaseStreamController {
+	constructor(hls, fragmentTracker, keyLoader) {
+		super(hls, fragmentTracker, keyLoader, "subtitle-stream-controller", PlaylistLevelType.SUBTITLE);
+		this.currentTrackId = -1;
+		this.tracksBuffered = [];
+		this.mainDetails = null;
+		this.registerListeners();
+	}
+	onHandlerDestroying() {
+		this.unregisterListeners();
+		super.onHandlerDestroying();
+		this.mainDetails = null;
+	}
+	registerListeners() {
+		super.registerListeners();
+		const { hls } = this;
+		hls.on(Events.LEVEL_LOADED, this.onLevelLoaded, this);
+		hls.on(Events.SUBTITLE_TRACKS_UPDATED, this.onSubtitleTracksUpdated, this);
+		hls.on(Events.SUBTITLE_TRACK_SWITCH, this.onSubtitleTrackSwitch, this);
+		hls.on(Events.SUBTITLE_TRACK_LOADED, this.onSubtitleTrackLoaded, this);
+		hls.on(Events.SUBTITLE_FRAG_PROCESSED, this.onSubtitleFragProcessed, this);
+		hls.on(Events.BUFFER_FLUSHING, this.onBufferFlushing, this);
+	}
+	unregisterListeners() {
+		super.unregisterListeners();
+		const { hls } = this;
+		hls.off(Events.LEVEL_LOADED, this.onLevelLoaded, this);
+		hls.off(Events.SUBTITLE_TRACKS_UPDATED, this.onSubtitleTracksUpdated, this);
+		hls.off(Events.SUBTITLE_TRACK_SWITCH, this.onSubtitleTrackSwitch, this);
+		hls.off(Events.SUBTITLE_TRACK_LOADED, this.onSubtitleTrackLoaded, this);
+		hls.off(Events.SUBTITLE_FRAG_PROCESSED, this.onSubtitleFragProcessed, this);
+		hls.off(Events.BUFFER_FLUSHING, this.onBufferFlushing, this);
+	}
+	startLoad(startPosition, skipSeekToStartPosition) {
+		this.stopLoad();
+		this.state = State.IDLE;
+		this.setInterval(TICK_INTERVAL$2);
+		this.nextLoadPosition = this.lastCurrentTime = startPosition + this.timelineOffset;
+		this.startPosition = skipSeekToStartPosition ? -1 : startPosition;
+		this.tick();
+	}
+	onManifestLoading() {
+		super.onManifestLoading();
+		this.mainDetails = null;
+	}
+	onMediaDetaching(event, data) {
+		this.tracksBuffered = [];
+		super.onMediaDetaching(event, data);
+	}
+	onLevelLoaded(event, data) {
+		this.mainDetails = data.details;
+	}
+	onSubtitleFragProcessed(event, data) {
+		const { frag, success } = data;
+		if (!this.fragContextChanged(frag)) {
+			if (isMediaFragment(frag)) this.fragPrevious = frag;
+			this.state = State.IDLE;
+		}
+		if (!success) return;
+		const buffered = this.tracksBuffered[this.currentTrackId];
+		if (!buffered) return;
+		let timeRange;
+		const fragStart = frag.start;
+		for (let i = 0; i < buffered.length; i++) if (fragStart >= buffered[i].start && fragStart <= buffered[i].end) {
+			timeRange = buffered[i];
+			break;
+		}
+		const fragEnd = frag.start + frag.duration;
+		if (timeRange) timeRange.end = fragEnd;
+		else {
+			timeRange = {
+				start: fragStart,
+				end: fragEnd
+			};
+			buffered.push(timeRange);
+		}
+		this.fragmentTracker.fragBuffered(frag);
+		this.fragBufferedComplete(frag, null);
+		if (this.media) this.tick();
+	}
+	onBufferFlushing(event, data) {
+		const { startOffset, endOffset } = data;
+		if (startOffset === 0 && endOffset !== Number.POSITIVE_INFINITY) {
+			const endOffsetSubtitles = endOffset - 1;
+			if (endOffsetSubtitles <= 0) return;
+			data.endOffsetSubtitles = Math.max(0, endOffsetSubtitles);
+			this.tracksBuffered.forEach((buffered) => {
+				for (let i = 0; i < buffered.length;) {
+					if (buffered[i].end <= endOffsetSubtitles) {
+						buffered.shift();
+						continue;
+					} else if (buffered[i].start < endOffsetSubtitles) buffered[i].start = endOffsetSubtitles;
+					else break;
+					i++;
+				}
+			});
+			this.fragmentTracker.removeFragmentsInRange(startOffset, endOffsetSubtitles, PlaylistLevelType.SUBTITLE);
+		}
+	}
+	onError(event, data) {
+		const frag = data.frag;
+		if ((frag == null ? void 0 : frag.type) === PlaylistLevelType.SUBTITLE) {
+			if (data.details === ErrorDetails.FRAG_GAP) this.fragmentTracker.fragBuffered(frag, true);
+			if (this.fragCurrent) this.fragCurrent.abortRequests();
+			if (this.state !== State.STOPPED) this.state = State.IDLE;
+		}
+	}
+	onSubtitleTracksUpdated(event, { subtitleTracks }) {
+		if (this.levels && subtitleOptionsIdentical(this.levels, subtitleTracks)) {
+			this.levels = subtitleTracks.map((mediaPlaylist) => new Level(mediaPlaylist));
+			return;
+		}
+		this.tracksBuffered = [];
+		this.levels = subtitleTracks.map((mediaPlaylist) => {
+			const level = new Level(mediaPlaylist);
+			this.tracksBuffered[level.id] = [];
+			return level;
+		});
+		this.fragmentTracker.removeFragmentsInRange(0, Number.POSITIVE_INFINITY, PlaylistLevelType.SUBTITLE);
+		this.fragPrevious = null;
+		this.mediaBuffer = null;
+	}
+	onSubtitleTrackSwitch(event, data) {
+		var _this$levels;
+		this.currentTrackId = data.id;
+		if (!((_this$levels = this.levels) != null && _this$levels.length) || this.currentTrackId === -1) {
+			this.clearInterval();
+			return;
+		}
+		const currentTrack = this.levels[this.currentTrackId];
+		if (currentTrack != null && currentTrack.details) this.mediaBuffer = this.mediaBufferTimeRanges;
+		else this.mediaBuffer = null;
+		if (currentTrack && this.state !== State.STOPPED) this.setInterval(TICK_INTERVAL$2);
+	}
+	onSubtitleTrackLoaded(event, data) {
+		var _track$details;
+		const { currentTrackId, levels } = this;
+		const { details: newDetails, id: trackId } = data;
+		if (!levels) {
+			this.warn(`Subtitle tracks were reset while loading level ${trackId}`);
+			return;
+		}
+		const track = levels[trackId];
+		if (trackId >= levels.length || !track) return;
+		this.log(`Subtitle track ${trackId} loaded [${newDetails.startSN},${newDetails.endSN}]${newDetails.lastPartSn ? `[part-${newDetails.lastPartSn}-${newDetails.lastPartIndex}]` : ""},duration:${newDetails.totalduration}`);
+		this.mediaBuffer = this.mediaBufferTimeRanges;
+		let sliding = 0;
+		if (newDetails.live || (_track$details = track.details) != null && _track$details.live) {
+			if (newDetails.deltaUpdateFailed) return;
+			const mainDetails = this.mainDetails;
+			if (!mainDetails) {
+				this.startFragRequested = false;
+				return;
+			}
+			const mainSlidingStartFragment = mainDetails.fragments[0];
+			if (!track.details) {
+				if (newDetails.hasProgramDateTime && mainDetails.hasProgramDateTime) {
+					alignMediaPlaylistByPDT(newDetails, mainDetails);
+					sliding = newDetails.fragmentStart;
+				} else if (mainSlidingStartFragment) {
+					sliding = mainSlidingStartFragment.start;
+					addSliding(newDetails, sliding);
+				}
+			} else {
+				var _this$levelLastLoaded;
+				sliding = this.alignPlaylists(newDetails, track.details, (_this$levelLastLoaded = this.levelLastLoaded) == null ? void 0 : _this$levelLastLoaded.details);
+				if (sliding === 0 && mainSlidingStartFragment) {
+					sliding = mainSlidingStartFragment.start;
+					addSliding(newDetails, sliding);
+				}
+			}
+			if (mainDetails && !this.startFragRequested) this.setStartPosition(mainDetails, sliding);
+		}
+		track.details = newDetails;
+		this.levelLastLoaded = track;
+		if (trackId !== currentTrackId) return;
+		this.hls.trigger(Events.SUBTITLE_TRACK_UPDATED, {
+			details: newDetails,
+			id: trackId,
+			groupId: data.groupId
+		});
+		this.tick();
+		if (newDetails.live && !this.fragCurrent && this.media && this.state === State.IDLE) {
+			if (!findFragmentByPTS(null, newDetails.fragments, this.media.currentTime, 0)) {
+				this.warn("Subtitle playlist not aligned with playback");
+				track.details = void 0;
+			}
+		}
+	}
+	_handleFragmentLoadComplete(fragLoadedData) {
+		const { frag, payload } = fragLoadedData;
+		const decryptData = frag.decryptdata;
+		const hls = this.hls;
+		if (this.fragContextChanged(frag)) return;
+		if (payload && payload.byteLength > 0 && decryptData != null && decryptData.key && decryptData.iv && isFullSegmentEncryption(decryptData.method)) {
+			const startTime = performance.now();
+			this.decrypter.decrypt(new Uint8Array(payload), decryptData.key.buffer, decryptData.iv.buffer, getAesModeFromFullSegmentMethod(decryptData.method)).catch((err) => {
+				hls.trigger(Events.ERROR, {
+					type: ErrorTypes.MEDIA_ERROR,
+					details: ErrorDetails.FRAG_DECRYPT_ERROR,
+					fatal: false,
+					error: err,
+					reason: err.message,
+					frag
+				});
+				throw err;
+			}).then((decryptedData) => {
+				const endTime = performance.now();
+				hls.trigger(Events.FRAG_DECRYPTED, {
+					frag,
+					payload: decryptedData,
+					stats: {
+						tstart: startTime,
+						tdecrypt: endTime
+					}
+				});
+			}).catch((err) => {
+				this.warn(`${err.name}: ${err.message}`);
+				this.state = State.IDLE;
+			});
+		}
+	}
+	doTick() {
+		if (!this.media) {
+			this.state = State.IDLE;
+			return;
+		}
+		if (this.state === State.IDLE) {
+			const { currentTrackId, levels } = this;
+			const track = levels == null ? void 0 : levels[currentTrackId];
+			if (!track || !levels.length || !track.details) return;
+			if (this.waitForLive(track)) return;
+			const { config } = this;
+			const currentTime = this.getLoadPosition();
+			const { end: targetBufferTime, len: bufferLen } = BufferHelper.bufferedInfo(this.tracksBuffered[this.currentTrackId] || [], currentTime, config.maxBufferHole);
+			const trackDetails = track.details;
+			if (bufferLen > this.hls.maxBufferLength + trackDetails.levelTargetDuration) return;
+			const fragments = trackDetails.fragments;
+			const fragLen = fragments.length;
+			const end = trackDetails.edge;
+			let foundFrag = null;
+			const fragPrevious = this.fragPrevious;
+			if (targetBufferTime < end) {
+				const tolerance = config.maxFragLookUpTolerance;
+				const lookupTolerance = targetBufferTime > end - tolerance ? 0 : tolerance;
+				foundFrag = findFragmentByPTS(fragPrevious, fragments, Math.max(fragments[0].start, targetBufferTime), lookupTolerance);
+				if (!foundFrag && fragPrevious && fragPrevious.start < fragments[0].start) foundFrag = fragments[0];
+			} else foundFrag = fragments[fragLen - 1];
+			foundFrag = this.filterReplacedPrimary(foundFrag, track.details);
+			if (!foundFrag) return;
+			const prevFrag = fragments[foundFrag.sn - trackDetails.startSN - 1];
+			if (prevFrag && prevFrag.cc === foundFrag.cc && this.fragmentTracker.getState(prevFrag) === FragmentState.NOT_LOADED) foundFrag = prevFrag;
+			if (this.fragmentTracker.getState(foundFrag) === FragmentState.NOT_LOADED) {
+				const fragToLoad = this.mapToInitFragWhenRequired(foundFrag);
+				if (fragToLoad) this.loadFragment(fragToLoad, track, targetBufferTime);
+			}
+		}
+	}
+	loadFragment(frag, level, targetBufferTime) {
+		if (!isMediaFragment(frag)) this._loadInitSegment(frag, level);
+		else super.loadFragment(frag, level, targetBufferTime);
+	}
+	get mediaBufferTimeRanges() {
+		return new BufferableInstance(this.tracksBuffered[this.currentTrackId] || []);
+	}
+};
+var BufferableInstance = class {
+	constructor(timeranges) {
+		this.buffered = void 0;
+		const getRange = (name, index, length) => {
+			index = index >>> 0;
+			if (index > length - 1) throw new DOMException(`Failed to execute '${name}' on 'TimeRanges': The index provided (${index}) is greater than the maximum bound (${length})`);
+			return timeranges[index][name];
+		};
+		this.buffered = {
+			get length() {
+				return timeranges.length;
+			},
+			end(index) {
+				return getRange("end", index, timeranges.length);
+			},
+			start(index) {
+				return getRange("start", index, timeranges.length);
+			}
+		};
+	}
+};
+/**
+*
+* This code was ported from the dash.js project at:
+*   https://github.com/Dash-Industry-Forum/dash.js/blob/development/externals/cea608-parser.js
+*   https://github.com/Dash-Industry-Forum/dash.js/commit/8269b26a761e0853bb21d78780ed945144ecdd4d#diff-71bc295a2d6b6b7093a1d3290d53a4b2
+*
+* The original copyright appears below:
+*
+* The copyright in this software is being made available under the BSD License,
+* included below. This software may be subject to other third party and contributor
+* rights, including patent rights, and no such rights are granted under this license.
+*
+* Copyright (c) 2015-2016, DASH Industry Forum.
+* All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without modification,
+* are permitted provided that the following conditions are met:
+*  1. Redistributions of source code must retain the above copyright notice, this
+*  list of conditions and the following disclaimer.
+*  * Redistributions in binary form must reproduce the above copyright notice,
+*  this list of conditions and the following disclaimer in the documentation and/or
+*  other materials provided with the distribution.
+*  2. Neither the name of Dash Industry Forum nor the names of its
+*  contributors may be used to endorse or promote products derived from this software
+*  without specific prior written permission.
+*
+*  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS AS IS AND ANY
+*  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+*  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+*  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+*  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+*  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+*  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+*  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+*  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+*  POSSIBILITY OF SUCH DAMAGE.
+*/
+/**
+*  Exceptions from regular ASCII. CodePoints are mapped to UTF-16 codes
+*/
+var specialCea608CharsCodes = {
+	42: 225,
+	92: 233,
+	94: 237,
+	95: 243,
+	96: 250,
+	123: 231,
+	124: 247,
+	125: 209,
+	126: 241,
+	127: 9608,
+	128: 174,
+	129: 176,
+	130: 189,
+	131: 191,
+	132: 8482,
+	133: 162,
+	134: 163,
+	135: 9834,
+	136: 224,
+	137: 32,
+	138: 232,
+	139: 226,
+	140: 234,
+	141: 238,
+	142: 244,
+	143: 251,
+	144: 193,
+	145: 201,
+	146: 211,
+	147: 218,
+	148: 220,
+	149: 252,
+	150: 8216,
+	151: 161,
+	152: 42,
+	153: 8217,
+	154: 9473,
+	155: 169,
+	156: 8480,
+	157: 8226,
+	158: 8220,
+	159: 8221,
+	160: 192,
+	161: 194,
+	162: 199,
+	163: 200,
+	164: 202,
+	165: 203,
+	166: 235,
+	167: 206,
+	168: 207,
+	169: 239,
+	170: 212,
+	171: 217,
+	172: 249,
+	173: 219,
+	174: 171,
+	175: 187,
+	176: 195,
+	177: 227,
+	178: 205,
+	179: 204,
+	180: 236,
+	181: 210,
+	182: 242,
+	183: 213,
+	184: 245,
+	185: 123,
+	186: 125,
+	187: 92,
+	188: 94,
+	189: 95,
+	190: 124,
+	191: 8764,
+	192: 196,
+	193: 228,
+	194: 214,
+	195: 246,
+	196: 223,
+	197: 165,
+	198: 164,
+	199: 9475,
+	200: 197,
+	201: 229,
+	202: 216,
+	203: 248,
+	204: 9487,
+	205: 9491,
+	206: 9495,
+	207: 9499
+};
+/**
+* Utils
+*/
+var getCharForByte = (byte) => String.fromCharCode(specialCea608CharsCodes[byte] || byte);
+var NR_ROWS = 15;
+var NR_COLS = 100;
+var rowsLowCh1 = {
+	17: 1,
+	18: 3,
+	21: 5,
+	22: 7,
+	23: 9,
+	16: 11,
+	19: 12,
+	20: 14
+};
+var rowsHighCh1 = {
+	17: 2,
+	18: 4,
+	21: 6,
+	22: 8,
+	23: 10,
+	19: 13,
+	20: 15
+};
+var rowsLowCh2 = {
+	25: 1,
+	26: 3,
+	29: 5,
+	30: 7,
+	31: 9,
+	24: 11,
+	27: 12,
+	28: 14
+};
+var rowsHighCh2 = {
+	25: 2,
+	26: 4,
+	29: 6,
+	30: 8,
+	31: 10,
+	27: 13,
+	28: 15
+};
+var backgroundColors = [
+	"white",
+	"green",
+	"blue",
+	"cyan",
+	"red",
+	"yellow",
+	"magenta",
+	"black",
+	"transparent"
+];
+var CaptionsLogger = class {
+	constructor() {
+		this.time = null;
+		this.verboseLevel = 0;
+	}
+	log(severity, msg) {
+		if (this.verboseLevel >= severity) {
+			const m = typeof msg === "function" ? msg() : msg;
+			logger.log(`${this.time} [${severity}] ${m}`);
+		}
+	}
+};
+var numArrayToHexArray = function numArrayToHexArray(numArray) {
+	const hexArray = [];
+	for (let j = 0; j < numArray.length; j++) hexArray.push(numArray[j].toString(16));
+	return hexArray;
+};
+var PenState = class {
+	constructor() {
+		this.foreground = "white";
+		this.underline = false;
+		this.italics = false;
+		this.background = "black";
+		this.flash = false;
+	}
+	reset() {
+		this.foreground = "white";
+		this.underline = false;
+		this.italics = false;
+		this.background = "black";
+		this.flash = false;
+	}
+	setStyles(styles) {
+		const attribs = [
+			"foreground",
+			"underline",
+			"italics",
+			"background",
+			"flash"
+		];
+		for (let i = 0; i < attribs.length; i++) {
+			const style = attribs[i];
+			if (styles.hasOwnProperty(style)) this[style] = styles[style];
+		}
+	}
+	isDefault() {
+		return this.foreground === "white" && !this.underline && !this.italics && this.background === "black" && !this.flash;
+	}
+	equals(other) {
+		return this.foreground === other.foreground && this.underline === other.underline && this.italics === other.italics && this.background === other.background && this.flash === other.flash;
+	}
+	copy(newPenState) {
+		this.foreground = newPenState.foreground;
+		this.underline = newPenState.underline;
+		this.italics = newPenState.italics;
+		this.background = newPenState.background;
+		this.flash = newPenState.flash;
+	}
+	toString() {
+		return "color=" + this.foreground + ", underline=" + this.underline + ", italics=" + this.italics + ", background=" + this.background + ", flash=" + this.flash;
+	}
+};
+/**
+* Unicode character with styling and background.
+* @constructor
+*/
+var StyledUnicodeChar = class {
+	constructor() {
+		this.uchar = " ";
+		this.penState = new PenState();
+	}
+	reset() {
+		this.uchar = " ";
+		this.penState.reset();
+	}
+	setChar(uchar, newPenState) {
+		this.uchar = uchar;
+		this.penState.copy(newPenState);
+	}
+	setPenState(newPenState) {
+		this.penState.copy(newPenState);
+	}
+	equals(other) {
+		return this.uchar === other.uchar && this.penState.equals(other.penState);
+	}
+	copy(newChar) {
+		this.uchar = newChar.uchar;
+		this.penState.copy(newChar.penState);
+	}
+	isEmpty() {
+		return this.uchar === " " && this.penState.isDefault();
+	}
+};
+/**
+* CEA-608 row consisting of NR_COLS instances of StyledUnicodeChar.
+* @constructor
+*/
+var Row = class {
+	constructor(logger) {
+		this.chars = [];
+		this.pos = 0;
+		this.currPenState = new PenState();
+		this.cueStartTime = null;
+		this.logger = void 0;
+		for (let i = 0; i < NR_COLS; i++) this.chars.push(new StyledUnicodeChar());
+		this.logger = logger;
+	}
+	equals(other) {
+		for (let i = 0; i < NR_COLS; i++) if (!this.chars[i].equals(other.chars[i])) return false;
+		return true;
+	}
+	copy(other) {
+		for (let i = 0; i < NR_COLS; i++) this.chars[i].copy(other.chars[i]);
+	}
+	isEmpty() {
+		let empty = true;
+		for (let i = 0; i < NR_COLS; i++) if (!this.chars[i].isEmpty()) {
+			empty = false;
+			break;
+		}
+		return empty;
+	}
+	/**
+	*  Set the cursor to a valid column.
+	*/
+	setCursor(absPos) {
+		if (this.pos !== absPos) this.pos = absPos;
+		if (this.pos < 0) {
+			this.logger.log(3, "Negative cursor position " + this.pos);
+			this.pos = 0;
+		} else if (this.pos > NR_COLS) {
+			this.logger.log(3, "Too large cursor position " + this.pos);
+			this.pos = NR_COLS;
+		}
+	}
+	/**
+	* Move the cursor relative to current position.
+	*/
+	moveCursor(relPos) {
+		const newPos = this.pos + relPos;
+		if (relPos > 1) for (let i = this.pos + 1; i < newPos + 1; i++) this.chars[i].setPenState(this.currPenState);
+		this.setCursor(newPos);
+	}
+	/**
+	* Backspace, move one step back and clear character.
+	*/
+	backSpace() {
+		this.moveCursor(-1);
+		this.chars[this.pos].setChar(" ", this.currPenState);
+	}
+	insertChar(byte) {
+		if (byte >= 144) this.backSpace();
+		const char = getCharForByte(byte);
+		if (this.pos >= NR_COLS) {
+			this.logger.log(0, () => "Cannot insert " + byte.toString(16) + " (" + char + ") at position " + this.pos + ". Skipping it!");
+			return;
+		}
+		this.chars[this.pos].setChar(char, this.currPenState);
+		this.moveCursor(1);
+	}
+	clearFromPos(startPos) {
+		let i;
+		for (i = startPos; i < NR_COLS; i++) this.chars[i].reset();
+	}
+	clear() {
+		this.clearFromPos(0);
+		this.pos = 0;
+		this.currPenState.reset();
+	}
+	clearToEndOfRow() {
+		this.clearFromPos(this.pos);
+	}
+	getTextString() {
+		const chars = [];
+		let empty = true;
+		for (let i = 0; i < NR_COLS; i++) {
+			const char = this.chars[i].uchar;
+			if (char !== " ") empty = false;
+			chars.push(char);
+		}
+		if (empty) return "";
+		else return chars.join("");
+	}
+	setPenStyles(styles) {
+		this.currPenState.setStyles(styles);
+		this.chars[this.pos].setPenState(this.currPenState);
+	}
+};
+/**
+* Keep a CEA-608 screen of 32x15 styled characters
+* @constructor
+*/
+var CaptionScreen = class {
+	constructor(logger) {
+		this.rows = [];
+		this.currRow = 14;
+		this.nrRollUpRows = null;
+		this.lastOutputScreen = null;
+		this.logger = void 0;
+		for (let i = 0; i < NR_ROWS; i++) this.rows.push(new Row(logger));
+		this.logger = logger;
+	}
+	reset() {
+		for (let i = 0; i < NR_ROWS; i++) this.rows[i].clear();
+		this.currRow = 14;
+	}
+	equals(other) {
+		let equal = true;
+		for (let i = 0; i < NR_ROWS; i++) if (!this.rows[i].equals(other.rows[i])) {
+			equal = false;
+			break;
+		}
+		return equal;
+	}
+	copy(other) {
+		for (let i = 0; i < NR_ROWS; i++) this.rows[i].copy(other.rows[i]);
+	}
+	isEmpty() {
+		let empty = true;
+		for (let i = 0; i < NR_ROWS; i++) if (!this.rows[i].isEmpty()) {
+			empty = false;
+			break;
+		}
+		return empty;
+	}
+	backSpace() {
+		this.rows[this.currRow].backSpace();
+	}
+	clearToEndOfRow() {
+		this.rows[this.currRow].clearToEndOfRow();
+	}
+	/**
+	* Insert a character (without styling) in the current row.
+	*/
+	insertChar(char) {
+		this.rows[this.currRow].insertChar(char);
+	}
+	setPen(styles) {
+		this.rows[this.currRow].setPenStyles(styles);
+	}
+	moveCursor(relPos) {
+		this.rows[this.currRow].moveCursor(relPos);
+	}
+	setCursor(absPos) {
+		this.logger.log(2, "setCursor: " + absPos);
+		this.rows[this.currRow].setCursor(absPos);
+	}
+	setPAC(pacData) {
+		this.logger.log(2, () => "pacData = " + stringify(pacData));
+		let newRow = pacData.row - 1;
+		if (this.nrRollUpRows && newRow < this.nrRollUpRows - 1) newRow = this.nrRollUpRows - 1;
+		if (this.nrRollUpRows && this.currRow !== newRow) {
+			for (let i = 0; i < NR_ROWS; i++) this.rows[i].clear();
+			const topRowIndex = this.currRow + 1 - this.nrRollUpRows;
+			const lastOutputScreen = this.lastOutputScreen;
+			if (lastOutputScreen) {
+				const prevLineTime = lastOutputScreen.rows[topRowIndex].cueStartTime;
+				const time = this.logger.time;
+				if (prevLineTime !== null && time !== null && prevLineTime < time) for (let i = 0; i < this.nrRollUpRows; i++) this.rows[newRow - this.nrRollUpRows + i + 1].copy(lastOutputScreen.rows[topRowIndex + i]);
+			}
+		}
+		this.currRow = newRow;
+		const row = this.rows[this.currRow];
+		if (pacData.indent !== null) {
+			const indent = pacData.indent;
+			const prevPos = Math.max(indent - 1, 0);
+			row.setCursor(pacData.indent);
+			pacData.color = row.chars[prevPos].penState.foreground;
+		}
+		const styles = {
+			foreground: pacData.color,
+			underline: pacData.underline,
+			italics: pacData.italics,
+			background: "black",
+			flash: false
+		};
+		this.setPen(styles);
+	}
+	/**
+	* Set background/extra foreground, but first do back_space, and then insert space (backwards compatibility).
+	*/
+	setBkgData(bkgData) {
+		this.logger.log(2, () => "bkgData = " + stringify(bkgData));
+		this.backSpace();
+		this.setPen(bkgData);
+		this.insertChar(32);
+	}
+	setRollUpRows(nrRows) {
+		this.nrRollUpRows = nrRows;
+	}
+	rollUp() {
+		if (this.nrRollUpRows === null) {
+			this.logger.log(3, "roll_up but nrRollUpRows not set yet");
+			return;
+		}
+		this.logger.log(1, () => this.getDisplayText());
+		const topRowIndex = this.currRow + 1 - this.nrRollUpRows;
+		const topRow = this.rows.splice(topRowIndex, 1)[0];
+		topRow.clear();
+		this.rows.splice(this.currRow, 0, topRow);
+		this.logger.log(2, "Rolling up");
+	}
+	/**
+	* Get all non-empty rows with as unicode text.
+	*/
+	getDisplayText(asOneRow) {
+		asOneRow = asOneRow || false;
+		const displayText = [];
+		let text = "";
+		let rowNr = -1;
+		for (let i = 0; i < NR_ROWS; i++) {
+			const rowText = this.rows[i].getTextString();
+			if (rowText) {
+				rowNr = i + 1;
+				if (asOneRow) displayText.push("Row " + rowNr + ": '" + rowText + "'");
+				else displayText.push(rowText.trim());
+			}
+		}
+		if (displayText.length > 0) if (asOneRow) text = "[" + displayText.join(" | ") + "]";
+		else text = displayText.join("\n");
+		return text;
+	}
+	getTextAndFormat() {
+		return this.rows;
+	}
+};
+var Cea608Channel = class {
+	constructor(channelNumber, outputFilter, logger) {
+		this.chNr = void 0;
+		this.outputFilter = void 0;
+		this.mode = void 0;
+		this.verbose = void 0;
+		this.displayedMemory = void 0;
+		this.nonDisplayedMemory = void 0;
+		this.lastOutputScreen = void 0;
+		this.currRollUpRow = void 0;
+		this.writeScreen = void 0;
+		this.cueStartTime = void 0;
+		this.logger = void 0;
+		this.chNr = channelNumber;
+		this.outputFilter = outputFilter;
+		this.mode = null;
+		this.verbose = 0;
+		this.displayedMemory = new CaptionScreen(logger);
+		this.nonDisplayedMemory = new CaptionScreen(logger);
+		this.lastOutputScreen = new CaptionScreen(logger);
+		this.currRollUpRow = this.displayedMemory.rows[14];
+		this.writeScreen = this.displayedMemory;
+		this.mode = null;
+		this.cueStartTime = null;
+		this.logger = logger;
+	}
+	reset() {
+		this.mode = null;
+		this.displayedMemory.reset();
+		this.nonDisplayedMemory.reset();
+		this.lastOutputScreen.reset();
+		this.outputFilter.reset();
+		this.currRollUpRow = this.displayedMemory.rows[14];
+		this.writeScreen = this.displayedMemory;
+		this.mode = null;
+		this.cueStartTime = null;
+	}
+	getHandler() {
+		return this.outputFilter;
+	}
+	setHandler(newHandler) {
+		this.outputFilter = newHandler;
+	}
+	setPAC(pacData) {
+		this.writeScreen.setPAC(pacData);
+	}
+	setBkgData(bkgData) {
+		this.writeScreen.setBkgData(bkgData);
+	}
+	setMode(newMode) {
+		if (newMode === this.mode) return;
+		this.mode = newMode;
+		this.logger.log(2, () => "MODE=" + newMode);
+		if (this.mode === "MODE_POP-ON") this.writeScreen = this.nonDisplayedMemory;
+		else {
+			this.writeScreen = this.displayedMemory;
+			this.writeScreen.reset();
+		}
+		if (this.mode !== "MODE_ROLL-UP") {
+			this.displayedMemory.nrRollUpRows = null;
+			this.nonDisplayedMemory.nrRollUpRows = null;
+		}
+		this.mode = newMode;
+	}
+	insertChars(chars) {
+		for (let i = 0; i < chars.length; i++) this.writeScreen.insertChar(chars[i]);
+		const screen = this.writeScreen === this.displayedMemory ? "DISP" : "NON_DISP";
+		this.logger.log(2, () => screen + ": " + this.writeScreen.getDisplayText(true));
+		if (this.mode === "MODE_PAINT-ON" || this.mode === "MODE_ROLL-UP") {
+			this.logger.log(1, () => "DISPLAYED: " + this.displayedMemory.getDisplayText(true));
+			this.outputDataUpdate();
+		}
+	}
+	ccRCL() {
+		this.logger.log(2, "RCL - Resume Caption Loading");
+		this.setMode("MODE_POP-ON");
+	}
+	ccBS() {
+		this.logger.log(2, "BS - BackSpace");
+		if (this.mode === "MODE_TEXT") return;
+		this.writeScreen.backSpace();
+		if (this.writeScreen === this.displayedMemory) this.outputDataUpdate();
+	}
+	ccAOF() {}
+	ccAON() {}
+	ccDER() {
+		this.logger.log(2, "DER- Delete to End of Row");
+		this.writeScreen.clearToEndOfRow();
+		this.outputDataUpdate();
+	}
+	ccRU(nrRows) {
+		this.logger.log(2, "RU(" + nrRows + ") - Roll Up");
+		this.writeScreen = this.displayedMemory;
+		this.setMode("MODE_ROLL-UP");
+		this.writeScreen.setRollUpRows(nrRows);
+	}
+	ccFON() {
+		this.logger.log(2, "FON - Flash On");
+		this.writeScreen.setPen({ flash: true });
+	}
+	ccRDC() {
+		this.logger.log(2, "RDC - Resume Direct Captioning");
+		this.setMode("MODE_PAINT-ON");
+	}
+	ccTR() {
+		this.logger.log(2, "TR");
+		this.setMode("MODE_TEXT");
+	}
+	ccRTD() {
+		this.logger.log(2, "RTD");
+		this.setMode("MODE_TEXT");
+	}
+	ccEDM() {
+		this.logger.log(2, "EDM - Erase Displayed Memory");
+		this.displayedMemory.reset();
+		this.outputDataUpdate(true);
+	}
+	ccCR() {
+		this.logger.log(2, "CR - Carriage Return");
+		this.writeScreen.rollUp();
+		this.outputDataUpdate(true);
+	}
+	ccENM() {
+		this.logger.log(2, "ENM - Erase Non-displayed Memory");
+		this.nonDisplayedMemory.reset();
+	}
+	ccEOC() {
+		this.logger.log(2, "EOC - End Of Caption");
+		if (this.mode === "MODE_POP-ON") {
+			const tmp = this.displayedMemory;
+			this.displayedMemory = this.nonDisplayedMemory;
+			this.nonDisplayedMemory = tmp;
+			this.writeScreen = this.nonDisplayedMemory;
+			this.logger.log(1, () => "DISP: " + this.displayedMemory.getDisplayText());
+		}
+		this.outputDataUpdate(true);
+	}
+	ccTO(nrCols) {
+		this.logger.log(2, "TO(" + nrCols + ") - Tab Offset");
+		this.writeScreen.moveCursor(nrCols);
+	}
+	ccMIDROW(secondByte) {
+		const styles = { flash: false };
+		styles.underline = secondByte % 2 === 1;
+		styles.italics = secondByte >= 46;
+		if (!styles.italics) styles.foreground = [
+			"white",
+			"green",
+			"blue",
+			"cyan",
+			"red",
+			"yellow",
+			"magenta"
+		][Math.floor(secondByte / 2) - 16];
+		else styles.foreground = "white";
+		this.logger.log(2, "MIDROW: " + stringify(styles));
+		this.writeScreen.setPen(styles);
+	}
+	outputDataUpdate(dispatch = false) {
+		const time = this.logger.time;
+		if (time === null) return;
+		if (this.outputFilter) {
+			if (this.cueStartTime === null && !this.displayedMemory.isEmpty()) this.cueStartTime = time;
+			else if (!this.displayedMemory.equals(this.lastOutputScreen)) {
+				this.outputFilter.newCue(this.cueStartTime, time, this.lastOutputScreen);
+				if (dispatch && this.outputFilter.dispatchCue) this.outputFilter.dispatchCue();
+				this.cueStartTime = this.displayedMemory.isEmpty() ? null : time;
+			}
+			this.lastOutputScreen.copy(this.displayedMemory);
+		}
+	}
+	cueSplitAtTime(t) {
+		if (this.outputFilter) {
+			if (!this.displayedMemory.isEmpty()) {
+				if (this.outputFilter.newCue) this.outputFilter.newCue(this.cueStartTime, t, this.displayedMemory);
+				this.cueStartTime = t;
+			}
+		}
+	}
+};
+var Cea608Parser = class {
+	constructor(field, out1, out2) {
+		this.channels = void 0;
+		this.currentChannel = 0;
+		this.cmdHistory = createCmdHistory();
+		this.logger = void 0;
+		const logger = this.logger = new CaptionsLogger();
+		this.channels = [
+			null,
+			new Cea608Channel(field, out1, logger),
+			new Cea608Channel(field + 1, out2, logger)
+		];
+	}
+	getHandler(channel) {
+		return this.channels[channel].getHandler();
+	}
+	setHandler(channel, newHandler) {
+		this.channels[channel].setHandler(newHandler);
+	}
+	/**
+	* Add data for time t in forms of list of bytes (unsigned ints). The bytes are treated as pairs.
+	*/
+	addData(time, byteList) {
+		this.logger.time = time;
+		for (let i = 0; i < byteList.length; i += 2) {
+			const a = byteList[i] & 127;
+			const b = byteList[i + 1] & 127;
+			let cmdFound = false;
+			let charsFound = null;
+			if (a === 0 && b === 0) continue;
+			else this.logger.log(3, () => "[" + numArrayToHexArray([byteList[i], byteList[i + 1]]) + "] -> (" + numArrayToHexArray([a, b]) + ")");
+			const cmdHistory = this.cmdHistory;
+			if (a >= 16 && a <= 31) {
+				if (hasCmdRepeated(a, b, cmdHistory)) {
+					setLastCmd(null, null, cmdHistory);
+					this.logger.log(3, () => "Repeated command (" + numArrayToHexArray([a, b]) + ") is dropped");
+					continue;
+				}
+				setLastCmd(a, b, this.cmdHistory);
+				cmdFound = this.parseCmd(a, b);
+				if (!cmdFound) cmdFound = this.parseMidrow(a, b);
+				if (!cmdFound) cmdFound = this.parsePAC(a, b);
+				if (!cmdFound) cmdFound = this.parseBackgroundAttributes(a, b);
+			} else setLastCmd(null, null, cmdHistory);
+			if (!cmdFound) {
+				charsFound = this.parseChars(a, b);
+				if (charsFound) {
+					const currChNr = this.currentChannel;
+					if (currChNr && currChNr > 0) this.channels[currChNr].insertChars(charsFound);
+					else this.logger.log(2, "No channel found yet. TEXT-MODE?");
+				}
+			}
+			if (!cmdFound && !charsFound) this.logger.log(2, () => "Couldn't parse cleaned data " + numArrayToHexArray([a, b]) + " orig: " + numArrayToHexArray([byteList[i], byteList[i + 1]]));
+		}
+	}
+	/**
+	* Parse Command.
+	* @returns True if a command was found
+	*/
+	parseCmd(a, b) {
+		if (!((a === 20 || a === 28 || a === 21 || a === 29) && b >= 32 && b <= 47 || (a === 23 || a === 31) && b >= 33 && b <= 35)) return false;
+		const chNr = a === 20 || a === 21 || a === 23 ? 1 : 2;
+		const channel = this.channels[chNr];
+		if (a === 20 || a === 21 || a === 28 || a === 29) {
+			if (b === 32) channel.ccRCL();
+			else if (b === 33) channel.ccBS();
+			else if (b === 34) channel.ccAOF();
+			else if (b === 35) channel.ccAON();
+			else if (b === 36) channel.ccDER();
+			else if (b === 37) channel.ccRU(2);
+			else if (b === 38) channel.ccRU(3);
+			else if (b === 39) channel.ccRU(4);
+			else if (b === 40) channel.ccFON();
+			else if (b === 41) channel.ccRDC();
+			else if (b === 42) channel.ccTR();
+			else if (b === 43) channel.ccRTD();
+			else if (b === 44) channel.ccEDM();
+			else if (b === 45) channel.ccCR();
+			else if (b === 46) channel.ccENM();
+			else if (b === 47) channel.ccEOC();
+		} else channel.ccTO(b - 32);
+		this.currentChannel = chNr;
+		return true;
+	}
+	/**
+	* Parse midrow styling command
+	*/
+	parseMidrow(a, b) {
+		let chNr = 0;
+		if ((a === 17 || a === 25) && b >= 32 && b <= 47) {
+			if (a === 17) chNr = 1;
+			else chNr = 2;
+			if (chNr !== this.currentChannel) {
+				this.logger.log(0, "Mismatch channel in midrow parsing");
+				return false;
+			}
+			const channel = this.channels[chNr];
+			if (!channel) return false;
+			channel.ccMIDROW(b);
+			this.logger.log(3, () => "MIDROW (" + numArrayToHexArray([a, b]) + ")");
+			return true;
+		}
+		return false;
+	}
+	/**
+	* Parse Preable Access Codes (Table 53).
+	* @returns {Boolean} Tells if PAC found
+	*/
+	parsePAC(a, b) {
+		let row;
+		if (!((a >= 17 && a <= 23 || a >= 25 && a <= 31) && b >= 64 && b <= 127 || (a === 16 || a === 24) && b >= 64 && b <= 95)) return false;
+		const chNr = a <= 23 ? 1 : 2;
+		if (b >= 64 && b <= 95) row = chNr === 1 ? rowsLowCh1[a] : rowsLowCh2[a];
+		else row = chNr === 1 ? rowsHighCh1[a] : rowsHighCh2[a];
+		const channel = this.channels[chNr];
+		if (!channel) return false;
+		channel.setPAC(this.interpretPAC(row, b));
+		this.currentChannel = chNr;
+		return true;
+	}
+	/**
+	* Interpret the second byte of the pac, and return the information.
+	* @returns pacData with style parameters
+	*/
+	interpretPAC(row, byte) {
+		let pacIndex;
+		const pacData = {
+			color: null,
+			italics: false,
+			indent: null,
+			underline: false,
+			row
+		};
+		if (byte > 95) pacIndex = byte - 96;
+		else pacIndex = byte - 64;
+		pacData.underline = (pacIndex & 1) === 1;
+		if (pacIndex <= 13) pacData.color = [
+			"white",
+			"green",
+			"blue",
+			"cyan",
+			"red",
+			"yellow",
+			"magenta",
+			"white"
+		][Math.floor(pacIndex / 2)];
+		else if (pacIndex <= 15) {
+			pacData.italics = true;
+			pacData.color = "white";
+		} else pacData.indent = Math.floor((pacIndex - 16) / 2) * 4;
+		return pacData;
+	}
+	/**
+	* Parse characters.
+	* @returns An array with 1 to 2 codes corresponding to chars, if found. null otherwise.
+	*/
+	parseChars(a, b) {
+		let channelNr;
+		let charCodes = null;
+		let charCode1 = null;
+		if (a >= 25) {
+			channelNr = 2;
+			charCode1 = a - 8;
+		} else {
+			channelNr = 1;
+			charCode1 = a;
+		}
+		if (charCode1 >= 17 && charCode1 <= 19) {
+			let oneCode;
+			if (charCode1 === 17) oneCode = b + 80;
+			else if (charCode1 === 18) oneCode = b + 112;
+			else oneCode = b + 144;
+			this.logger.log(2, () => "Special char '" + getCharForByte(oneCode) + "' in channel " + channelNr);
+			charCodes = [oneCode];
+		} else if (a >= 32 && a <= 127) charCodes = b === 0 ? [a] : [a, b];
+		if (charCodes) this.logger.log(3, () => "Char codes =  " + numArrayToHexArray(charCodes).join(","));
+		return charCodes;
+	}
+	/**
+	* Parse extended background attributes as well as new foreground color black.
+	* @returns True if background attributes are found
+	*/
+	parseBackgroundAttributes(a, b) {
+		if (!((a === 16 || a === 24) && b >= 32 && b <= 47 || (a === 23 || a === 31) && b >= 45 && b <= 47)) return false;
+		let index;
+		const bkgData = {};
+		if (a === 16 || a === 24) {
+			index = Math.floor((b - 32) / 2);
+			bkgData.background = backgroundColors[index];
+			if (b % 2 === 1) bkgData.background = bkgData.background + "_semi";
+		} else if (b === 45) bkgData.background = "transparent";
+		else {
+			bkgData.foreground = "black";
+			if (b === 47) bkgData.underline = true;
+		}
+		const chNr = a <= 23 ? 1 : 2;
+		this.channels[chNr].setBkgData(bkgData);
+		return true;
+	}
+	/**
+	* Reset state of parser and its channels.
+	*/
+	reset() {
+		for (let i = 0; i < Object.keys(this.channels).length; i++) {
+			const channel = this.channels[i];
+			if (channel) channel.reset();
+		}
+		setLastCmd(null, null, this.cmdHistory);
+	}
+	/**
+	* Trigger the generation of a cue, and the start of a new one if displayScreens are not empty.
+	*/
+	cueSplitAtTime(t) {
+		for (let i = 0; i < this.channels.length; i++) {
+			const channel = this.channels[i];
+			if (channel) channel.cueSplitAtTime(t);
+		}
+	}
+};
+function setLastCmd(a, b, cmdHistory) {
+	cmdHistory.a = a;
+	cmdHistory.b = b;
+}
+function hasCmdRepeated(a, b, cmdHistory) {
+	return cmdHistory.a === a && cmdHistory.b === b;
+}
+function createCmdHistory() {
+	return {
+		a: null,
+		b: null
+	};
+}
+/**
+* Copyright 2013 vtt.js Contributors
+*
+* Licensed under the Apache License, Version 2.0 (the 'License');
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*   http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an 'AS IS' BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+var VTTCue = (function() {
+	if (optionalSelf != null && optionalSelf.VTTCue) return self.VTTCue;
+	const AllowedDirections = [
+		"",
+		"lr",
+		"rl"
+	];
+	const AllowedAlignments = [
+		"start",
+		"middle",
+		"end",
+		"left",
+		"right"
+	];
+	function isAllowedValue(allowed, value) {
+		if (typeof value !== "string") return false;
+		if (!Array.isArray(allowed)) return false;
+		const lcValue = value.toLowerCase();
+		if (~allowed.indexOf(lcValue)) return lcValue;
+		return false;
+	}
+	function findDirectionSetting(value) {
+		return isAllowedValue(AllowedDirections, value);
+	}
+	function findAlignSetting(value) {
+		return isAllowedValue(AllowedAlignments, value);
+	}
+	function extend(obj, ...rest) {
+		let i = 1;
+		for (; i < arguments.length; i++) {
+			const cobj = arguments[i];
+			for (const p in cobj) obj[p] = cobj[p];
+		}
+		return obj;
+	}
+	function VTTCue(startTime, endTime, text) {
+		const cue = this;
+		const baseObj = { enumerable: true };
+		/**
+		* Shim implementation specific properties. These properties are not in
+		* the spec.
+		*/
+		cue.hasBeenReset = false;
+		/**
+		* VTTCue and TextTrackCue properties
+		* http://dev.w3.org/html5/webvtt/#vttcue-interface
+		*/
+		let _id = "";
+		let _pauseOnExit = false;
+		let _startTime = startTime;
+		let _endTime = endTime;
+		let _text = text;
+		let _region = null;
+		let _vertical = "";
+		let _snapToLines = true;
+		let _line = "auto";
+		let _lineAlign = "start";
+		let _position = 50;
+		let _positionAlign = "middle";
+		let _size = 50;
+		let _align = "middle";
+		Object.defineProperty(cue, "id", extend({}, baseObj, {
+			get: function() {
+				return _id;
+			},
+			set: function(value) {
+				_id = "" + value;
+			}
+		}));
+		Object.defineProperty(cue, "pauseOnExit", extend({}, baseObj, {
+			get: function() {
+				return _pauseOnExit;
+			},
+			set: function(value) {
+				_pauseOnExit = !!value;
+			}
+		}));
+		Object.defineProperty(cue, "startTime", extend({}, baseObj, {
+			get: function() {
+				return _startTime;
+			},
+			set: function(value) {
+				if (typeof value !== "number") throw new TypeError("Start time must be set to a number.");
+				_startTime = value;
+				this.hasBeenReset = true;
+			}
+		}));
+		Object.defineProperty(cue, "endTime", extend({}, baseObj, {
+			get: function() {
+				return _endTime;
+			},
+			set: function(value) {
+				if (typeof value !== "number") throw new TypeError("End time must be set to a number.");
+				_endTime = value;
+				this.hasBeenReset = true;
+			}
+		}));
+		Object.defineProperty(cue, "text", extend({}, baseObj, {
+			get: function() {
+				return _text;
+			},
+			set: function(value) {
+				_text = "" + value;
+				this.hasBeenReset = true;
+			}
+		}));
+		Object.defineProperty(cue, "region", extend({}, baseObj, {
+			get: function() {
+				return _region;
+			},
+			set: function(value) {
+				_region = value;
+				this.hasBeenReset = true;
+			}
+		}));
+		Object.defineProperty(cue, "vertical", extend({}, baseObj, {
+			get: function() {
+				return _vertical;
+			},
+			set: function(value) {
+				const setting = findDirectionSetting(value);
+				if (setting === false) throw new SyntaxError("An invalid or illegal string was specified.");
+				_vertical = setting;
+				this.hasBeenReset = true;
+			}
+		}));
+		Object.defineProperty(cue, "snapToLines", extend({}, baseObj, {
+			get: function() {
+				return _snapToLines;
+			},
+			set: function(value) {
+				_snapToLines = !!value;
+				this.hasBeenReset = true;
+			}
+		}));
+		Object.defineProperty(cue, "line", extend({}, baseObj, {
+			get: function() {
+				return _line;
+			},
+			set: function(value) {
+				if (typeof value !== "number" && value !== "auto") throw new SyntaxError("An invalid number or illegal string was specified.");
+				_line = value;
+				this.hasBeenReset = true;
+			}
+		}));
+		Object.defineProperty(cue, "lineAlign", extend({}, baseObj, {
+			get: function() {
+				return _lineAlign;
+			},
+			set: function(value) {
+				const setting = findAlignSetting(value);
+				if (!setting) throw new SyntaxError("An invalid or illegal string was specified.");
+				_lineAlign = setting;
+				this.hasBeenReset = true;
+			}
+		}));
+		Object.defineProperty(cue, "position", extend({}, baseObj, {
+			get: function() {
+				return _position;
+			},
+			set: function(value) {
+				if (value < 0 || value > 100) throw new Error("Position must be between 0 and 100.");
+				_position = value;
+				this.hasBeenReset = true;
+			}
+		}));
+		Object.defineProperty(cue, "positionAlign", extend({}, baseObj, {
+			get: function() {
+				return _positionAlign;
+			},
+			set: function(value) {
+				const setting = findAlignSetting(value);
+				if (!setting) throw new SyntaxError("An invalid or illegal string was specified.");
+				_positionAlign = setting;
+				this.hasBeenReset = true;
+			}
+		}));
+		Object.defineProperty(cue, "size", extend({}, baseObj, {
+			get: function() {
+				return _size;
+			},
+			set: function(value) {
+				if (value < 0 || value > 100) throw new Error("Size must be between 0 and 100.");
+				_size = value;
+				this.hasBeenReset = true;
+			}
+		}));
+		Object.defineProperty(cue, "align", extend({}, baseObj, {
+			get: function() {
+				return _align;
+			},
+			set: function(value) {
+				const setting = findAlignSetting(value);
+				if (!setting) throw new SyntaxError("An invalid or illegal string was specified.");
+				_align = setting;
+				this.hasBeenReset = true;
+			}
+		}));
+		/**
+		* Other <track> spec defined properties
+		*/
+		cue.displayState = void 0;
+	}
+	/**
+	* VTTCue methods
+	*/
+	VTTCue.prototype.getCueAsHTML = function() {
+		return self.WebVTT.convertCueToDOMTree(self, this.text);
+	};
+	return VTTCue;
+})();
+var StringDecoder = class {
+	decode(data, options) {
+		if (!data) return "";
+		if (typeof data !== "string") throw new Error("Error - expected string data.");
+		return decodeURIComponent(encodeURIComponent(data));
+	}
+};
+function parseTimeStamp(input) {
+	function computeSeconds(h, m, s, f) {
+		return (h | 0) * 3600 + (m | 0) * 60 + (s | 0) + parseFloat(f || 0);
+	}
+	const m = input.match(/^(?:(\d+):)?(\d{2}):(\d{2})(\.\d+)?/);
+	if (!m) return null;
+	if (parseFloat(m[2]) > 59) return computeSeconds(m[2], m[3], 0, m[4]);
+	return computeSeconds(m[1], m[2], m[3], m[4]);
+}
+var Settings = class {
+	constructor() {
+		this.values = Object.create(null);
+	}
+	set(k, v) {
+		if (!this.get(k) && v !== "") this.values[k] = v;
+	}
+	get(k, dflt, defaultKey) {
+		if (defaultKey) return this.has(k) ? this.values[k] : dflt[defaultKey];
+		return this.has(k) ? this.values[k] : dflt;
+	}
+	has(k) {
+		return k in this.values;
+	}
+	alt(k, v, a) {
+		for (let n = 0; n < a.length; ++n) if (v === a[n]) {
+			this.set(k, v);
+			break;
+		}
+	}
+	integer(k, v) {
+		if (/^-?\d+$/.test(v)) this.set(k, parseInt(v, 10));
+	}
+	percent(k, v) {
+		if (/^([\d]{1,3})(\.[\d]*)?%$/.test(v)) {
+			const percent = parseFloat(v);
+			if (percent >= 0 && percent <= 100) {
+				this.set(k, percent);
+				return true;
+			}
+		}
+		return false;
+	}
+};
+function parseOptions(input, callback, keyValueDelim, groupDelim) {
+	const groups = groupDelim ? input.split(groupDelim) : [input];
+	for (const i in groups) {
+		if (typeof groups[i] !== "string") continue;
+		const kv = groups[i].split(keyValueDelim);
+		if (kv.length !== 2) continue;
+		const k = kv[0];
+		const v = kv[1];
+		callback(k, v);
+	}
+}
+var defaults = new VTTCue(0, 0, "");
+var center = defaults.align === "middle" ? "middle" : "center";
+function parseCue(input, cue, regionList) {
+	const oInput = input;
+	function consumeTimeStamp() {
+		const ts = parseTimeStamp(input);
+		if (ts === null) throw new Error("Malformed timestamp: " + oInput);
+		input = input.replace(/^[^\sa-zA-Z-]+/, "");
+		return ts;
+	}
+	function consumeCueSettings(input, cue) {
+		const settings = new Settings();
+		parseOptions(input, function(k, v) {
+			let vals;
+			switch (k) {
+				case "region":
+					for (let i = regionList.length - 1; i >= 0; i--) if (regionList[i].id === v) {
+						settings.set(k, regionList[i].region);
+						break;
+					}
+					break;
+				case "vertical":
+					settings.alt(k, v, ["rl", "lr"]);
+					break;
+				case "line":
+					vals = v.split(",");
+					settings.integer(k, vals[0]);
+					if (settings.percent(k, vals[0])) settings.set("snapToLines", false);
+					settings.alt(k, vals[0], ["auto"]);
+					if (vals.length === 2) settings.alt("lineAlign", vals[1], [
+						"start",
+						center,
+						"end"
+					]);
+					break;
+				case "position":
+					vals = v.split(",");
+					settings.percent(k, vals[0]);
+					if (vals.length === 2) settings.alt("positionAlign", vals[1], [
+						"start",
+						center,
+						"end",
+						"line-left",
+						"line-right",
+						"auto"
+					]);
+					break;
+				case "size":
+					settings.percent(k, v);
+					break;
+				case "align": settings.alt(k, v, [
+					"start",
+					center,
+					"end",
+					"left",
+					"right"
+				]);
+			}
+		}, /:/, /\s/);
+		cue.region = settings.get("region", null);
+		cue.vertical = settings.get("vertical", "");
+		let line = settings.get("line", "auto");
+		if (line === "auto" && defaults.line === -1) line = -1;
+		cue.line = line;
+		cue.lineAlign = settings.get("lineAlign", "start");
+		cue.snapToLines = settings.get("snapToLines", true);
+		cue.size = settings.get("size", 100);
+		cue.align = settings.get("align", center);
+		let position = settings.get("position", "auto");
+		if (position === "auto" && defaults.position === 50) position = cue.align === "start" || cue.align === "left" ? 0 : cue.align === "end" || cue.align === "right" ? 100 : 50;
+		cue.position = position;
+	}
+	function skipWhitespace() {
+		input = input.replace(/^\s+/, "");
+	}
+	skipWhitespace();
+	cue.startTime = consumeTimeStamp();
+	skipWhitespace();
+	if (input.slice(0, 3) !== "-->") throw new Error("Malformed time stamp (time stamps must be separated by '-->'): " + oInput);
+	input = input.slice(3);
+	skipWhitespace();
+	cue.endTime = consumeTimeStamp();
+	skipWhitespace();
+	consumeCueSettings(input, cue);
+}
+function fixLineBreaks(input) {
+	return input.replace(/<br(?: \/)?>/gi, "\n");
+}
+var VTTParser = class {
+	constructor() {
+		this.state = "INITIAL";
+		this.buffer = "";
+		this.decoder = new StringDecoder();
+		this.regionList = [];
+		this.cue = null;
+		this.oncue = void 0;
+		this.onparsingerror = void 0;
+		this.onflush = void 0;
+	}
+	parse(data) {
+		const _this = this;
+		if (data) _this.buffer += _this.decoder.decode(data, { stream: true });
+		function collectNextLine() {
+			let buffer = _this.buffer;
+			let pos = 0;
+			buffer = fixLineBreaks(buffer);
+			while (pos < buffer.length && buffer[pos] !== "\r" && buffer[pos] !== "\n") ++pos;
+			const line = buffer.slice(0, pos);
+			if (buffer[pos] === "\r") ++pos;
+			if (buffer[pos] === "\n") ++pos;
+			_this.buffer = buffer.slice(pos);
+			return line;
+		}
+		function parseHeader(input) {
+			parseOptions(input, function(k, v) {}, /:/);
+		}
+		try {
+			let line = "";
+			if (_this.state === "INITIAL") {
+				if (!/\r\n|\n/.test(_this.buffer)) return this;
+				line = collectNextLine();
+				const m = line.match(/^(ï»¿)?WEBVTT([ \t].*)?$/);
+				if (!(m != null && m[0])) throw new Error("Malformed WebVTT signature.");
+				_this.state = "HEADER";
+			}
+			let alreadyCollectedLine = false;
+			while (_this.buffer) {
+				if (!/\r\n|\n/.test(_this.buffer)) return this;
+				if (!alreadyCollectedLine) line = collectNextLine();
+				else alreadyCollectedLine = false;
+				switch (_this.state) {
+					case "HEADER":
+						if (/:/.test(line)) parseHeader(line);
+						else if (!line) _this.state = "ID";
+						continue;
+					case "NOTE":
+						if (!line) _this.state = "ID";
+						continue;
+					case "ID":
+						if (/^NOTE($|[ \t])/.test(line)) {
+							_this.state = "NOTE";
+							break;
+						}
+						if (!line) continue;
+						_this.cue = new VTTCue(0, 0, "");
+						_this.state = "CUE";
+						if (line.indexOf("-->") === -1) {
+							_this.cue.id = line;
+							continue;
+						}
+					case "CUE":
+						if (!_this.cue) {
+							_this.state = "BADCUE";
+							continue;
+						}
+						try {
+							parseCue(line, _this.cue, _this.regionList);
+						} catch (e) {
+							_this.cue = null;
+							_this.state = "BADCUE";
+							continue;
+						}
+						_this.state = "CUETEXT";
+						continue;
+					case "CUETEXT":
+						{
+							const hasSubstring = line.indexOf("-->") !== -1;
+							if (!line || hasSubstring && (alreadyCollectedLine = true)) {
+								if (_this.oncue && _this.cue) _this.oncue(_this.cue);
+								_this.cue = null;
+								_this.state = "ID";
+								continue;
+							}
+							if (_this.cue === null) continue;
+							if (_this.cue.text) _this.cue.text += "\n";
+							_this.cue.text += line;
+						}
+						continue;
+					case "BADCUE": if (!line) _this.state = "ID";
+				}
+			}
+		} catch (e) {
+			if (_this.state === "CUETEXT" && _this.cue && _this.oncue) _this.oncue(_this.cue);
+			_this.cue = null;
+			_this.state = _this.state === "INITIAL" ? "BADWEBVTT" : "BADCUE";
+		}
+		return this;
+	}
+	flush() {
+		const _this = this;
+		try {
+			if (_this.cue || _this.state === "HEADER") {
+				_this.buffer += "\n\n";
+				_this.parse();
+			}
+			if (_this.state === "INITIAL" || _this.state === "BADWEBVTT") throw new Error("Malformed WebVTT signature.");
+		} catch (e) {
+			if (_this.onparsingerror) _this.onparsingerror(e);
+		}
+		if (_this.onflush) _this.onflush();
+		return this;
+	}
+};
+var LINEBREAKS = /\r\n|\n\r|\n|\r/g;
+var startsWith = function startsWith(inputString, searchString, position = 0) {
+	return inputString.slice(position, position + searchString.length) === searchString;
+};
+var cueString2millis = function cueString2millis(timeString) {
+	let ts = parseInt(timeString.slice(-3));
+	const secs = parseInt(timeString.slice(-6, -4));
+	const mins = parseInt(timeString.slice(-9, -7));
+	const hours = timeString.length > 9 ? parseInt(timeString.substring(0, timeString.indexOf(":"))) : 0;
+	if (!isFiniteNumber(ts) || !isFiniteNumber(secs) || !isFiniteNumber(mins) || !isFiniteNumber(hours)) throw Error(`Malformed X-TIMESTAMP-MAP: Local:${timeString}`);
+	ts += 1e3 * secs;
+	ts += 6e4 * mins;
+	ts += 36e5 * hours;
+	return ts;
+};
+function generateCueId(startTime, endTime, text) {
+	return hash(startTime.toString()) + hash(endTime.toString()) + hash(text);
+}
+var calculateOffset$2 = function calculateOffset(vttCCs, cc, presentationTime) {
+	let currCC = vttCCs[cc];
+	let prevCC = vttCCs[currCC.prevCC];
+	if (!prevCC || !prevCC.new && currCC.new) {
+		vttCCs.ccOffset = vttCCs.presentationOffset = currCC.start;
+		currCC.new = false;
+		return;
+	}
+	while ((_prevCC = prevCC) != null && _prevCC.new) {
+		var _prevCC;
+		vttCCs.ccOffset += currCC.start - prevCC.start;
+		currCC.new = false;
+		currCC = prevCC;
+		prevCC = vttCCs[currCC.prevCC];
+	}
+	vttCCs.presentationOffset = presentationTime;
+};
+function parseWebVTT(vttByteArray, initPTS, vttCCs, cc, timeOffset, callBack, errorCallBack) {
+	const parser = new VTTParser();
+	const vttLines = utf8ArrayToStr(new Uint8Array(vttByteArray)).trim().replace(LINEBREAKS, "\n").split("\n");
+	const cues = [];
+	const init90kHz = initPTS ? toMpegTsClockFromTimescale(initPTS.baseTime, initPTS.timescale) : 0;
+	let cueTime = "00:00.000";
+	let timestampMapMPEGTS = 0;
+	let timestampMapLOCAL = 0;
+	let parsingError;
+	let inHeader = true;
+	parser.oncue = function(cue) {
+		const currCC = vttCCs[cc];
+		let cueOffset = vttCCs.ccOffset;
+		const webVttMpegTsMapOffset = (timestampMapMPEGTS - init90kHz) / 9e4;
+		if (currCC != null && currCC.new) if (timestampMapLOCAL !== void 0) cueOffset = vttCCs.ccOffset = currCC.start;
+		else calculateOffset$2(vttCCs, cc, webVttMpegTsMapOffset);
+		if (webVttMpegTsMapOffset) {
+			if (!initPTS) {
+				parsingError = /* @__PURE__ */ new Error("Missing initPTS for VTT MPEGTS");
+				return;
+			}
+			cueOffset = webVttMpegTsMapOffset - vttCCs.presentationOffset;
+		}
+		const duration = cue.endTime - cue.startTime;
+		const startTime = normalizePts((cue.startTime + cueOffset - timestampMapLOCAL) * 9e4, timeOffset * 9e4) / 9e4;
+		cue.startTime = Math.max(startTime, 0);
+		cue.endTime = Math.max(startTime + duration, 0);
+		const text = cue.text.trim();
+		cue.text = decodeURIComponent(encodeURIComponent(text));
+		if (!cue.id) cue.id = generateCueId(cue.startTime, cue.endTime, text);
+		if (cue.endTime > 0) cues.push(cue);
+	};
+	parser.onparsingerror = function(error) {
+		parsingError = error;
+	};
+	parser.onflush = function() {
+		if (parsingError) {
+			errorCallBack(parsingError);
+			return;
+		}
+		callBack(cues);
+	};
+	vttLines.forEach((line) => {
+		if (inHeader) {
+			if (startsWith(line, "X-TIMESTAMP-MAP=")) {
+				inHeader = false;
+				line.slice(16).split(",").forEach((timestamp) => {
+					if (startsWith(timestamp, "LOCAL:")) cueTime = timestamp.slice(6);
+					else if (startsWith(timestamp, "MPEGTS:")) timestampMapMPEGTS = parseInt(timestamp.slice(7));
+				});
+				try {
+					timestampMapLOCAL = cueString2millis(cueTime) / 1e3;
+				} catch (error) {
+					parsingError = error;
+				}
+				return;
+			} else if (line === "") inHeader = false;
+		}
+		parser.parse(line + "\n");
+	});
+	parser.flush();
+}
+var IMSC1_CODEC = "stpp.ttml.im1t";
+var HMSF_REGEX = /^(\d{2,}):(\d{2}):(\d{2}):(\d{2})\.?(\d+)?$/;
+var TIME_UNIT_REGEX = /^(\d*(?:\.\d*)?)(h|m|s|ms|f|t)$/;
+var textAlignToLineAlign = {
+	left: "start",
+	center: "center",
+	right: "end",
+	start: "start",
+	end: "end"
+};
+function parseIMSC1(payload, initPTS, callBack, errorCallBack) {
+	const results = findBox(new Uint8Array(payload), ["mdat"]);
+	if (results.length === 0) {
+		errorCallBack(/* @__PURE__ */ new Error("Could not parse IMSC1 mdat"));
+		return;
+	}
+	const ttmlList = results.map((mdat) => utf8ArrayToStr(mdat));
+	const syncTime = toTimescaleFromScale(initPTS.baseTime, 1, initPTS.timescale);
+	try {
+		ttmlList.forEach((ttml) => callBack(parseTTML(ttml, syncTime)));
+	} catch (error) {
+		errorCallBack(error);
+	}
+}
+function parseTTML(ttml, syncTime) {
+	const tt = new DOMParser().parseFromString(ttml, "text/xml").getElementsByTagName("tt")[0];
+	if (!tt) throw new Error("Invalid ttml");
+	const defaultRateInfo = {
+		frameRate: 30,
+		subFrameRate: 1,
+		frameRateMultiplier: 0,
+		tickRate: 0
+	};
+	const rateInfo = Object.keys(defaultRateInfo).reduce((result, key) => {
+		result[key] = tt.getAttribute(`ttp:${key}`) || defaultRateInfo[key];
+		return result;
+	}, {});
+	const trim = tt.getAttribute("xml:space") !== "preserve";
+	const styleElements = collectionToDictionary(getElementCollection(tt, "styling", "style"));
+	const regionElements = collectionToDictionary(getElementCollection(tt, "layout", "region"));
+	const cueElements = getElementCollection(tt, "body", "[begin]");
+	return [].map.call(cueElements, (cueElement) => {
+		const cueText = getTextContent(cueElement, trim);
+		if (!cueText || !cueElement.hasAttribute("begin")) return null;
+		const startTime = parseTtmlTime(cueElement.getAttribute("begin"), rateInfo);
+		const duration = parseTtmlTime(cueElement.getAttribute("dur"), rateInfo);
+		let endTime = parseTtmlTime(cueElement.getAttribute("end"), rateInfo);
+		if (startTime === null) throw timestampParsingError(cueElement);
+		if (endTime === null) {
+			if (duration === null) throw timestampParsingError(cueElement);
+			endTime = startTime + duration;
+		}
+		const cue = new VTTCue(startTime - syncTime, endTime - syncTime, cueText);
+		cue.id = generateCueId(cue.startTime, cue.endTime, cue.text);
+		const region = regionElements[cueElement.getAttribute("region")];
+		const style = styleElements[cueElement.getAttribute("style")];
+		const styles = getTtmlStyles(region, style, styleElements);
+		const { textAlign } = styles;
+		if (textAlign) {
+			const lineAlign = textAlignToLineAlign[textAlign];
+			if (lineAlign) cue.lineAlign = lineAlign;
+			cue.align = textAlign;
+		}
+		_extends(cue, styles);
+		return cue;
+	}).filter((cue) => cue !== null);
+}
+function getElementCollection(fromElement, parentName, childName) {
+	const parent = fromElement.getElementsByTagName(parentName)[0];
+	if (parent) return [].slice.call(parent.querySelectorAll(childName));
+	return [];
+}
+function collectionToDictionary(elementsWithId) {
+	return elementsWithId.reduce((dict, element) => {
+		const id = element.getAttribute("xml:id");
+		if (id) dict[id] = element;
+		return dict;
+	}, {});
+}
+function getTextContent(element, trim) {
+	return [].slice.call(element.childNodes).reduce((str, node, i) => {
+		var _node$childNodes;
+		if (node.nodeName === "br" && i) return str + "\n";
+		if ((_node$childNodes = node.childNodes) != null && _node$childNodes.length) return getTextContent(node, trim);
+		else if (trim) return str + node.textContent.trim().replace(/\s+/g, " ");
+		return str + node.textContent;
+	}, "");
+}
+function getTtmlStyles(region, style, styleElements) {
+	const ttsNs = "http://www.w3.org/ns/ttml#styling";
+	let regionStyle = null;
+	const styleAttributes = [
+		"displayAlign",
+		"textAlign",
+		"color",
+		"backgroundColor",
+		"fontSize",
+		"fontFamily"
+	];
+	const regionStyleName = region != null && region.hasAttribute("style") ? region.getAttribute("style") : null;
+	if (regionStyleName && styleElements.hasOwnProperty(regionStyleName)) regionStyle = styleElements[regionStyleName];
+	return styleAttributes.reduce((styles, name) => {
+		const value = getAttributeNS(style, ttsNs, name) || getAttributeNS(region, ttsNs, name) || getAttributeNS(regionStyle, ttsNs, name);
+		if (value) styles[name] = value;
+		return styles;
+	}, {});
+}
+function getAttributeNS(element, ns, name) {
+	if (!element) return null;
+	return element.hasAttributeNS(ns, name) ? element.getAttributeNS(ns, name) : null;
+}
+function timestampParsingError(node) {
+	return /* @__PURE__ */ new Error(`Could not parse ttml timestamp ${node}`);
+}
+function parseTtmlTime(timeAttributeValue, rateInfo) {
+	if (!timeAttributeValue) return null;
+	let seconds = parseTimeStamp(timeAttributeValue);
+	if (seconds === null) {
+		if (HMSF_REGEX.test(timeAttributeValue)) seconds = parseHoursMinutesSecondsFrames(timeAttributeValue, rateInfo);
+		else if (TIME_UNIT_REGEX.test(timeAttributeValue)) seconds = parseTimeUnits(timeAttributeValue, rateInfo);
+	}
+	return seconds;
+}
+function parseHoursMinutesSecondsFrames(timeAttributeValue, rateInfo) {
+	const m = HMSF_REGEX.exec(timeAttributeValue);
+	const frames = (m[4] | 0) + (m[5] | 0) / rateInfo.subFrameRate;
+	return (m[1] | 0) * 3600 + (m[2] | 0) * 60 + (m[3] | 0) + frames / rateInfo.frameRate;
+}
+function parseTimeUnits(timeAttributeValue, rateInfo) {
+	const m = TIME_UNIT_REGEX.exec(timeAttributeValue);
+	const value = Number(m[1]);
+	switch (m[2]) {
+		case "h": return value * 3600;
+		case "m": return value * 60;
+		case "ms": return value * 1e3;
+		case "f": return value / rateInfo.frameRate;
+		case "t": return value / rateInfo.tickRate;
+	}
+	return value;
+}
+var OutputFilter = class {
+	constructor(timelineController, trackName) {
+		this.timelineController = void 0;
+		this.cueRanges = [];
+		this.trackName = void 0;
+		this.startTime = null;
+		this.endTime = null;
+		this.screen = null;
+		this.timelineController = timelineController;
+		this.trackName = trackName;
+	}
+	dispatchCue() {
+		if (this.startTime === null) return;
+		this.timelineController.addCues(this.trackName, this.startTime, this.endTime, this.screen, this.cueRanges);
+		this.startTime = null;
+	}
+	newCue(startTime, endTime, screen) {
+		if (this.startTime === null || this.startTime > startTime) this.startTime = startTime;
+		this.endTime = endTime;
+		this.screen = screen;
+		this.timelineController.createCaptionsTrack(this.trackName);
+	}
+	reset() {
+		this.cueRanges = [];
+		this.startTime = null;
+	}
+};
+var TimelineController = class {
+	constructor(hls) {
+		this.hls = void 0;
+		this.media = null;
+		this.config = void 0;
+		this.enabled = true;
+		this.Cues = void 0;
+		this.textTracks = [];
+		this.tracks = [];
+		this.initPTS = [];
+		this.unparsedVttFrags = [];
+		this.captionsTracks = {};
+		this.nonNativeCaptionsTracks = {};
+		this.cea608Parser1 = void 0;
+		this.cea608Parser2 = void 0;
+		this.lastCc = -1;
+		this.lastSn = -1;
+		this.lastPartIndex = -1;
+		this.prevCC = -1;
+		this.vttCCs = newVTTCCs();
+		this.captionsProperties = void 0;
+		this.hls = hls;
+		this.config = hls.config;
+		this.Cues = hls.config.cueHandler;
+		this.captionsProperties = {
+			textTrack1: {
+				label: this.config.captionsTextTrack1Label,
+				languageCode: this.config.captionsTextTrack1LanguageCode
+			},
+			textTrack2: {
+				label: this.config.captionsTextTrack2Label,
+				languageCode: this.config.captionsTextTrack2LanguageCode
+			},
+			textTrack3: {
+				label: this.config.captionsTextTrack3Label,
+				languageCode: this.config.captionsTextTrack3LanguageCode
+			},
+			textTrack4: {
+				label: this.config.captionsTextTrack4Label,
+				languageCode: this.config.captionsTextTrack4LanguageCode
+			}
+		};
+		hls.on(Events.MEDIA_ATTACHING, this.onMediaAttaching, this);
+		hls.on(Events.MEDIA_DETACHING, this.onMediaDetaching, this);
+		hls.on(Events.MANIFEST_LOADING, this.onManifestLoading, this);
+		hls.on(Events.MANIFEST_LOADED, this.onManifestLoaded, this);
+		hls.on(Events.SUBTITLE_TRACKS_UPDATED, this.onSubtitleTracksUpdated, this);
+		hls.on(Events.FRAG_LOADING, this.onFragLoading, this);
+		hls.on(Events.FRAG_LOADED, this.onFragLoaded, this);
+		hls.on(Events.FRAG_PARSING_USERDATA, this.onFragParsingUserdata, this);
+		hls.on(Events.FRAG_DECRYPTED, this.onFragDecrypted, this);
+		hls.on(Events.INIT_PTS_FOUND, this.onInitPtsFound, this);
+		hls.on(Events.SUBTITLE_TRACKS_CLEARED, this.onSubtitleTracksCleared, this);
+		hls.on(Events.BUFFER_FLUSHING, this.onBufferFlushing, this);
+	}
+	destroy() {
+		const { hls } = this;
+		hls.off(Events.MEDIA_ATTACHING, this.onMediaAttaching, this);
+		hls.off(Events.MEDIA_DETACHING, this.onMediaDetaching, this);
+		hls.off(Events.MANIFEST_LOADING, this.onManifestLoading, this);
+		hls.off(Events.MANIFEST_LOADED, this.onManifestLoaded, this);
+		hls.off(Events.SUBTITLE_TRACKS_UPDATED, this.onSubtitleTracksUpdated, this);
+		hls.off(Events.FRAG_LOADING, this.onFragLoading, this);
+		hls.off(Events.FRAG_LOADED, this.onFragLoaded, this);
+		hls.off(Events.FRAG_PARSING_USERDATA, this.onFragParsingUserdata, this);
+		hls.off(Events.FRAG_DECRYPTED, this.onFragDecrypted, this);
+		hls.off(Events.INIT_PTS_FOUND, this.onInitPtsFound, this);
+		hls.off(Events.SUBTITLE_TRACKS_CLEARED, this.onSubtitleTracksCleared, this);
+		hls.off(Events.BUFFER_FLUSHING, this.onBufferFlushing, this);
+		this.hls = this.config = this.media = null;
+		this.cea608Parser1 = this.cea608Parser2 = void 0;
+	}
+	initCea608Parsers() {
+		const channel1 = new OutputFilter(this, "textTrack1");
+		const channel2 = new OutputFilter(this, "textTrack2");
+		const channel3 = new OutputFilter(this, "textTrack3");
+		const channel4 = new OutputFilter(this, "textTrack4");
+		this.cea608Parser1 = new Cea608Parser(1, channel1, channel2);
+		this.cea608Parser2 = new Cea608Parser(3, channel3, channel4);
+	}
+	addCues(trackName, startTime, endTime, screen, cueRanges) {
+		let merged = false;
+		for (let i = cueRanges.length; i--;) {
+			const cueRange = cueRanges[i];
+			const overlap = intersection$2(cueRange[0], cueRange[1], startTime, endTime);
+			if (overlap >= 0) {
+				cueRange[0] = Math.min(cueRange[0], startTime);
+				cueRange[1] = Math.max(cueRange[1], endTime);
+				merged = true;
+				if (overlap / (endTime - startTime) > .5) return;
+			}
+		}
+		if (!merged) cueRanges.push([startTime, endTime]);
+		if (this.config.renderTextTracksNatively) {
+			const track = this.captionsTracks[trackName];
+			this.Cues.newCue(track, startTime, endTime, screen);
+		} else {
+			const cues = this.Cues.newCue(null, startTime, endTime, screen);
+			this.hls.trigger(Events.CUES_PARSED, {
+				type: "captions",
+				cues,
+				track: trackName
+			});
+		}
+	}
+	onInitPtsFound(event, { frag, id, initPTS, timescale, trackId }) {
+		const { unparsedVttFrags } = this;
+		if (id === PlaylistLevelType.MAIN) this.initPTS[frag.cc] = {
+			baseTime: initPTS,
+			timescale,
+			trackId
+		};
+		if (unparsedVttFrags.length) {
+			this.unparsedVttFrags = [];
+			unparsedVttFrags.forEach((data) => {
+				if (this.initPTS[data.frag.cc]) this.onFragLoaded(Events.FRAG_LOADED, data);
+				else this.hls.trigger(Events.SUBTITLE_FRAG_PROCESSED, {
+					success: false,
+					frag: data.frag,
+					error: /* @__PURE__ */ new Error("Subtitle discontinuity domain does not match main")
+				});
+			});
+		}
+	}
+	getExistingTrack(label, language) {
+		const { media } = this;
+		if (media) for (let i = 0; i < media.textTracks.length; i++) {
+			const textTrack = media.textTracks[i];
+			if (canReuseVttTextTrack(textTrack, {
+				name: label,
+				lang: language,
+				characteristics: "transcribes-spoken-dialog,describes-music-and-sound"
+			})) return textTrack;
+		}
+		return null;
+	}
+	createCaptionsTrack(trackName) {
+		if (this.config.renderTextTracksNatively) this.createNativeTrack(trackName);
+		else this.createNonNativeTrack(trackName);
+	}
+	createNativeTrack(trackName) {
+		if (this.captionsTracks[trackName]) return;
+		const { captionsProperties, captionsTracks, media } = this;
+		const { label, languageCode } = captionsProperties[trackName];
+		const existingTrack = this.getExistingTrack(label, languageCode);
+		if (!existingTrack) {
+			const textTrack = this.createTextTrack("captions", label, languageCode);
+			if (textTrack) {
+				textTrack[trackName] = true;
+				captionsTracks[trackName] = textTrack;
+			}
+		} else {
+			captionsTracks[trackName] = existingTrack;
+			clearCurrentCues(captionsTracks[trackName]);
+			sendAddTrackEvent(captionsTracks[trackName], media);
+		}
+	}
+	createNonNativeTrack(trackName) {
+		if (this.nonNativeCaptionsTracks[trackName]) return;
+		const trackProperties = this.captionsProperties[trackName];
+		if (!trackProperties) return;
+		const track = {
+			_id: trackName,
+			label: trackProperties.label,
+			kind: "captions",
+			default: trackProperties.media ? !!trackProperties.media.default : false,
+			closedCaptions: trackProperties.media
+		};
+		this.nonNativeCaptionsTracks[trackName] = track;
+		this.hls.trigger(Events.NON_NATIVE_TEXT_TRACKS_FOUND, { tracks: [track] });
+	}
+	createTextTrack(kind, label, lang) {
+		const media = this.media;
+		if (!media) return;
+		return media.addTextTrack(kind, label, lang);
+	}
+	onMediaAttaching(event, data) {
+		this.media = data.media;
+		if (!data.mediaSource) this._cleanTracks();
+	}
+	onMediaDetaching(event, data) {
+		const transferringMedia = !!data.transferMedia;
+		this.media = null;
+		if (transferringMedia) return;
+		const { captionsTracks } = this;
+		Object.keys(captionsTracks).forEach((trackName) => {
+			clearCurrentCues(captionsTracks[trackName]);
+			delete captionsTracks[trackName];
+		});
+		this.nonNativeCaptionsTracks = {};
+	}
+	onManifestLoading() {
+		this.lastCc = -1;
+		this.lastSn = -1;
+		this.lastPartIndex = -1;
+		this.prevCC = -1;
+		this.vttCCs = newVTTCCs();
+		this._cleanTracks();
+		this.tracks = [];
+		this.captionsTracks = {};
+		this.nonNativeCaptionsTracks = {};
+		this.textTracks = [];
+		this.unparsedVttFrags = [];
+		this.initPTS = [];
+		if (this.cea608Parser1 && this.cea608Parser2) {
+			this.cea608Parser1.reset();
+			this.cea608Parser2.reset();
+		}
+	}
+	_cleanTracks() {
+		const { media } = this;
+		if (!media) return;
+		const textTracks = media.textTracks;
+		if (textTracks) for (let i = 0; i < textTracks.length; i++) clearCurrentCues(textTracks[i]);
+	}
+	onSubtitleTracksUpdated(event, data) {
+		const tracks = data.subtitleTracks || [];
+		const hasIMSC1 = tracks.some((track) => track.textCodec === IMSC1_CODEC);
+		if (this.config.enableWebVTT || hasIMSC1 && this.config.enableIMSC1) {
+			if (subtitleOptionsIdentical(this.tracks, tracks)) {
+				this.tracks = tracks;
+				return;
+			}
+			this.textTracks = [];
+			this.tracks = tracks;
+			if (this.config.renderTextTracksNatively) {
+				const media = this.media;
+				const inUseTracks = media ? filterSubtitleTracks(media.textTracks) : null;
+				this.tracks.forEach((track, index) => {
+					let textTrack;
+					if (inUseTracks) {
+						let inUseTrack = null;
+						for (let i = 0; i < inUseTracks.length; i++) if (inUseTracks[i] && canReuseVttTextTrack(inUseTracks[i], track)) {
+							inUseTrack = inUseTracks[i];
+							inUseTracks[i] = null;
+							break;
+						}
+						if (inUseTrack) textTrack = inUseTrack;
+					}
+					if (textTrack) clearCurrentCues(textTrack);
+					else {
+						const textTrackKind = captionsOrSubtitlesFromCharacteristics(track);
+						textTrack = this.createTextTrack(textTrackKind, track.name, track.lang);
+						if (textTrack) textTrack.mode = "disabled";
+					}
+					if (textTrack) this.textTracks.push(textTrack);
+				});
+				if (inUseTracks != null && inUseTracks.length) {
+					const unusedTextTracks = inUseTracks.filter((t) => t !== null).map((t) => t.label);
+					if (unusedTextTracks.length) this.hls.logger.warn(`Media element contains unused subtitle tracks: ${unusedTextTracks.join(", ")}. Replace media element for each source to clear TextTracks and captions menu.`);
+				}
+			} else if (this.tracks.length) {
+				const tracksList = this.tracks.map((track) => {
+					return {
+						label: track.name,
+						kind: track.type.toLowerCase(),
+						default: track.default,
+						subtitleTrack: track
+					};
+				});
+				this.hls.trigger(Events.NON_NATIVE_TEXT_TRACKS_FOUND, { tracks: tracksList });
+			}
+		}
+	}
+	onManifestLoaded(event, data) {
+		if (this.config.enableCEA708Captions && data.captions) data.captions.forEach((captionsTrack) => {
+			const instreamIdMatch = /(?:CC|SERVICE)([1-4])/.exec(captionsTrack.instreamId);
+			if (!instreamIdMatch) return;
+			const trackName = `textTrack${instreamIdMatch[1]}`;
+			const trackProperties = this.captionsProperties[trackName];
+			if (!trackProperties) return;
+			trackProperties.label = captionsTrack.name;
+			if (captionsTrack.lang) trackProperties.languageCode = captionsTrack.lang;
+			trackProperties.media = captionsTrack;
+		});
+	}
+	closedCaptionsForLevel(frag) {
+		const level = this.hls.levels[frag.level];
+		return level == null ? void 0 : level.attrs["CLOSED-CAPTIONS"];
+	}
+	onFragLoading(event, data) {
+		if (this.enabled && data.frag.type === PlaylistLevelType.MAIN) {
+			var _data$part$index, _data$part;
+			const { cea608Parser1, cea608Parser2, lastSn } = this;
+			const { cc, sn } = data.frag;
+			const partIndex = (_data$part$index = (_data$part = data.part) == null ? void 0 : _data$part.index) != null ? _data$part$index : -1;
+			if (cea608Parser1 && cea608Parser2) {
+				if (sn !== lastSn + 1 || sn === lastSn && partIndex !== this.lastPartIndex + 1 || cc !== this.lastCc) {
+					cea608Parser1.reset();
+					cea608Parser2.reset();
+				}
+			}
+			this.lastCc = cc;
+			this.lastSn = sn;
+			this.lastPartIndex = partIndex;
+		}
+	}
+	onFragLoaded(event, data) {
+		const { frag, payload } = data;
+		if (frag.type === PlaylistLevelType.SUBTITLE) if (payload.byteLength) {
+			const decryptData = frag.decryptdata;
+			const decrypted = "stats" in data;
+			if (decryptData == null || !decryptData.encrypted || decrypted) {
+				const trackPlaylistMedia = this.tracks[frag.level];
+				const vttCCs = this.vttCCs;
+				if (!vttCCs[frag.cc]) {
+					vttCCs[frag.cc] = {
+						start: frag.start,
+						prevCC: this.prevCC,
+						new: true
+					};
+					this.prevCC = frag.cc;
+				}
+				if (trackPlaylistMedia && trackPlaylistMedia.textCodec === IMSC1_CODEC) this._parseIMSC1(frag, payload);
+				else this._parseVTTs(data);
+			}
+		} else this.hls.trigger(Events.SUBTITLE_FRAG_PROCESSED, {
+			success: false,
+			frag,
+			error: /* @__PURE__ */ new Error("Empty subtitle payload")
+		});
+	}
+	_parseIMSC1(frag, payload) {
+		const hls = this.hls;
+		parseIMSC1(payload, this.initPTS[frag.cc], (cues) => {
+			this._appendCues(cues, frag.level);
+			hls.trigger(Events.SUBTITLE_FRAG_PROCESSED, {
+				success: true,
+				frag
+			});
+		}, (error) => {
+			hls.logger.log(`Failed to parse IMSC1: ${error}`);
+			hls.trigger(Events.SUBTITLE_FRAG_PROCESSED, {
+				success: false,
+				frag,
+				error
+			});
+		});
+	}
+	_parseVTTs(data) {
+		var _frag$initSegment;
+		const { frag, payload } = data;
+		const { initPTS, unparsedVttFrags } = this;
+		const maxAvCC = initPTS.length - 1;
+		if (!initPTS[frag.cc] && maxAvCC === -1) {
+			unparsedVttFrags.push(data);
+			return;
+		}
+		const hls = this.hls;
+		parseWebVTT((_frag$initSegment = frag.initSegment) != null && _frag$initSegment.data ? appendUint8Array(frag.initSegment.data, new Uint8Array(payload)).buffer : payload, this.initPTS[frag.cc], this.vttCCs, frag.cc, frag.start, (cues) => {
+			this._appendCues(cues, frag.level);
+			hls.trigger(Events.SUBTITLE_FRAG_PROCESSED, {
+				success: true,
+				frag
+			});
+		}, (error) => {
+			const missingInitPTS = error.message === "Missing initPTS for VTT MPEGTS";
+			if (missingInitPTS) unparsedVttFrags.push(data);
+			else this._fallbackToIMSC1(frag, payload);
+			hls.logger.log(`Failed to parse VTT cue: ${error}`);
+			if (missingInitPTS && maxAvCC > frag.cc) return;
+			hls.trigger(Events.SUBTITLE_FRAG_PROCESSED, {
+				success: false,
+				frag,
+				error
+			});
+		});
+	}
+	_fallbackToIMSC1(frag, payload) {
+		const trackPlaylistMedia = this.tracks[frag.level];
+		if (!trackPlaylistMedia.textCodec) parseIMSC1(payload, this.initPTS[frag.cc], () => {
+			trackPlaylistMedia.textCodec = IMSC1_CODEC;
+			this._parseIMSC1(frag, payload);
+		}, () => {
+			trackPlaylistMedia.textCodec = "wvtt";
+		});
+	}
+	_appendCues(cues, fragLevel) {
+		const hls = this.hls;
+		if (this.config.renderTextTracksNatively) {
+			const textTrack = this.textTracks[fragLevel];
+			if (!textTrack || textTrack.mode === "disabled") return;
+			cues.forEach((cue) => addCueToTrack(textTrack, cue));
+		} else {
+			const currentTrack = this.tracks[fragLevel];
+			if (!currentTrack) return;
+			const track = currentTrack.default ? "default" : "subtitles" + fragLevel;
+			hls.trigger(Events.CUES_PARSED, {
+				type: "subtitles",
+				cues,
+				track
+			});
+		}
+	}
+	onFragDecrypted(event, data) {
+		const { frag } = data;
+		if (frag.type === PlaylistLevelType.SUBTITLE) this.onFragLoaded(Events.FRAG_LOADED, data);
+	}
+	onSubtitleTracksCleared() {
+		this.tracks = [];
+		this.captionsTracks = {};
+	}
+	onFragParsingUserdata(event, data) {
+		if (!this.enabled || !this.config.enableCEA708Captions) return;
+		const { frag, samples } = data;
+		if (frag.type === PlaylistLevelType.MAIN && this.closedCaptionsForLevel(frag) === "NONE") return;
+		for (let i = 0; i < samples.length; i++) {
+			const ccBytes = samples[i].bytes;
+			if (ccBytes) {
+				if (!this.cea608Parser1) this.initCea608Parsers();
+				const ccdatas = this.extractCea608Data(ccBytes);
+				this.cea608Parser1.addData(samples[i].pts, ccdatas[0]);
+				this.cea608Parser2.addData(samples[i].pts, ccdatas[1]);
+			}
+		}
+	}
+	onBufferFlushing(event, { startOffset, endOffset, endOffsetSubtitles, type }) {
+		const { media } = this;
+		if (!media || media.currentTime < endOffset) return;
+		if (!type || type === "video") {
+			const { captionsTracks } = this;
+			Object.keys(captionsTracks).forEach((trackName) => removeCuesInRange(captionsTracks[trackName], startOffset, endOffset));
+		}
+		if (this.config.renderTextTracksNatively) {
+			if (startOffset === 0 && endOffsetSubtitles !== void 0) {
+				const { textTracks } = this;
+				Object.keys(textTracks).forEach((trackName) => removeCuesInRange(textTracks[trackName], startOffset, endOffsetSubtitles));
+			}
+		}
+	}
+	extractCea608Data(byteArray) {
+		const actualCCBytes = [[], []];
+		const count = byteArray[0] & 31;
+		let position = 2;
+		for (let j = 0; j < count; j++) {
+			const tmpByte = byteArray[position++];
+			const ccbyte1 = 127 & byteArray[position++];
+			const ccbyte2 = 127 & byteArray[position++];
+			if (ccbyte1 === 0 && ccbyte2 === 0) continue;
+			if ((4 & tmpByte) !== 0) {
+				const ccType = 3 & tmpByte;
+				if (0 === ccType || 1 === ccType) {
+					actualCCBytes[ccType].push(ccbyte1);
+					actualCCBytes[ccType].push(ccbyte2);
+				}
+			}
+		}
+		return actualCCBytes;
+	}
+};
+function captionsOrSubtitlesFromCharacteristics(track) {
+	if (track.characteristics) {
+		if (/transcribes-spoken-dialog/gi.test(track.characteristics) && /describes-music-and-sound/gi.test(track.characteristics)) return "captions";
+	}
+	return "subtitles";
+}
+function canReuseVttTextTrack(inUseTrack, manifestTrack) {
+	return !!inUseTrack && inUseTrack.kind === captionsOrSubtitlesFromCharacteristics(manifestTrack) && subtitleTrackMatchesTextTrack(manifestTrack, inUseTrack);
+}
+function intersection$2(x1, x2, y1, y2) {
+	return Math.min(x2, y2) - Math.max(x1, y1);
+}
+function newVTTCCs() {
+	return {
+		ccOffset: 0,
+		presentationOffset: 0,
+		0: {
+			start: 0,
+			prevCC: -1,
+			new: true
+		}
+	};
+}
+var WHITESPACE_CHAR = /\s/;
+var Cues = { newCue(track, startTime, endTime, captionScreen) {
+	const result = [];
+	let row;
+	let cue;
+	let indenting;
+	let indent;
+	let text;
+	const Cue = self.VTTCue || self.TextTrackCue;
+	for (let r = 0; r < captionScreen.rows.length; r++) {
+		row = captionScreen.rows[r];
+		indenting = true;
+		indent = 0;
+		text = "";
+		if (!row.isEmpty()) {
+			var _track$cues;
+			for (let c = 0; c < row.chars.length; c++) if (WHITESPACE_CHAR.test(row.chars[c].uchar) && indenting) indent++;
+			else {
+				text += row.chars[c].uchar;
+				indenting = false;
+			}
+			row.cueStartTime = startTime;
+			if (startTime === endTime) endTime += 1e-4;
+			if (indent >= 16) indent--;
+			else indent++;
+			const cueText = fixLineBreaks(text.trim());
+			const id = generateCueId(startTime, endTime, cueText);
+			if (!(track != null && (_track$cues = track.cues) != null && _track$cues.getCueById(id))) {
+				cue = new Cue(startTime, endTime, cueText);
+				cue.id = id;
+				cue.line = r + 1;
+				cue.align = "left";
+				cue.position = 10 + Math.min(80, Math.floor(indent * 8 / 32) * 10);
+				result.push(cue);
+			}
+		}
+	}
+	if (track && result.length) {
+		result.sort((cueA, cueB) => {
+			if (cueA.line === "auto" || cueB.line === "auto") return 0;
+			if (cueA.line > 8 && cueB.line > 8) return cueB.line - cueA.line;
+			return cueA.line - cueB.line;
+		});
+		result.forEach((cue) => addCueToTrack(track, cue));
+	}
+	return result;
+} };
+function fetchSupported() {
+	if (self.fetch && self.AbortController && self.ReadableStream && self.Request) try {
+		new self.ReadableStream({});
+		return true;
+	} catch (e) {}
+	return false;
+}
+var BYTERANGE = /(\d+)-(\d+)\/(\d+)/;
+var FetchLoader = class {
+	constructor(config) {
+		this.fetchSetup = void 0;
+		this.requestTimeout = void 0;
+		this.request = null;
+		this.response = null;
+		this.controller = void 0;
+		this.context = null;
+		this.config = null;
+		this.callbacks = null;
+		this.stats = void 0;
+		this.loader = null;
+		this.fetchSetup = config.fetchSetup || getRequest;
+		this.controller = new self.AbortController();
+		this.stats = new LoadStats();
+	}
+	destroy() {
+		this.loader = this.callbacks = this.context = this.config = this.request = null;
+		this.abortInternal();
+		this.response = null;
+		this.fetchSetup = this.controller = this.stats = null;
+	}
+	abortInternal() {
+		if (this.controller && !this.stats.loading.end) {
+			this.stats.aborted = true;
+			this.controller.abort();
+		}
+	}
+	abort() {
+		var _this$callbacks;
+		this.abortInternal();
+		if ((_this$callbacks = this.callbacks) != null && _this$callbacks.onAbort) this.callbacks.onAbort(this.stats, this.context, this.response);
+	}
+	load(context, config, callbacks) {
+		const stats = this.stats;
+		if (stats.loading.start) throw new Error("Loader can only be used once.");
+		stats.loading.start = self.performance.now();
+		const initParams = getRequestParameters(context, this.controller.signal);
+		const isArrayBuffer = context.responseType === "arraybuffer";
+		const LENGTH = isArrayBuffer ? "byteLength" : "length";
+		const { maxTimeToFirstByteMs, maxLoadTimeMs } = config.loadPolicy;
+		this.context = context;
+		this.config = config;
+		this.callbacks = callbacks;
+		this.request = this.fetchSetup(context, initParams);
+		self.clearTimeout(this.requestTimeout);
+		config.timeout = maxTimeToFirstByteMs && isFiniteNumber(maxTimeToFirstByteMs) ? maxTimeToFirstByteMs : maxLoadTimeMs;
+		this.requestTimeout = self.setTimeout(() => {
+			if (this.callbacks) {
+				this.abortInternal();
+				this.callbacks.onTimeout(stats, context, this.response);
+			}
+		}, config.timeout);
+		(isPromise(this.request) ? this.request.then(self.fetch) : self.fetch(this.request)).then((response) => {
+			var _this$callbacks2;
+			this.response = this.loader = response;
+			const first = Math.max(self.performance.now(), stats.loading.start);
+			self.clearTimeout(this.requestTimeout);
+			config.timeout = maxLoadTimeMs;
+			this.requestTimeout = self.setTimeout(() => {
+				if (this.callbacks) {
+					this.abortInternal();
+					this.callbacks.onTimeout(stats, context, this.response);
+				}
+			}, maxLoadTimeMs - (first - stats.loading.start));
+			if (!response.ok) {
+				const { status, statusText } = response;
+				throw new FetchError(statusText || "fetch, bad network response", status, response);
+			}
+			stats.loading.first = first;
+			stats.total = getContentLength(response.headers) || stats.total;
+			const onProgress = (_this$callbacks2 = this.callbacks) == null ? void 0 : _this$callbacks2.onProgress;
+			if (onProgress && isFiniteNumber(config.highWaterMark)) return this.loadProgressively(response, stats, context, config.highWaterMark, onProgress);
+			if (isArrayBuffer) return response.arrayBuffer();
+			if (context.responseType === "json") return response.json();
+			return response.text();
+		}).then((responseData) => {
+			var _this$callbacks3, _this$callbacks4;
+			const response = this.response;
+			if (!response) throw new Error("loader destroyed");
+			self.clearTimeout(this.requestTimeout);
+			stats.loading.end = Math.max(self.performance.now(), stats.loading.first);
+			const total = responseData[LENGTH];
+			if (total) stats.loaded = stats.total = total;
+			const loaderResponse = {
+				url: response.url,
+				data: responseData,
+				code: response.status
+			};
+			const onProgress = (_this$callbacks3 = this.callbacks) == null ? void 0 : _this$callbacks3.onProgress;
+			if (onProgress && !isFiniteNumber(config.highWaterMark)) onProgress(stats, context, responseData, response);
+			(_this$callbacks4 = this.callbacks) == null || _this$callbacks4.onSuccess(loaderResponse, stats, context, response);
+		}).catch((error) => {
+			var _this$callbacks5;
+			self.clearTimeout(this.requestTimeout);
+			if (stats.aborted) return;
+			const code = !error ? 0 : error.code || 0;
+			const text = !error ? null : error.message;
+			(_this$callbacks5 = this.callbacks) == null || _this$callbacks5.onError({
+				code,
+				text
+			}, context, error ? error.details : null, stats);
+		});
+	}
+	getCacheAge() {
+		let result = null;
+		if (this.response) {
+			const ageHeader = this.response.headers.get("age");
+			result = ageHeader ? parseFloat(ageHeader) : null;
+		}
+		return result;
+	}
+	getResponseHeader(name) {
+		return this.response ? this.response.headers.get(name) : null;
+	}
+	loadProgressively(response, stats, context, highWaterMark = 0, onProgress) {
+		const chunkCache = new ChunkCache();
+		const reader = response.body.getReader();
+		const pump = () => {
+			return reader.read().then((data) => {
+				if (data.done) {
+					if (chunkCache.dataLength) onProgress(stats, context, chunkCache.flush().buffer, response);
+					return Promise.resolve(/* @__PURE__ */ new ArrayBuffer(0));
+				}
+				const chunk = data.value;
+				const len = chunk.length;
+				stats.loaded += len;
+				if (len < highWaterMark || chunkCache.dataLength) {
+					chunkCache.push(chunk);
+					if (chunkCache.dataLength >= highWaterMark) onProgress(stats, context, chunkCache.flush().buffer, response);
+				} else onProgress(stats, context, chunk.buffer, response);
+				return pump();
+			}).catch(() => {
+				return Promise.reject();
+			});
+		};
+		return pump();
+	}
+};
+function getRequestParameters(context, signal) {
+	const initParams = {
+		method: "GET",
+		mode: "cors",
+		credentials: "same-origin",
+		signal,
+		headers: new self.Headers(_extends({}, context.headers))
+	};
+	if (context.rangeEnd) initParams.headers.set("Range", "bytes=" + context.rangeStart + "-" + String(context.rangeEnd - 1));
+	return initParams;
+}
+function getByteRangeLength(byteRangeHeader) {
+	const result = BYTERANGE.exec(byteRangeHeader);
+	if (result) return parseInt(result[2]) - parseInt(result[1]) + 1;
+}
+function getContentLength(headers) {
+	const contentRange = headers.get("Content-Range");
+	if (contentRange) {
+		const byteRangeLength = getByteRangeLength(contentRange);
+		if (isFiniteNumber(byteRangeLength)) return byteRangeLength;
+	}
+	const contentLength = headers.get("Content-Length");
+	if (contentLength) return parseInt(contentLength);
+}
+function getRequest(context, initParams) {
+	return new self.Request(context.url, initParams);
+}
+var FetchError = class extends Error {
+	constructor(message, code, details) {
+		super(message);
+		this.code = void 0;
+		this.details = void 0;
+		this.code = code;
+		this.details = details;
+	}
+};
+var AGE_HEADER_LINE_REGEX = /^age:\s*[\d.]+\s*$/im;
+var XhrLoader = class {
+	constructor(config) {
+		this.xhrSetup = void 0;
+		this.requestTimeout = void 0;
+		this.retryTimeout = void 0;
+		this.retryDelay = void 0;
+		this.config = null;
+		this.callbacks = null;
+		this.context = null;
+		this.loader = null;
+		this.stats = void 0;
+		this.xhrSetup = config ? config.xhrSetup || null : null;
+		this.stats = new LoadStats();
+		this.retryDelay = 0;
+	}
+	destroy() {
+		this.callbacks = null;
+		this.abortInternal();
+		this.loader = null;
+		this.config = null;
+		this.context = null;
+		this.xhrSetup = null;
+	}
+	abortInternal() {
+		const loader = this.loader;
+		self.clearTimeout(this.requestTimeout);
+		self.clearTimeout(this.retryTimeout);
+		if (loader) {
+			loader.onreadystatechange = null;
+			loader.onprogress = null;
+			if (loader.readyState !== 4) {
+				this.stats.aborted = true;
+				loader.abort();
+			}
+		}
+	}
+	abort() {
+		var _this$callbacks;
+		this.abortInternal();
+		if ((_this$callbacks = this.callbacks) != null && _this$callbacks.onAbort) this.callbacks.onAbort(this.stats, this.context, this.loader);
+	}
+	load(context, config, callbacks) {
+		if (this.stats.loading.start) throw new Error("Loader can only be used once.");
+		this.stats.loading.start = self.performance.now();
+		this.context = context;
+		this.config = config;
+		this.callbacks = callbacks;
+		this.loadInternal();
+	}
+	loadInternal() {
+		const { config, context } = this;
+		if (!config || !context) return;
+		const xhr = this.loader = new self.XMLHttpRequest();
+		const stats = this.stats;
+		stats.loading.first = 0;
+		stats.loaded = 0;
+		stats.aborted = false;
+		const xhrSetup = this.xhrSetup;
+		if (xhrSetup) Promise.resolve().then(() => {
+			if (this.loader !== xhr || this.stats.aborted) return;
+			return xhrSetup(xhr, context.url);
+		}).catch((error) => {
+			if (this.loader !== xhr || this.stats.aborted) return;
+			xhr.open("GET", context.url, true);
+			return xhrSetup(xhr, context.url);
+		}).then(() => {
+			if (this.loader !== xhr || this.stats.aborted) return;
+			this.openAndSendXhr(xhr, context, config);
+		}).catch((error) => {
+			var _this$callbacks2;
+			(_this$callbacks2 = this.callbacks) == null || _this$callbacks2.onError({
+				code: xhr.status,
+				text: error.message
+			}, context, xhr, stats);
+		});
+		else this.openAndSendXhr(xhr, context, config);
+	}
+	openAndSendXhr(xhr, context, config) {
+		if (!xhr.readyState) xhr.open("GET", context.url, true);
+		const headers = context.headers;
+		const { maxTimeToFirstByteMs, maxLoadTimeMs } = config.loadPolicy;
+		if (headers) for (const header in headers) xhr.setRequestHeader(header, headers[header]);
+		if (context.rangeEnd) xhr.setRequestHeader("Range", "bytes=" + context.rangeStart + "-" + (context.rangeEnd - 1));
+		xhr.onreadystatechange = this.readystatechange.bind(this);
+		xhr.onprogress = this.loadprogress.bind(this);
+		xhr.responseType = context.responseType;
+		self.clearTimeout(this.requestTimeout);
+		config.timeout = maxTimeToFirstByteMs && isFiniteNumber(maxTimeToFirstByteMs) ? maxTimeToFirstByteMs : maxLoadTimeMs;
+		this.requestTimeout = self.setTimeout(this.loadtimeout.bind(this), config.timeout);
+		xhr.send();
+	}
+	readystatechange() {
+		const { context, loader: xhr, stats } = this;
+		if (!context || !xhr) return;
+		const readyState = xhr.readyState;
+		const config = this.config;
+		if (stats.aborted) return;
+		if (readyState >= 2) {
+			if (stats.loading.first === 0) {
+				stats.loading.first = Math.max(self.performance.now(), stats.loading.start);
+				if (config.timeout !== config.loadPolicy.maxLoadTimeMs) {
+					self.clearTimeout(this.requestTimeout);
+					config.timeout = config.loadPolicy.maxLoadTimeMs;
+					this.requestTimeout = self.setTimeout(this.loadtimeout.bind(this), config.loadPolicy.maxLoadTimeMs - (stats.loading.first - stats.loading.start));
+				}
+			}
+			if (readyState === 4) {
+				self.clearTimeout(this.requestTimeout);
+				xhr.onreadystatechange = null;
+				xhr.onprogress = null;
+				const status = xhr.status;
+				const useResponseText = xhr.responseType === "text" ? xhr.responseText : null;
+				if (status >= 200 && status < 300) {
+					const data = useResponseText != null ? useResponseText : xhr.response;
+					if (data != null) {
+						var _this$callbacks3, _this$callbacks4;
+						stats.loading.end = Math.max(self.performance.now(), stats.loading.first);
+						stats.loaded = stats.total = xhr.responseType === "arraybuffer" ? data.byteLength : data.length;
+						stats.bwEstimate = stats.total * 8e3 / (stats.loading.end - stats.loading.first);
+						const onProgress = (_this$callbacks3 = this.callbacks) == null ? void 0 : _this$callbacks3.onProgress;
+						if (onProgress) onProgress(stats, context, data, xhr);
+						const _response = {
+							url: xhr.responseURL,
+							data,
+							code: status
+						};
+						(_this$callbacks4 = this.callbacks) == null || _this$callbacks4.onSuccess(_response, stats, context, xhr);
+						return;
+					}
+				}
+				const retryConfig = config.loadPolicy.errorRetry;
+				const retryCount = stats.retry;
+				if (shouldRetry(retryConfig, retryCount, false, {
+					url: context.url,
+					data: void 0,
+					code: status
+				})) this.retry(retryConfig);
+				else {
+					var _this$callbacks5;
+					logger.error(`${status} while loading ${context.url}`);
+					(_this$callbacks5 = this.callbacks) == null || _this$callbacks5.onError({
+						code: status,
+						text: xhr.statusText
+					}, context, xhr, stats);
+				}
+			}
+		}
+	}
+	loadtimeout() {
+		if (!this.config) return;
+		const retryConfig = this.config.loadPolicy.timeoutRetry;
+		const retryCount = this.stats.retry;
+		if (shouldRetry(retryConfig, retryCount, true)) this.retry(retryConfig);
+		else {
+			var _this$context;
+			logger.warn(`timeout while loading ${(_this$context = this.context) == null ? void 0 : _this$context.url}`);
+			const callbacks = this.callbacks;
+			if (callbacks) {
+				this.abortInternal();
+				callbacks.onTimeout(this.stats, this.context, this.loader);
+			}
+		}
+	}
+	retry(retryConfig) {
+		const { context, stats } = this;
+		this.retryDelay = getRetryDelay(retryConfig, stats.retry);
+		stats.retry++;
+		logger.warn(`${status ? "HTTP Status " + status : "Timeout"} while loading ${context == null ? void 0 : context.url}, retrying ${stats.retry}/${retryConfig.maxNumRetry} in ${this.retryDelay}ms`);
+		this.abortInternal();
+		this.loader = null;
+		self.clearTimeout(this.retryTimeout);
+		this.retryTimeout = self.setTimeout(this.loadInternal.bind(this), this.retryDelay);
+	}
+	loadprogress(event) {
+		const stats = this.stats;
+		stats.loaded = event.loaded;
+		if (event.lengthComputable) stats.total = event.total;
+	}
+	getCacheAge() {
+		let result = null;
+		if (this.loader && AGE_HEADER_LINE_REGEX.test(this.loader.getAllResponseHeaders())) {
+			const ageHeader = this.loader.getResponseHeader("age");
+			result = ageHeader ? parseFloat(ageHeader) : null;
+		}
+		return result;
+	}
+	getResponseHeader(name) {
+		if (this.loader && new RegExp(`^${name}:\\s*[\\d.]+\\s*$`, "im").test(this.loader.getAllResponseHeaders())) return this.loader.getResponseHeader(name);
+		return null;
+	}
+};
+/**
+* @ignore
+* If possible, keep hlsDefaultConfig shallow
+* It is cloned whenever a new Hls instance is created, by keeping the config
+* shallow the properties are cloned, and we don't end up manipulating the default
+*/
+var hlsDefaultConfig = _objectSpread2(_objectSpread2({
+	autoStartLoad: true,
+	startPosition: -1,
+	defaultAudioCodec: void 0,
+	debug: false,
+	capLevelOnFPSDrop: false,
+	capLevelToPlayerSize: false,
+	ignoreDevicePixelRatio: false,
+	maxDevicePixelRatio: Number.POSITIVE_INFINITY,
+	preferManagedMediaSource: true,
+	initialLiveManifestSize: 1,
+	maxBufferLength: 30,
+	backBufferLength: Infinity,
+	frontBufferFlushThreshold: Infinity,
+	startOnSegmentBoundary: false,
+	maxBufferSize: 6e7,
+	maxFragLookUpTolerance: .25,
+	maxBufferHole: .1,
+	detectStallWithCurrentTimeMs: 1250,
+	highBufferWatchdogPeriod: 2,
+	nudgeOffset: .1,
+	nudgeMaxRetry: 3,
+	nudgeOnVideoHole: true,
+	liveSyncMode: "edge",
+	liveSyncDurationCount: 3,
+	liveSyncOnStallIncrease: 1,
+	liveMaxLatencyDurationCount: Infinity,
+	liveSyncDuration: void 0,
+	liveMaxLatencyDuration: void 0,
+	maxLiveSyncPlaybackRate: 1,
+	liveDurationInfinity: false,
+	/**
+	* @deprecated use backBufferLength
+	*/
+	liveBackBufferLength: null,
+	maxMaxBufferLength: 600,
+	enableWorker: true,
+	workerPath: null,
+	enableSoftwareAES: true,
+	startLevel: void 0,
+	startFragPrefetch: false,
+	fpsDroppedMonitoringPeriod: 5e3,
+	fpsDroppedMonitoringThreshold: .2,
+	appendErrorMaxRetry: 3,
+	ignorePlaylistParsingErrors: false,
+	loader: XhrLoader,
+	fLoader: void 0,
+	pLoader: void 0,
+	xhrSetup: void 0,
+	licenseXhrSetup: void 0,
+	licenseResponseCallback: void 0,
+	abrController: AbrController,
+	bufferController: BufferController,
+	capLevelController: CapLevelController,
+	errorController: ErrorController,
+	fpsController: FPSController,
+	stretchShortVideoTrack: false,
+	maxAudioFramesDrift: 1,
+	forceKeyFrameOnDiscontinuity: true,
+	abrEwmaFastLive: 3,
+	abrEwmaSlowLive: 9,
+	abrEwmaFastVoD: 3,
+	abrEwmaSlowVoD: 9,
+	abrEwmaDefaultEstimate: 5e5,
+	abrEwmaDefaultEstimateMax: 5e6,
+	abrBandWidthFactor: .95,
+	abrBandWidthUpFactor: .7,
+	abrMaxWithRealBitrate: false,
+	maxStarvationDelay: 4,
+	maxLoadingDelay: 4,
+	minAutoBitrate: 0,
+	emeEnabled: false,
+	widevineLicenseUrl: void 0,
+	drmSystems: {},
+	drmSystemOptions: {},
+	requestMediaKeySystemAccessFunc: requestMediaKeySystemAccess,
+	requireKeySystemAccessOnStart: false,
+	testBandwidth: true,
+	progressive: false,
+	lowLatencyMode: true,
+	cmcd: void 0,
+	enableDateRangeMetadataCues: true,
+	enableEmsgMetadataCues: true,
+	enableEmsgKLVMetadata: false,
+	enableID3MetadataCues: true,
+	enableInterstitialPlayback: true,
+	interstitialAppendInPlace: true,
+	interstitialLiveLookAhead: 10,
+	useMediaCapabilities: true,
+	preserveManualLevelOnError: false,
+	certLoadPolicy: { default: {
+		maxTimeToFirstByteMs: 8e3,
+		maxLoadTimeMs: 2e4,
+		timeoutRetry: null,
+		errorRetry: null
+	} },
+	keyLoadPolicy: { default: {
+		maxTimeToFirstByteMs: 8e3,
+		maxLoadTimeMs: 2e4,
+		timeoutRetry: {
+			maxNumRetry: 1,
+			retryDelayMs: 1e3,
+			maxRetryDelayMs: 2e4,
+			backoff: "linear"
+		},
+		errorRetry: {
+			maxNumRetry: 8,
+			retryDelayMs: 1e3,
+			maxRetryDelayMs: 2e4,
+			backoff: "linear"
+		}
+	} },
+	manifestLoadPolicy: { default: {
+		maxTimeToFirstByteMs: Infinity,
+		maxLoadTimeMs: 2e4,
+		timeoutRetry: {
+			maxNumRetry: 2,
+			retryDelayMs: 0,
+			maxRetryDelayMs: 0
+		},
+		errorRetry: {
+			maxNumRetry: 1,
+			retryDelayMs: 1e3,
+			maxRetryDelayMs: 8e3
+		}
+	} },
+	playlistLoadPolicy: { default: {
+		maxTimeToFirstByteMs: 1e4,
+		maxLoadTimeMs: 2e4,
+		timeoutRetry: {
+			maxNumRetry: 2,
+			retryDelayMs: 0,
+			maxRetryDelayMs: 0
+		},
+		errorRetry: {
+			maxNumRetry: 2,
+			retryDelayMs: 1e3,
+			maxRetryDelayMs: 8e3
+		}
+	} },
+	fragLoadPolicy: { default: {
+		maxTimeToFirstByteMs: 1e4,
+		maxLoadTimeMs: 12e4,
+		timeoutRetry: {
+			maxNumRetry: 4,
+			retryDelayMs: 0,
+			maxRetryDelayMs: 0
+		},
+		errorRetry: {
+			maxNumRetry: 6,
+			retryDelayMs: 1e3,
+			maxRetryDelayMs: 8e3
+		}
+	} },
+	steeringManifestLoadPolicy: { default: {
+		maxTimeToFirstByteMs: 1e4,
+		maxLoadTimeMs: 2e4,
+		timeoutRetry: {
+			maxNumRetry: 2,
+			retryDelayMs: 0,
+			maxRetryDelayMs: 0
+		},
+		errorRetry: {
+			maxNumRetry: 1,
+			retryDelayMs: 1e3,
+			maxRetryDelayMs: 8e3
+		}
+	} },
+	interstitialAssetListLoadPolicy: { default: {
+		maxTimeToFirstByteMs: 1e4,
+		maxLoadTimeMs: 3e4,
+		timeoutRetry: {
+			maxNumRetry: 0,
+			retryDelayMs: 0,
+			maxRetryDelayMs: 0
+		},
+		errorRetry: {
+			maxNumRetry: 0,
+			retryDelayMs: 1e3,
+			maxRetryDelayMs: 8e3
+		}
+	} },
+	manifestLoadingTimeOut: 1e4,
+	manifestLoadingMaxRetry: 1,
+	manifestLoadingRetryDelay: 1e3,
+	manifestLoadingMaxRetryTimeout: 64e3,
+	levelLoadingTimeOut: 1e4,
+	levelLoadingMaxRetry: 4,
+	levelLoadingRetryDelay: 1e3,
+	levelLoadingMaxRetryTimeout: 64e3,
+	fragLoadingTimeOut: 2e4,
+	fragLoadingMaxRetry: 6,
+	fragLoadingRetryDelay: 1e3,
+	fragLoadingMaxRetryTimeout: 64e3
+}, timelineConfig()), {}, {
+	subtitleStreamController: SubtitleStreamController,
+	subtitleTrackController: SubtitleTrackController,
+	timelineController: TimelineController,
+	audioStreamController: AudioStreamController,
+	audioTrackController: AudioTrackController,
+	emeController: EMEController,
+	cmcdController: CMCDController,
+	contentSteeringController: ContentSteeringController,
+	interstitialsController: InterstitialsController
+});
+function timelineConfig() {
+	return {
+		cueHandler: Cues,
+		enableWebVTT: true,
+		enableIMSC1: true,
+		enableCEA708Captions: true,
+		captionsTextTrack1Label: "English",
+		captionsTextTrack1LanguageCode: "en",
+		captionsTextTrack2Label: "Spanish",
+		captionsTextTrack2LanguageCode: "es",
+		captionsTextTrack3Label: "Unknown CC",
+		captionsTextTrack3LanguageCode: "",
+		captionsTextTrack4Label: "Unknown CC",
+		captionsTextTrack4LanguageCode: "",
+		renderTextTracksNatively: true
+	};
+}
+/**
+* @ignore
+*/
+function mergeConfig(defaultConfig, userConfig, logger) {
+	if ((userConfig.liveSyncDurationCount || userConfig.liveMaxLatencyDurationCount) && (userConfig.liveSyncDuration || userConfig.liveMaxLatencyDuration)) throw new Error("Illegal hls.js config: don't mix up liveSyncDurationCount/liveMaxLatencyDurationCount and liveSyncDuration/liveMaxLatencyDuration");
+	if (userConfig.liveMaxLatencyDurationCount !== void 0 && (userConfig.liveSyncDurationCount === void 0 || userConfig.liveMaxLatencyDurationCount <= userConfig.liveSyncDurationCount)) throw new Error("Illegal hls.js config: \"liveMaxLatencyDurationCount\" must be greater than \"liveSyncDurationCount\"");
+	if (userConfig.liveMaxLatencyDuration !== void 0 && (userConfig.liveSyncDuration === void 0 || userConfig.liveMaxLatencyDuration <= userConfig.liveSyncDuration)) throw new Error("Illegal hls.js config: \"liveMaxLatencyDuration\" must be greater than \"liveSyncDuration\"");
+	const defaultsCopy = deepCpy(defaultConfig);
+	const deprecatedSettingTypes = [
+		"manifest",
+		"level",
+		"frag"
+	];
+	const deprecatedSettings = [
+		"TimeOut",
+		"MaxRetry",
+		"RetryDelay",
+		"MaxRetryTimeout"
+	];
+	deprecatedSettingTypes.forEach((type) => {
+		const policyName = `${type === "level" ? "playlist" : type}LoadPolicy`;
+		const policyNotSet = userConfig[policyName] === void 0;
+		const report = [];
+		deprecatedSettings.forEach((setting) => {
+			const deprecatedSetting = `${type}Loading${setting}`;
+			const value = userConfig[deprecatedSetting];
+			if (value !== void 0 && policyNotSet) {
+				report.push(deprecatedSetting);
+				const settings = defaultsCopy[policyName].default;
+				userConfig[policyName] = { default: settings };
+				switch (setting) {
+					case "TimeOut":
+						settings.maxLoadTimeMs = value;
+						settings.maxTimeToFirstByteMs = value;
+						break;
+					case "MaxRetry":
+						settings.errorRetry.maxNumRetry = value;
+						settings.timeoutRetry.maxNumRetry = value;
+						break;
+					case "RetryDelay":
+						settings.errorRetry.retryDelayMs = value;
+						settings.timeoutRetry.retryDelayMs = value;
+						break;
+					case "MaxRetryTimeout":
+						settings.errorRetry.maxRetryDelayMs = value;
+						settings.timeoutRetry.maxRetryDelayMs = value;
+				}
+			}
+		});
+		if (report.length) logger.warn(`hls.js config: "${report.join("\", \"")}" setting(s) are deprecated, use "${policyName}": ${stringify(userConfig[policyName])}`);
+	});
+	return _objectSpread2(_objectSpread2({}, defaultsCopy), userConfig);
+}
+function deepCpy(obj) {
+	if (obj && typeof obj === "object") {
+		if (Array.isArray(obj)) return obj.map(deepCpy);
+		return Object.keys(obj).reduce((result, key) => {
+			result[key] = deepCpy(obj[key]);
+			return result;
+		}, {});
+	}
+	return obj;
+}
+/**
+* @ignore
+*/
+function enableStreamingMode(config, logger) {
+	const currentLoader = config.loader;
+	if (currentLoader !== FetchLoader && currentLoader !== XhrLoader) {
+		logger.log("[config]: Custom loader detected, cannot enable progressive streaming");
+		config.progressive = false;
+	} else if (fetchSupported()) {
+		config.loader = FetchLoader;
+		config.progressive = true;
+		config.enableSoftwareAES = true;
+		logger.log("[config]: Progressive streaming enabled, using FetchLoader");
+	}
+}
+var MAX_START_GAP_JUMP = 2;
+var SKIP_BUFFER_HOLE_STEP_SECONDS = .1;
+var SKIP_BUFFER_RANGE_START = .05;
+var TICK_INTERVAL$1 = 100;
+var GapController = class extends TaskLoop {
+	constructor(hls, fragmentTracker) {
+		super("gap-controller", hls.logger);
+		this.hls = void 0;
+		this.fragmentTracker = void 0;
+		this.media = null;
+		this.mediaSource = void 0;
+		this.nudgeRetry = 0;
+		this.stallReported = false;
+		this.stalled = null;
+		this.moved = false;
+		this.seeking = false;
+		this.buffered = {};
+		this.lastCurrentTime = 0;
+		this.ended = 0;
+		this.waiting = 0;
+		this.onMediaPlaying = () => {
+			this.ended = 0;
+			this.waiting = 0;
+		};
+		this.onMediaWaiting = () => {
+			var _this$media;
+			if ((_this$media = this.media) != null && _this$media.seeking) return;
+			this.waiting = self.performance.now();
+			this.tick();
+		};
+		this.onMediaEnded = () => {
+			if (this.hls) {
+				var _this$media2;
+				this.ended = ((_this$media2 = this.media) == null ? void 0 : _this$media2.currentTime) || 1;
+				this.hls.trigger(Events.MEDIA_ENDED, { stalled: false });
+			}
+		};
+		this.hls = hls;
+		this.fragmentTracker = fragmentTracker;
+		this.registerListeners();
+	}
+	registerListeners() {
+		const { hls } = this;
+		if (hls) {
+			hls.on(Events.MEDIA_ATTACHED, this.onMediaAttached, this);
+			hls.on(Events.MEDIA_DETACHING, this.onMediaDetaching, this);
+			hls.on(Events.BUFFER_APPENDED, this.onBufferAppended, this);
+		}
+	}
+	unregisterListeners() {
+		const { hls } = this;
+		if (hls) {
+			hls.off(Events.MEDIA_ATTACHED, this.onMediaAttached, this);
+			hls.off(Events.MEDIA_DETACHING, this.onMediaDetaching, this);
+			hls.off(Events.BUFFER_APPENDED, this.onBufferAppended, this);
+		}
+	}
+	destroy() {
+		super.destroy();
+		this.unregisterListeners();
+		this.media = this.hls = this.fragmentTracker = null;
+		this.mediaSource = void 0;
+	}
+	onMediaAttached(event, data) {
+		this.setInterval(TICK_INTERVAL$1);
+		this.mediaSource = data.mediaSource;
+		const media = this.media = data.media;
+		addEventListener(media, "playing", this.onMediaPlaying);
+		addEventListener(media, "waiting", this.onMediaWaiting);
+		addEventListener(media, "ended", this.onMediaEnded);
+	}
+	onMediaDetaching(event, data) {
+		this.clearInterval();
+		const { media } = this;
+		if (media) {
+			removeEventListener(media, "playing", this.onMediaPlaying);
+			removeEventListener(media, "waiting", this.onMediaWaiting);
+			removeEventListener(media, "ended", this.onMediaEnded);
+			this.media = null;
+		}
+		this.mediaSource = void 0;
+	}
+	onBufferAppended(event, data) {
+		this.buffered = data.timeRanges;
+	}
+	get hasBuffered() {
+		return Object.keys(this.buffered).length > 0;
+	}
+	tick() {
+		var _this$media3;
+		if (!((_this$media3 = this.media) != null && _this$media3.readyState) || !this.hasBuffered) return;
+		const currentTime = this.media.currentTime;
+		this.poll(currentTime, this.lastCurrentTime);
+		this.lastCurrentTime = currentTime;
+	}
+	/**
+	* Checks if the playhead is stuck within a gap, and if so, attempts to free it.
+	* A gap is an unbuffered range between two buffered ranges (or the start and the first buffered range).
+	*
+	* @param lastCurrentTime - Previously read playhead position
+	*/
+	poll(currentTime, lastCurrentTime) {
+		var _this$hls, _this$hls2;
+		const config = (_this$hls = this.hls) == null ? void 0 : _this$hls.config;
+		if (!config) return;
+		const media = this.media;
+		if (!media) return;
+		const { seeking } = media;
+		const seeked = this.seeking && !seeking;
+		const beginSeek = !this.seeking && seeking;
+		const pausedEndedOrHalted = media.paused && !seeking || media.ended || media.playbackRate === 0;
+		this.seeking = seeking;
+		if (currentTime !== lastCurrentTime) {
+			if (lastCurrentTime) this.ended = 0;
+			this.moved = true;
+			if (!seeking) {
+				this.nudgeRetry = 0;
+				if (config.nudgeOnVideoHole && !pausedEndedOrHalted && currentTime > lastCurrentTime) this.nudgeOnVideoHole(currentTime, lastCurrentTime);
+			}
+			if (this.waiting === 0) this.stallResolved(currentTime);
+			return;
+		}
+		if (beginSeek || seeked) {
+			if (seeked) this.stallResolved(currentTime);
+			return;
+		}
+		if (pausedEndedOrHalted) {
+			this.nudgeRetry = 0;
+			this.stallResolved(currentTime);
+			if (!this.ended && media.ended && this.hls) {
+				this.ended = currentTime || 1;
+				this.hls.trigger(Events.MEDIA_ENDED, { stalled: false });
+			}
+			return;
+		}
+		if (!BufferHelper.getBuffered(media).length) {
+			this.nudgeRetry = 0;
+			return;
+		}
+		const bufferInfo = BufferHelper.bufferInfo(media, currentTime, 0);
+		const nextStart = bufferInfo.nextStart || 0;
+		const fragmentTracker = this.fragmentTracker;
+		if (seeking && fragmentTracker && this.hls) {
+			const inFlightDependency = getInFlightDependency(this.hls.inFlightFragments, currentTime);
+			const hasEnoughBuffer = bufferInfo.len > MAX_START_GAP_JUMP;
+			const noBufferHole = !nextStart || inFlightDependency || nextStart - currentTime > MAX_START_GAP_JUMP && !fragmentTracker.getPartialFragment(currentTime);
+			if (hasEnoughBuffer || noBufferHole) return;
+			this.moved = false;
+		}
+		const levelDetails = (_this$hls2 = this.hls) == null ? void 0 : _this$hls2.latestLevelDetails;
+		if (!this.moved && this.stalled !== null && fragmentTracker) {
+			if (!(bufferInfo.len > 0) && !nextStart) return;
+			const startJump = Math.max(nextStart, bufferInfo.start || 0) - currentTime;
+			const maxStartGapJump = !!(levelDetails != null && levelDetails.live) ? levelDetails.targetduration * 2 : MAX_START_GAP_JUMP;
+			const appended = appendedFragAtPosition(currentTime, fragmentTracker);
+			if (startJump > 0 && (startJump <= maxStartGapJump || appended)) {
+				if (!media.paused) this._trySkipBufferHole(appended);
+				return;
+			}
+		}
+		const detectStallWithCurrentTimeMs = config.detectStallWithCurrentTimeMs;
+		const tnow = self.performance.now();
+		const tWaiting = this.waiting;
+		let stalled = this.stalled;
+		if (stalled === null) if (tWaiting > 0 && tnow - tWaiting < detectStallWithCurrentTimeMs) stalled = this.stalled = tWaiting;
+		else {
+			this.stalled = tnow;
+			return;
+		}
+		const stalledDuration = tnow - stalled;
+		if (!seeking && (stalledDuration >= detectStallWithCurrentTimeMs || tWaiting) && this.hls) {
+			var _this$mediaSource;
+			if (((_this$mediaSource = this.mediaSource) == null ? void 0 : _this$mediaSource.readyState) === "ended" && !(levelDetails != null && levelDetails.live) && Math.abs(currentTime - ((levelDetails == null ? void 0 : levelDetails.edge) || 0)) < 1) {
+				if (this.ended) return;
+				this.ended = currentTime || 1;
+				this.hls.trigger(Events.MEDIA_ENDED, { stalled: true });
+				return;
+			}
+			this._reportStall(bufferInfo);
+			if (!this.media || !this.hls) return;
+		}
+		const bufferedWithHoles = BufferHelper.bufferInfo(media, currentTime, config.maxBufferHole);
+		this._tryFixBufferStall(bufferedWithHoles, stalledDuration, currentTime);
+	}
+	stallResolved(currentTime) {
+		const stalled = this.stalled;
+		if (stalled && this.hls) {
+			this.stalled = null;
+			if (this.stallReported) {
+				const stalledDuration = self.performance.now() - stalled;
+				this.log(`playback not stuck anymore @${currentTime}, after ${Math.round(stalledDuration)}ms`);
+				this.stallReported = false;
+				this.waiting = 0;
+				this.hls.trigger(Events.STALL_RESOLVED, {});
+			}
+		}
+	}
+	nudgeOnVideoHole(currentTime, lastCurrentTime) {
+		var _this$buffered$audio;
+		const videoSourceBuffered = this.buffered.video;
+		if (this.hls && this.media && this.fragmentTracker && (_this$buffered$audio = this.buffered.audio) != null && _this$buffered$audio.length && videoSourceBuffered && videoSourceBuffered.length > 1 && currentTime > videoSourceBuffered.end(0)) {
+			const audioBufferInfo = BufferHelper.bufferedInfo(BufferHelper.timeRangesToArray(this.buffered.audio), currentTime, 0);
+			if (audioBufferInfo.len > 1 && lastCurrentTime >= audioBufferInfo.start) {
+				const videoTimes = BufferHelper.timeRangesToArray(videoSourceBuffered);
+				const lastBufferedIndex = BufferHelper.bufferedInfo(videoTimes, lastCurrentTime, 0).bufferedIndex;
+				if (lastBufferedIndex > -1 && lastBufferedIndex < videoTimes.length - 1) {
+					const bufferedIndex = BufferHelper.bufferedInfo(videoTimes, currentTime, 0).bufferedIndex;
+					const holeStart = videoTimes[lastBufferedIndex].end;
+					const holeEnd = videoTimes[lastBufferedIndex + 1].start;
+					if ((bufferedIndex === -1 || bufferedIndex > lastBufferedIndex) && holeEnd - holeStart < 1 && currentTime - holeStart < 2) {
+						const error = /* @__PURE__ */ new Error(`nudging playhead to flush pipeline after video hole. currentTime: ${currentTime} hole: ${holeStart} -> ${holeEnd} buffered index: ${bufferedIndex}`);
+						this.warn(error.message);
+						this.media.currentTime += 1e-6;
+						let frag = appendedFragAtPosition(currentTime, this.fragmentTracker);
+						if (frag && "fragment" in frag) frag = frag.fragment;
+						else if (!frag) frag = void 0;
+						const bufferInfo = BufferHelper.bufferInfo(this.media, currentTime, 0);
+						this.hls.trigger(Events.ERROR, {
+							type: ErrorTypes.MEDIA_ERROR,
+							details: ErrorDetails.BUFFER_SEEK_OVER_HOLE,
+							fatal: false,
+							error,
+							reason: error.message,
+							frag,
+							buffer: bufferInfo.len,
+							bufferInfo
+						});
+					}
+				}
+			}
+		}
+	}
+	/**
+	* Detects and attempts to fix known buffer stalling issues.
+	* @param bufferInfo - The properties of the current buffer.
+	* @param stalledDurationMs - The amount of time Hls.js has been stalling for.
+	* @private
+	*/
+	_tryFixBufferStall(bufferInfo, stalledDurationMs, currentTime) {
+		var _this$hls3, _this$hls4;
+		const { fragmentTracker, media } = this;
+		const config = (_this$hls3 = this.hls) == null ? void 0 : _this$hls3.config;
+		if (!media || !fragmentTracker || !config) return;
+		const levelDetails = (_this$hls4 = this.hls) == null ? void 0 : _this$hls4.latestLevelDetails;
+		const appended = appendedFragAtPosition(currentTime, fragmentTracker);
+		if (appended || levelDetails != null && levelDetails.live && currentTime < levelDetails.fragmentStart) {
+			if (this._trySkipBufferHole(appended) || !this.media) return;
+		}
+		const bufferedRanges = bufferInfo.buffered;
+		const adjacentTraversal = this.adjacentTraversal(bufferInfo, currentTime);
+		if ((bufferedRanges && bufferedRanges.length > 1 && bufferInfo.len > config.maxBufferHole || bufferInfo.nextStart && (bufferInfo.nextStart - currentTime < config.maxBufferHole || adjacentTraversal)) && (stalledDurationMs > config.highBufferWatchdogPeriod * 1e3 || this.waiting)) {
+			this.warn("Trying to nudge playhead over buffer-hole");
+			this._tryNudgeBuffer(bufferInfo);
+		}
+	}
+	adjacentTraversal(bufferInfo, currentTime) {
+		const fragmentTracker = this.fragmentTracker;
+		const nextStart = bufferInfo.nextStart;
+		if (fragmentTracker && nextStart) {
+			const current = fragmentTracker.getFragAtPos(currentTime, PlaylistLevelType.MAIN);
+			const next = fragmentTracker.getFragAtPos(nextStart, PlaylistLevelType.MAIN);
+			if (current && next) return next.sn - current.sn < 2;
+		}
+		return false;
+	}
+	/**
+	* Triggers a BUFFER_STALLED_ERROR event, but only once per stall period.
+	* @param bufferLen - The playhead distance from the end of the current buffer segment.
+	* @private
+	*/
+	_reportStall(bufferInfo) {
+		const { hls, media, stallReported, stalled } = this;
+		if (!stallReported && stalled !== null && media && hls) {
+			this.stallReported = true;
+			const error = /* @__PURE__ */ new Error(`Playback stalling at @${media.currentTime} due to low buffer (${stringify(bufferInfo)})`);
+			this.warn(error.message);
+			hls.trigger(Events.ERROR, {
+				type: ErrorTypes.MEDIA_ERROR,
+				details: ErrorDetails.BUFFER_STALLED_ERROR,
+				fatal: false,
+				error,
+				buffer: bufferInfo.len,
+				bufferInfo,
+				stalled: { start: stalled }
+			});
+		}
+	}
+	/**
+	* Attempts to fix buffer stalls by jumping over known gaps caused by partial fragments
+	* @param appended - The fragment or part found at the current time (where playback is stalling).
+	* @private
+	*/
+	_trySkipBufferHole(appended) {
+		var _this$hls5;
+		const { fragmentTracker, media } = this;
+		const config = (_this$hls5 = this.hls) == null ? void 0 : _this$hls5.config;
+		if (!media || !fragmentTracker || !config) return 0;
+		const currentTime = media.currentTime;
+		const bufferInfo = BufferHelper.bufferInfo(media, currentTime, 0);
+		const startTime = currentTime < bufferInfo.start ? bufferInfo.start : bufferInfo.nextStart;
+		if (startTime && this.hls) {
+			const bufferStarved = bufferInfo.len <= config.maxBufferHole;
+			const waiting = bufferInfo.len > 0 && bufferInfo.len < 1 && media.readyState < 3;
+			const gapLength = startTime - currentTime;
+			if (gapLength > 0 && (bufferStarved || waiting)) {
+				if (gapLength > config.maxBufferHole) {
+					let startGap = false;
+					if (currentTime === 0) {
+						const startFrag = fragmentTracker.getAppendedFrag(0, PlaylistLevelType.MAIN);
+						if (startFrag && startTime < startFrag.end) startGap = true;
+					}
+					if (!startGap && appended) {
+						var _this$hls$loadLevelOb;
+						if (!((_this$hls$loadLevelOb = this.hls.loadLevelObj) != null && _this$hls$loadLevelOb.details)) return 0;
+						if (getInFlightDependency(this.hls.inFlightFragments, startTime)) return 0;
+						let moreToLoad = false;
+						let pos = appended.end;
+						while (pos < startTime) {
+							const provisioned = appendedFragAtPosition(pos, fragmentTracker);
+							if (provisioned) pos += provisioned.duration;
+							else {
+								moreToLoad = true;
+								break;
+							}
+						}
+						if (moreToLoad) return 0;
+					}
+				}
+				const targetTime = Math.max(startTime + SKIP_BUFFER_RANGE_START, currentTime + SKIP_BUFFER_HOLE_STEP_SECONDS);
+				this.warn(`skipping hole, adjusting currentTime from ${currentTime} to ${targetTime}`);
+				this.moved = true;
+				media.currentTime = targetTime;
+				if (!(appended != null && appended.gap)) {
+					const error = /* @__PURE__ */ new Error(`fragment loaded with buffer holes, seeking from ${currentTime} to ${targetTime}`);
+					const errorData = {
+						type: ErrorTypes.MEDIA_ERROR,
+						details: ErrorDetails.BUFFER_SEEK_OVER_HOLE,
+						fatal: false,
+						error,
+						reason: error.message,
+						buffer: bufferInfo.len,
+						bufferInfo
+					};
+					if (appended) if ("fragment" in appended) errorData.part = appended;
+					else errorData.frag = appended;
+					this.hls.trigger(Events.ERROR, errorData);
+				}
+				return targetTime;
+			}
+		}
+		return 0;
+	}
+	/**
+	* Attempts to fix buffer stalls by advancing the mediaElement's current time by a small amount.
+	* @private
+	*/
+	_tryNudgeBuffer(bufferInfo) {
+		const { hls, media, nudgeRetry } = this;
+		const config = hls == null ? void 0 : hls.config;
+		if (!media || !config) return 0;
+		const currentTime = media.currentTime;
+		this.nudgeRetry++;
+		if (nudgeRetry < config.nudgeMaxRetry) {
+			const targetTime = currentTime + (nudgeRetry + 1) * config.nudgeOffset;
+			const error = /* @__PURE__ */ new Error(`Nudging 'currentTime' from ${currentTime} to ${targetTime}`);
+			this.warn(error.message);
+			media.currentTime = targetTime;
+			hls.trigger(Events.ERROR, {
+				type: ErrorTypes.MEDIA_ERROR,
+				details: ErrorDetails.BUFFER_NUDGE_ON_STALL,
+				error,
+				fatal: false,
+				buffer: bufferInfo.len,
+				bufferInfo
+			});
+		} else {
+			const error = /* @__PURE__ */ new Error(`Playhead still not moving while enough data buffered @${currentTime} after ${config.nudgeMaxRetry} nudges`);
+			this.error(error.message);
+			hls.trigger(Events.ERROR, {
+				type: ErrorTypes.MEDIA_ERROR,
+				details: ErrorDetails.BUFFER_STALLED_ERROR,
+				error,
+				fatal: true,
+				buffer: bufferInfo.len,
+				bufferInfo
+			});
+		}
+	}
+};
+function getInFlightDependency(inFlightFragments, currentTime) {
+	const main = inFlight(inFlightFragments.main);
+	if (main && main.start <= currentTime) return main;
+	const audio = inFlight(inFlightFragments.audio);
+	if (audio && audio.start <= currentTime) return audio;
+	return null;
+}
+function inFlight(inFlightData) {
+	if (!inFlightData) return null;
+	switch (inFlightData.state) {
+		case State.IDLE:
+		case State.STOPPED:
+		case State.ENDED:
+		case State.ERROR: return null;
+	}
+	return inFlightData.frag;
+}
+function appendedFragAtPosition(pos, fragmentTracker) {
+	return fragmentTracker.getAppendedFrag(pos, PlaylistLevelType.MAIN) || fragmentTracker.getPartialFragment(pos);
+}
+var MIN_CUE_DURATION = .25;
+function getCueClass() {
+	if (typeof self === "undefined") return void 0;
+	return self.VTTCue || self.TextTrackCue;
+}
+function createCueWithDataFields(Cue, startTime, endTime, data, type) {
+	let cue = new Cue(startTime, endTime, "");
+	try {
+		cue.value = data;
+		if (type) cue.type = type;
+	} catch (e) {
+		cue = new Cue(startTime, endTime, stringify(type ? _objectSpread2({ type }, data) : data));
+	}
+	return cue;
+}
+var MAX_CUE_ENDTIME = (() => {
+	const Cue = getCueClass();
+	try {
+		Cue && new Cue(0, Number.POSITIVE_INFINITY, "");
+	} catch (e) {
+		return Number.MAX_VALUE;
+	}
+	return Number.POSITIVE_INFINITY;
+})();
+var ID3TrackController = class {
+	constructor(hls) {
+		this.hls = void 0;
+		this.id3Track = null;
+		this.media = null;
+		this.dateRangeCuesAppended = {};
+		this.removeCues = true;
+		this.assetCue = void 0;
+		this.onEventCueEnter = () => {
+			if (!this.hls) return;
+			this.hls.trigger(Events.EVENT_CUE_ENTER, {});
+		};
+		this.hls = hls;
+		this._registerListeners();
+	}
+	destroy() {
+		this._unregisterListeners();
+		this.id3Track = null;
+		this.media = null;
+		this.dateRangeCuesAppended = {};
+		this.hls = this.onEventCueEnter = null;
+	}
+	_registerListeners() {
+		const { hls } = this;
+		if (hls) {
+			hls.on(Events.MEDIA_ATTACHING, this.onMediaAttaching, this);
+			hls.on(Events.MEDIA_ATTACHED, this.onMediaAttached, this);
+			hls.on(Events.MEDIA_DETACHING, this.onMediaDetaching, this);
+			hls.on(Events.MANIFEST_LOADING, this.onManifestLoading, this);
+			hls.on(Events.FRAG_PARSING_METADATA, this.onFragParsingMetadata, this);
+			hls.on(Events.BUFFER_FLUSHING, this.onBufferFlushing, this);
+			hls.on(Events.LEVEL_UPDATED, this.onLevelUpdated, this);
+			hls.on(Events.LEVEL_PTS_UPDATED, this.onLevelPtsUpdated, this);
+		}
+	}
+	_unregisterListeners() {
+		const { hls } = this;
+		if (hls) {
+			hls.off(Events.MEDIA_ATTACHING, this.onMediaAttaching, this);
+			hls.off(Events.MEDIA_ATTACHED, this.onMediaAttached, this);
+			hls.off(Events.MEDIA_DETACHING, this.onMediaDetaching, this);
+			hls.off(Events.MANIFEST_LOADING, this.

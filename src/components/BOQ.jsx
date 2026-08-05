@@ -86,6 +86,23 @@ const BOQ = () => {
     return parseFloat(val).toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
+  const renderDescription = (desc) => {
+    if (!desc) return desc;
+    const hexMatch = desc.match(/#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})\b/);
+    if (hexMatch) {
+      return (
+        <div className="flex items-center">
+          <span 
+            className="inline-block w-8 h-4 rounded-sm shadow-sm mr-2 border border-gray-300 print:border-black shrink-0" 
+            style={{ backgroundColor: hexMatch[0] }}
+          ></span>
+          <span>{desc}</span>
+        </div>
+      );
+    }
+    return desc;
+  };
+
   const handleExport = () => {
     if (rawData.length === 0) return;
     const csv = Papa.unparse(rawData);
@@ -182,7 +199,7 @@ const BOQ = () => {
                     ) : (
                       <tr key={idx} className="bg-white border-b border-gray-100 hover:bg-blue-50/30 transition-colors break-inside-avoid">
                         <td className="px-6 py-3 text-gray-500 print:text-black">{item.index}</td>
-                        <td className="px-6 py-3 font-medium text-gray-800 print:text-black">{item.desc}</td>
+                        <td className="px-6 py-3 font-medium text-gray-800 print:text-black">{renderDescription(item.desc)}</td>
                         <td className="px-6 py-3 text-center print:text-black">{item.qty}</td>
                         <td className="px-6 py-3 text-center print:text-black">{item.unit}</td>
                         <td className="px-6 py-3 text-right text-gray-500 print:text-black">{formatCurrency(item.matPrice)}</td>
