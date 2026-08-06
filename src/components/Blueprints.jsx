@@ -33,6 +33,57 @@ const Blueprints = () => {
             />
           </div>
         </div>
+
+        {/* DIY Manuals Section */}
+        <div className="max-w-6xl mx-auto mt-12 bg-white rounded-2xl shadow-xl overflow-hidden p-4 md:p-8" data-aos="fade-up" data-aos-delay="200">
+          <div className="text-center mb-10">
+            <h3 className="text-2xl md:text-3xl font-bold text-gray-900">แบบคู่มือการทำประตูและเสาแป้นบาส (DIY)</h3>
+            <div className="w-16 h-1 bg-heim-blue mx-auto mt-4 rounded-full"></div>
+            <p className="text-gray-600 mt-4">คู่มือสำหรับจัดเตรียมวัสดุและประกอบโครงสร้างด้วยตนเอง</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Football Goal Manual */}
+            <div className="flex flex-col group">
+              <h4 className="text-xl font-bold text-gray-800 mb-4 text-center group-hover:text-heim-blue transition-colors">1. คู่มือการเชื่อมโกลฟุตบอล (โกลหนู)</h4>
+              <div className="border-2 border-gray-200 rounded-xl overflow-hidden bg-gray-50 flex-grow relative shadow-sm hover:shadow-md transition-shadow min-h-[400px] flex items-center justify-center">
+                <img 
+                  src="/diy-football-goal.png" 
+                  alt="คู่มือการทำโกลฟุตบอล" 
+                  className="w-full h-full object-contain cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
+                  onClick={() => window.open('/diy-football-goal.png', '_blank')}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://placehold.co/800x1000/f3f4f6/6b7280.png?text=Waiting+for+Image%0A%0A%5B+diy-football-goal.png+%5D%0A%0APlease+save+in+public+folder";
+                  }}
+                />
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 pointer-events-none">
+                  <span className="text-white font-medium bg-black/60 px-4 py-2 rounded-lg">คลิกเพื่อดูรูปเต็ม</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Basketball Hoop Manual */}
+            <div className="flex flex-col group">
+              <h4 className="text-xl font-bold text-gray-800 mb-4 text-center group-hover:text-heim-blue transition-colors">2. แบบละเอียดเสาแป้นบาสเกตบอล</h4>
+              <div className="border-2 border-gray-200 rounded-xl overflow-hidden bg-gray-50 flex-grow relative shadow-sm hover:shadow-md transition-shadow min-h-[400px] flex items-center justify-center">
+                <img 
+                  src="/diy-basketball-hoop.png" 
+                  alt="แบบเสาแป้นบาสเกตบอล" 
+                  className="w-full h-full object-contain cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
+                  onClick={() => window.open('/diy-basketball-hoop.png', '_blank')}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://placehold.co/800x1000/f3f4f6/6b7280.png?text=Waiting+for+Image%0A%0A%5B+diy-basketball-hoop.png+%5D%0A%0APlease+save+in+public+folder";
+                  }}
+                />
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300 pointer-events-none">
+                  <span className="text-white font-medium bg-black/60 px-4 py-2 rounded-lg">คลิกเพื่อดูรูปเต็ม</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
